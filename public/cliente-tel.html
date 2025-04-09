@@ -2,464 +2,490 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Área del Cliente Premium</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área Premium</title>
   <!-- External Resources -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    /* Reset y estilos base */
+    :root {
+      --primary: #6c5ce7;
+      --primary-light: #a29bfe;
+      --secondary: #00cec9;
+      --dark: #2d3436;
+      --light: #f5f6fa;
+      --success: #00b894;
+      --warning: #fdcb6e;
+      --danger: #d63031;
+      --text: #636e72;
+      --card-bg: rgba(255, 255, 255, 0.9);
+      --blur-bg: rgba(255, 255, 255, 0.15);
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
     }
-    
+
     body {
       font-family: 'Poppins', sans-serif;
-      background-color: #f5f7fa;
-      color: #333;
-      line-height: 1.6;
+      background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+      color: var(--dark);
+      min-height: 100vh;
       overflow-x: hidden;
     }
-    
-    /* Contenedor principal */
+
+    /* App Container - Nuevo diseño móvil primero */
     .app-container {
       display: flex;
       flex-direction: column;
       min-height: 100vh;
       position: relative;
     }
-    
-    /* Sidebar móvil */
-    .sidebar {
-      background: linear-gradient(135deg, #2c3e50, #34495e);
+
+    /* Header móvil */
+    .mobile-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem;
+      background: var(--primary);
       color: white;
-      padding: 15px;
-      display: none;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+      position: sticky;
+      top: 0;
+    }
+
+    .menu-toggle {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    .mobile-title {
+      font-weight: 600;
+      font-size: 1.2rem;
+      animation: fadeIn 0.5s ease;
+    }
+
+    /* Sidebar - Rediseñado para móvil */
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -100%;
+      width: 80%;
+      max-width: 300px;
+      height: 100vh;
+      background: white;
+      box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+      z-index: 1000;
+      transition: var(--transition);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar.active {
+      left: 0;
+      animation: slideIn 0.3s ease;
+    }
+
+    .sidebar-overlay {
       position: fixed;
       top: 0;
       left: 0;
       width: 100%;
       height: 100%;
-      z-index: 1000;
-      overflow-y: auto;
-      transform: translateX(-100%);
-      transition: transform 0.3s ease;
+      background: rgba(0,0,0,0.5);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition);
     }
-    
-    .sidebar.active {
-      transform: translateX(0);
-      display: block;
+
+    .sidebar-overlay.active {
+      opacity: 1;
+      pointer-events: all;
     }
-    
-    /* Botón de menú */
-    .menu-toggle {
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      background: #2c3e50;
-      color: white;
-      border: none;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      z-index: 1001;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    }
-    
-    /* Perfil */
+
     .profile {
+      padding: 2rem 1rem 1rem;
       text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-      margin-bottom: 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-light) 100%);
+      color: white;
+      position: relative;
     }
-    
+
     .profile-pic {
       width: 80px;
       height: 80px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid rgba(255,255,255,0.2);
-      margin-bottom: 15px;
+      border: 3px solid white;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
     }
-    
+
+    .profile-pic:hover {
+      transform: scale(1.05);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
     .profile h3 {
+      margin-top: 0.5rem;
       font-size: 1.2rem;
-      margin-bottom: 5px;
     }
-    
-    .profile p {
-      font-size: 0.9rem;
-      opacity: 0.8;
-      margin-bottom: 5px;
-    }
-    
-    .status {
+
+    .profile small {
       display: inline-block;
-      padding: 3px 8px;
-      background-color: #27ae60;
-      border-radius: 12px;
+      padding: 0.2rem 0.5rem;
+      background: rgba(255,255,255,0.2);
+      border-radius: 20px;
       font-size: 0.7rem;
-      margin-top: 5px;
+      margin-top: 0.3rem;
     }
-    
-    /* Menú de navegación */
+
     .nav-menu {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      padding: 1rem 0;
+      flex-grow: 1;
     }
-    
+
     .nav-item {
-      background: transparent;
-      color: white;
-      border: none;
-      padding: 12px 15px;
-      border-radius: 8px;
       display: flex;
       align-items: center;
-      gap: 15px;
+      padding: 1rem 1.5rem;
+      background: none;
+      border: none;
+      color: var(--text);
       font-size: 0.95rem;
-      text-align: left;
-      transition: all 0.3s;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .nav-item::before {
+      content: '';
+      position: absolute;
+      left: -100%;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-light);
+      opacity: 0.1;
+      transition: var(--transition);
+    }
+
+    .nav-item:hover {
+      color: var(--primary);
+      background: rgba(108, 92, 231, 0.05);
+    }
+
+    .nav-item:hover::before {
+      left: 0;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+      background: rgba(108, 92, 231, 0.1);
+    }
+
+    .nav-item.active::before {
+      left: 0;
+      background: var(--primary);
+      opacity: 0.2;
+    }
+
     .nav-item i {
+      margin-right: 1rem;
+      font-size: 1.1rem;
       width: 24px;
       text-align: center;
     }
-    
-    .nav-item:hover, .nav-item.active {
-      background-color: rgba(255,255,255,0.1);
-    }
-    
-    /* Contenido principal */
+
+    /* Main Content - Rediseñado para móvil */
     .main-content {
-      flex: 1;
-      padding: 70px 15px 80px;
-      width: 100%;
+      flex-grow: 1;
+      padding: 1rem;
+      transition: var(--transition);
     }
-    
-    .content-header {
-      margin-bottom: 20px;
-      text-align: center;
-    }
-    
-    .content-title {
-      font-size: 1.5rem;
-      color: #2c3e50;
-    }
-    
-    /* Paneles de contenido */
+
     .content-panel {
       display: none;
-      animation: fadeIn 0.3s ease;
+      animation: fadeInUp 0.5s ease;
     }
-    
+
     .content-panel.active {
       display: block;
     }
-    
-    @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+
+    /* Welcome Message */
+    #welcome-box {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999;
+      background: var(--blur-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 1;
+      transition: opacity 0.5s ease;
     }
-    
-    /* Mensaje de bienvenida */
-    .welcome-message {
-      background-color: white;
-      border-radius: 12px;
-      padding: 30px 20px;
+
+    #welcome-box.fade-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .welcome-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 16px;
       text-align: center;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      margin-top: 20px;
+      box-shadow: var(--shadow);
+      transform: scale(0.9);
+      animation: popIn 0.5s ease forwards;
     }
-    
+
     .welcome-icon {
       font-size: 3rem;
-      color: #3498db;
-      margin-bottom: 15px;
+      color: var(--primary);
+      margin-bottom: 1rem;
+      animation: bounce 2s infinite;
     }
-    
-    .welcome-message h2 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      color: #2c3e50;
-    }
-    
-    .welcome-message p {
-      color: #7f8c8d;
-      font-size: 0.95rem;
-    }
-    
-    /* Chat */
+
+    /* Chat Panel - Rediseñado */
     .chat-container {
-      background-color: white;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-      height: calc(100vh - 160px);
       display: flex;
       flex-direction: column;
+      height: calc(100vh - 120px);
+      background: white;
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
     }
-    
+
     .chat-header {
-      background-color: #3498db;
+      padding: 1rem;
+      background: var(--primary);
       color: white;
-      padding: 15px;
       text-align: center;
     }
-    
+
     .chat-header h2 {
       font-size: 1.2rem;
     }
-    
+
     .chat-body {
-      flex: 1;
-      padding: 15px;
+      flex-grow: 1;
+      padding: 1rem;
       overflow-y: auto;
-      background-color: #f5f7fa;
+      background: #f5f6fa;
     }
-    
+
     .message {
-      max-width: 85%;
-      padding: 10px 14px;
+      max-width: 80%;
+      padding: 12px 16px;
       border-radius: 18px;
-      margin-bottom: 12px;
-      font-size: 0.95rem;
+      margin-bottom: 1rem;
       position: relative;
-      line-height: 1.4;
       animation: messageIn 0.3s ease-out forwards;
       opacity: 0;
       transform: translateY(10px);
+      font-size: 0.9rem;
+      line-height: 1.4;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.1);
     }
-    
-    @keyframes messageIn {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    
+
     .message.received {
-      background-color: white;
-      border-bottom-left-radius: 5px;
+      background: white;
+      border-bottom-left-radius: 4px;
       margin-right: auto;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
     }
-    
+
     .message.sent {
-      background-color: #3498db;
+      background: var(--primary);
       color: white;
-      border-bottom-right-radius: 5px;
+      border-bottom-right-radius: 4px;
       margin-left: auto;
     }
-    
+
     .message-time {
       display: block;
       font-size: 0.7rem;
       opacity: 0.7;
-      margin-top: 5px;
+      margin-top: 4px;
       text-align: right;
     }
-    
-    .welcome-chat-message {
-      text-align: center;
-      margin-bottom: 20px;
+
+    .message.sent .message-time {
+      color: rgba(255,255,255,0.7);
     }
-    
-    .chat-instructions {
-      font-size: 0.85rem;
-      color: #7f8c8d;
-      margin-top: 10px;
-    }
-    
-    /* Input de chat */
+
     .chat-input-container {
-      background-color: white;
-      padding: 10px;
+      padding: 1rem;
+      background: white;
       border-top: 1px solid #eee;
     }
-    
+
     .chat-input {
       display: flex;
-      align-items: center;
-      gap: 8px;
+      background: #f5f6fa;
+      border-radius: 30px;
+      overflow: hidden;
     }
-    
+
     .chat-input input {
-      flex: 1;
-      padding: 10px 15px;
-      border: 1px solid #ddd;
-      border-radius: 25px;
-      font-size: 0.95rem;
+      flex-grow: 1;
+      border: none;
+      background: transparent;
+      padding: 0.8rem 1rem;
       outline: none;
     }
-    
-    .file-btn, .send-btn {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
+
+    .chat-input button {
+      background: none;
       border: none;
-      background-color: #3498db;
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
+      padding: 0 1rem;
+      color: var(--primary);
+      cursor: pointer;
+      transition: var(--transition);
     }
-    
-    .file-btn {
-      background-color: #f1f1f1;
-      color: #7f8c8d;
+
+    .chat-input button:hover {
+      transform: scale(1.1);
     }
-    
-    /* Paneles de información */
+
+    /* Info Panel - Tarjetas rediseñadas */
     .info-container {
-      background-color: white;
-      border-radius: 12px;
-      padding: 20px 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    
-    .info-container h2 {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      color: #2c3e50;
-      text-align: center;
-    }
-    
-    .info-grid {
       display: grid;
       grid-template-columns: 1fr;
-      gap: 12px;
+      gap: 1rem;
     }
-    
+
     .info-card {
-      background-color: #f9f9f9;
-      padding: 15px;
-      border-radius: 8px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      padding: 1.2rem;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      animation: fadeInUp 0.5s ease;
+      animation-fill-mode: both;
     }
-    
+
+    .info-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+    }
+
     .info-card h3 {
       font-size: 0.9rem;
-      color: #7f8c8d;
-      margin-bottom: 5px;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
     }
-    
+
     .info-card p {
       font-size: 1rem;
-      color: #2c3e50;
       font-weight: 500;
     }
-    
-    /* Documentos */
-    .documents-container {
-      background-color: white;
-      border-radius: 12px;
-      padding: 20px 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-    }
-    
-    .documents-container h2 {
-      font-size: 1.3rem;
-      margin-bottom: 15px;
-      color: #2c3e50;
-      text-align: center;
-    }
-    
-    .empty-state {
-      text-align: center;
-      padding: 30px 0;
-      color: #7f8c8d;
-    }
-    
-    .empty-state i {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      opacity: 0.5;
-    }
-    
-    /* Progreso */
+
+    /* Progress Panel - Rediseñado */
     .progress-container {
-      background-color: white;
-      border-radius: 12px;
-      padding: 20px 15px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      margin-bottom: 1rem;
     }
-    
-    .progress-container h2 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      color: #2c3e50;
-      text-align: center;
-    }
-    
+
     .progress-description {
-      text-align: center;
-      color: #7f8c8d;
+      color: var(--text);
+      margin-bottom: 1rem;
       font-size: 0.9rem;
-      margin-bottom: 20px;
     }
-    
+
     .progress-wrapper {
-      margin-bottom: 25px;
+      margin-bottom: 1.5rem;
     }
-    
+
     .progress-title {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 0.5rem;
       font-size: 0.9rem;
     }
-    
+
     .progress-bar {
       height: 10px;
-      background-color: #f1f1f1;
-      border-radius: 5px;
+      background: #eee;
+      border-radius: 10px;
       overflow: hidden;
-      margin-bottom: 8px;
     }
-    
+
     .progress-fill {
       height: 100%;
-      background: linear-gradient(90deg, #3498db, #2ecc71);
-      border-radius: 5px;
-      transition: width 0.5s ease;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      border-radius: 10px;
+      transition: width 1s ease;
+      position: relative;
+      overflow: hidden;
     }
-    
+
+    .progress-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(90deg, 
+        rgba(255,255,255,0.1) 0%, 
+        rgba(255,255,255,0.3) 50%, 
+        rgba(255,255,255,0.1) 100%);
+      animation: shimmer 2s infinite linear;
+    }
+
     .progress-text {
-      font-size: 0.85rem;
-      color: #7f8c8d;
+      font-size: 0.9rem;
+      color: var(--text);
+      margin-top: 0.5rem;
       text-align: center;
     }
-    
-    /* Hitos */
-    .progress-steps {
+
+    /* Steps Animation */
+    #progress-steps {
       display: flex;
       flex-direction: column;
-      gap: 1.2rem;
-      padding: 1rem 0;
+      gap: 1.5rem;
+      padding: 1rem;
       position: relative;
     }
-    
-    .progress-steps::before {
+
+    #progress-steps::before {
       content: '';
       position: absolute;
       top: 0;
       bottom: 0;
-      left: 27px;
-      width: 3px;
+      left: 25px;
+      width: 4px;
       background: linear-gradient(to bottom, #e0e0e0, #e0e0e0);
       z-index: 1;
       border-radius: 4px;
     }
-    
+
     .step {
       display: flex;
       gap: 1rem;
@@ -469,269 +495,594 @@
       transform: translateY(20px);
       transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     }
-    
+
     .step.visible {
       opacity: 1;
       transform: translateY(0);
     }
-    
+
     .step-icon {
-      width: 55px;
-      height: 55px;
+      width: 50px;
+      height: 50px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
       flex-shrink: 0;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-      transition: all 0.3s;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+      transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      cursor: pointer;
+      position: relative;
     }
-    
+
+    .step-icon::after {
+      content: '';
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 2px solid transparent;
+      top: 0;
+      left: 0;
+      transition: all 0.3s ease;
+    }
+
     .step-info {
       flex-grow: 1;
       padding-bottom: 1.5rem;
     }
-    
+
     .step-info h3 {
       margin: 0 0 0.3rem 0;
       font-size: 1rem;
       color: #333;
       font-weight: 600;
     }
-    
+
     .step-info p {
       margin: 0;
       font-size: 0.85rem;
       color: #666;
     }
-    
-    /* Estados de hitos */
+
     .step.pending .step-icon {
       background: linear-gradient(135deg, #fff3cd, #ffecb3);
       color: #ffb300;
-      border: 2px solid #ffc107;
+      border: 3px solid #ffc107;
     }
-    
+
     .step.current .step-icon {
       background: linear-gradient(135deg, #cce5ff, #a3d0ff);
       color: #0062cc;
-      border: 2px solid #007bff;
+      border: 3px solid #007bff;
+      animation: pulseSpin 2s infinite ease-in-out;
     }
-    
+
     .step.completed .step-icon {
       background: linear-gradient(135deg, #d4edda, #b8e0c1);
       color: #218838;
-      border: 2px solid #28a745;
+      border: 3px solid #28a745;
     }
-    
-    /* Modal de archivos */
-    .modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
+
+    /* Dependientes Panel - Rediseñado */
+    .dependientes-header {
+      margin-bottom: 1.5rem;
+      text-align: center;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .section-subtitle {
+      color: var(--text);
+      font-size: 0.9rem;
+    }
+
+    .milestone-card {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .form-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--primary);
+    }
+
+    .form-group {
+      margin-bottom: 1rem;
+    }
+
+    .input-label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 0.5rem;
+      color: var(--dark);
+      font-size: 0.9rem;
+    }
+
+    .input-field {
       width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.7);
-      z-index: 1002;
+      padding: 0.8rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: var(--transition);
+      background: rgba(255,255,255,0.8);
+    }
+
+    .input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.2);
+      outline: none;
+    }
+
+    .input-hint {
+      display: block;
+      font-size: 0.75rem;
+      color: var(--text);
+      margin-top: 0.25rem;
+      opacity: 0.7;
+    }
+
+    .btn-primary {
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.8rem 1.5rem;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      gap: 0.5rem;
+      width: 100%;
+      box-shadow: 0 4px 6px rgba(108, 92, 231, 0.2);
     }
-    
-    .modal-content {
-      background-color: white;
-      width: 90%;
-      max-width: 400px;
-      border-radius: 12px;
-      padding: 20px;
-      position: relative;
+
+    .btn-primary:hover {
+      background-color: #5a4bd1;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 10px rgba(108, 92, 231, 0.3);
     }
-    
-    .close-modal {
-      position: absolute;
-      top: 10px;
-      right: 15px;
-      font-size: 1.5rem;
-      cursor: pointer;
-      color: #7f8c8d;
+
+    .dependientes-list-container {
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 1.5rem;
+      box-shadow: var(--shadow);
+      animation: fadeInUp 0.5s ease;
     }
-    
-    .modal-content h3 {
-      margin-bottom: 15px;
+
+    .list-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 1rem;
+      color: var(--dark);
+    }
+
+    .empty-state {
       text-align: center;
-      color: #2c3e50;
+      padding: 2rem;
+      color: var(--text);
+      animation: fadeIn 0.5s ease;
     }
-    
-    .file-uploader {
-      margin-bottom: 20px;
+
+    .empty-state i {
+      font-size: 2rem;
+      margin-bottom: 1rem;
+      color: #bdc3c7;
     }
-    
-    .drop-area {
-      border: 2px dashed #ddd;
-      border-radius: 8px;
-      padding: 30px 20px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .drop-area.highlight {
-      border-color: #3498db;
-      background-color: rgba(52, 152, 219, 0.05);
-    }
-    
-    .drop-area i {
-      font-size: 2.5rem;
-      color: #3498db;
-      margin-bottom: 10px;
-    }
-    
-    .drop-area p {
-      margin-bottom: 15px;
-      color: #7f8c8d;
-    }
-    
-    .btn-select-file {
-      background-color: #3498db;
-      color: white;
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      font-size: 0.9rem;
-    }
-    
-    .file-preview {
-      margin-top: 15px;
-      text-align: center;
-    }
-    
-    .file-preview img {
-      max-width: 100%;
-      max-height: 150px;
-      border-radius: 8px;
-      margin-bottom: 10px;
-    }
-    
-    .modal-actions {
+
+    .dependiente-item {
       display: flex;
       justify-content: space-between;
-      margin-top: 20px;
+      align-items: center;
+      padding: 1rem;
+      border-bottom: 1px solid #eee;
+      transition: var(--transition);
+      animation: fadeIn 0.5s ease;
     }
-    
-    .modal-actions button {
-      padding: 8px 20px;
-      border-radius: 5px;
+
+    .dependiente-item:last-child {
+      border-bottom: none;
+    }
+
+    .dependiente-item:hover {
+      background: rgba(0,0,0,0.02);
+    }
+
+    .dependiente-info {
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .dependiente-nombre {
+      font-weight: 500;
+      margin-bottom: 0.25rem;
+      color: var(--dark);
+    }
+
+    .dependiente-details {
+      font-size: 0.85rem;
+      color: var(--text);
+    }
+
+    .btn-icon {
+      background: none;
       border: none;
+      color: var(--danger);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .btn-icon:hover {
+      background-color: rgba(214, 48, 49, 0.1);
+    }
+
+    /* Pagos Panel - Rediseñado */
+    .pago-step {
+      background-color: #f5faff;
+      border-left: 5px solid var(--primary);
+      padding: 1rem;
+      border-radius: 8px;
+      position: relative;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      margin-bottom: 1rem;
+      animation: fadeInUp 0.5s ease;
+    }
+
+    .pago-step h3 {
+      margin: 0 0 0.5rem 0;
+      color: var(--primary);
+      font-size: 1.1rem;
+    }
+
+    .pago-step p {
+      margin: 0.3rem 0;
       font-size: 0.9rem;
     }
-    
-    .btn-cancel {
-      background-color: #f1f1f1;
-      color: #7f8c8d;
+
+    .estado-pago span {
+      font-weight: bold;
     }
-    
-    .btn-send {
-      background-color: #3498db;
+
+    .btn-comprobante {
+      margin-top: 0.8rem;
+      background-color: var(--primary);
       color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-size: 0.9rem;
+      width: 100%;
     }
-    
-    .btn-send:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
+
+    .btn-comprobante:hover {
+      background-color: #5a4bd1;
     }
-    
-    /* Modal de foto ampliada */
+
+    .input-comprobante {
+      width: 100%;
+      margin-top: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    /* Modal de foto */
     .modal-foto {
       display: none;
       justify-content: center;
       align-items: center;
       position: fixed;
-      z-index: 1002;
+      z-index: 9999;
       left: 0;
       top: 0;
       width: 100%;
       height: 100%;
-      background-color: rgba(0,0,0,0.8);
+      background-color: rgba(0,0,0,0.9);
+      animation: fadeIn 0.3s ease;
     }
-    
+
     .modal-foto.activo {
       display: flex;
     }
-    
+
     .contenido-modal {
       max-width: 90%;
       max-height: 80%;
       border-radius: 10px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.2);
+      animation: zoomIn 0.3s ease;
     }
-    
+
     .cerrar-modal {
       position: absolute;
       top: 20px;
       right: 20px;
-      font-size: 2rem;
+      font-size: 30px;
       color: white;
       cursor: pointer;
+      transition: var(--transition);
     }
-    
-    /* Animaciones */
-    .floating {
-      animation: floating 3s ease-in-out infinite;
+
+    .cerrar-modal:hover {
+      transform: rotate(90deg);
     }
-    
-    @keyframes floating {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-10px); }
-      100% { transform: translateY(0px); }
-    }
-    
-    .ripple {
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .ripple:after {
-      content: "";
-      display: block;
-      position: absolute;
+
+    /* Modal de archivos */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 9999;
+      left: 0;
+      top: 0;
       width: 100%;
       height: 100%;
-      top: 0;
-      left: 0;
-      pointer-events: none;
-      background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
-      background-repeat: no-repeat;
-      background-position: 50%;
-      transform: scale(10, 10);
-      opacity: 0;
-      transition: transform .5s, opacity 1s;
+      background-color: rgba(0,0,0,0.7);
+      animation: fadeIn 0.3s ease;
     }
-    
-    .ripple:active:after {
-      transform: scale(0, 0);
-      opacity: 0.3;
-      transition: 0s;
+
+    .modal-content {
+      background: white;
+      margin: 10% auto;
+      padding: 1.5rem;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 400px;
+      box-shadow: var(--shadow);
+      animation: slideUp 0.3s ease;
     }
-    
-    /* Responsive */
+
+    .close-modal {
+      color: #aaa;
+      float: right;
+      font-size: 1.5rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .close-modal:hover {
+      color: var(--danger);
+      transform: rotate(90deg);
+    }
+
+    .file-uploader {
+      margin: 1rem 0;
+    }
+
+    .drop-area {
+      border: 2px dashed #ddd;
+      border-radius: 8px;
+      padding: 2rem;
+      text-align: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .drop-area:hover {
+      border-color: var(--primary);
+      background: rgba(108, 92, 231, 0.05);
+    }
+
+    .drop-area i {
+      font-size: 2rem;
+      color: var(--primary);
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-select-file {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      margin-top: 1rem;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-select-file:hover {
+      background: #5a4bd1;
+    }
+
+    .file-preview {
+      margin-top: 1rem;
+      text-align: center;
+    }
+
+    .preview-image img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 8px;
+      margin-bottom: 0.5rem;
+    }
+
+    .modal-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 0.5rem;
+      margin-top: 1rem;
+    }
+
+    .modal-actions button {
+      padding: 0.6rem 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .btn-cancel {
+      background: #f1f1f1;
+      border: 1px solid #ddd;
+    }
+
+    .btn-cancel:hover {
+      background: #e0e0e0;
+    }
+
+    .btn-send {
+      background: var(--primary);
+      color: white;
+      border: none;
+    }
+
+    .btn-send:hover {
+      background: #5a4bd1;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { 
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to { 
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes slideIn {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.9); opacity: 0; }
+      80% { transform: scale(1.05); }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes messageIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes pulseSpin {
+      0% { transform: scale(1) rotate(0deg); }
+      50% { transform: scale(1.1) rotate(5deg); }
+      100% { transform: scale(1) rotate(0deg); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes shimmer {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes zoomIn {
+      from { transform: scale(0.8); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(50px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive adjustments */
     @media (min-width: 768px) {
-      .info-grid {
-        grid-template-columns: 1fr 1fr;
+      .app-container {
+        flex-direction: row;
+      }
+      
+      .mobile-header {
+        display: none;
+      }
+      
+      .sidebar {
+        position: relative;
+        left: 0;
+        width: 280px;
+        height: 100vh;
+        flex-shrink: 0;
+      }
+      
+      .sidebar-overlay {
+        display: none;
+      }
+      
+      .main-content {
+        flex-grow: 1;
+        height: 100vh;
+        overflow-y: auto;
+      }
+      
+      .info-container {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      
+      .step-icon {
+        width: 60px;
+        height: 60px;
+        font-size: 1.8rem;
+      }
+      
+      #progress-steps::before {
+        left: 30px;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .info-container {
+        grid-template-columns: repeat(3, 1fr);
+      }
+      
+      .form-grid {
+        grid-template-columns: repeat(2, 1fr);
       }
     }
   </style>
 </head>
 <body>
   <div class="app-container">
-    <!-- Botón de menú móvil -->
-    <button class="menu-toggle" id="menu-toggle">
-      <i class="fas fa-bars"></i>
-    </button>
-    
+    <!-- Mobile Header -->
+    <header class="mobile-header">
+      <button class="menu-toggle" id="menu-toggle">
+        <i class="fas fa-bars"></i>
+      </button>
+      <h1 class="mobile-title" id="mobile-title">Área Premium</h1>
+      <div style="width: 40px;"></div> <!-- Espacio para alinear -->
+    </header>
+
     <!-- Sidebar Navigation -->
     <aside class="sidebar" id="sidebar">
       <div class="profile">
-        <img id="client-photo" src="https://i.pravatar.cc/150?img=32" alt="Foto de perfil" class="profile-pic floating" style="cursor: pointer;">
+        <img id="client-photo" src="https://i.pravatar.cc/150?img=32" alt="Foto de perfil" class="profile-pic">
         <h3 id="client-name">Alex Johnson</h3>
         <p id="client-status">Cliente Premium</p>
         <small class="status">En línea</small>
@@ -758,15 +1109,17 @@
           <i class="fas fa-users"></i>
           <span>Dependientes</span>
         </button>
+        <button class="nav-item" data-view="pagos">
+          <i class="fas fa-credit-card"></i>
+          <span>Pagos</span>
+        </button>
       </nav>
     </aside>
 
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
+
     <!-- Main Content Area -->
     <main class="main-content">
-      <header class="content-header">
-        <h1 class="content-title" id="vista-titulo">Chat con Asesor</h1>
-      </header>
-
       <!-- Welcome Message -->
       <div class="welcome-message" id="welcome-box">
         <div class="welcome-content">
@@ -777,7 +1130,7 @@
       </div>
 
       <!-- Chat Panel -->
-      <section id="vista-chat" class="content-panel">
+      <section id="vista-chat" class="content-panel active">
         <div class="chat-container">
           <div class="chat-header">
             <h2>Conversación con tu Asesor</h2>
@@ -798,10 +1151,10 @@
           <div class="chat-input-container">
             <div class="chat-input">
               <input type="text" id="chat-message" placeholder="Escribe tu mensaje...">
-              <button class="file-btn ripple" id="file-btn">
+              <button class="file-btn" id="file-btn" title="Adjuntar archivo">
                 <i class="fas fa-paperclip"></i>
               </button>
-              <button class="send-btn ripple" id="send-btn">
+              <button class="send-btn" id="send-btn" title="Enviar mensaje">
                 <i class="fas fa-paper-plane"></i>
               </button>
             </div>
@@ -810,58 +1163,61 @@
       </section>
 
       <!-- Information Panel -->
-      <section id="vista-info" class="content-panel oculto">
+      <section id="vista-info" class="content-panel">
         <div class="info-container">
-          <h2>Mi Información Personal</h2>
-          <div class="info-grid">
-            <div class="info-card">
-              <h3>Nombre Completo</h3>
-              <p id="info-nombre">Alex Johnson</p>
-            </div>
-            <div class="info-card">
-              <h3>Correo Electrónico</h3>
-              <p id="info-email">alex.johnson@example.com</p>
-            </div>
-            <div class="info-card">
-              <h3>Teléfono</h3>
-              <p id="info-phone">+1 (555) 123-4567</p>
-            </div>
-            <div class="info-card">
-              <h3>ID de Cliente</h3>
-              <p id="info-id">CL-2023-001</p>
-            </div>
-            <div class="info-card">
-              <h3>Fecha de Registro</h3>
-              <p id="info-registro">15 Ene 2023</p>
-            </div>
-            <div class="info-card">
-              <h3>Último Acceso</h3>
-              <p id="info-acceso">Hoy, 10:15 AM</p>
-            </div>
-            <div class="info-card">
-              <h3>Cuenta USCIS</h3>
-              <p id="info-uscis">No registrado</p>
-            </div>
-            <div class="info-card">
-              <h3>Contraseña</h3>
-              <p id="info-password">No proporcionada</p>
-            </div>
-            <div class="info-card">
-              <h3>Detalles de Solicitud</h3>
-              <p id="info-detalles">Sin detalles disponibles</p>
-            </div>
-            <div class="info-card">
-              <h3>Tipo de Proceso</h3>
-              <p id="info-proceso">No especificado</p>
-            </div>
+          <div class="info-card">
+            <h3>Nombre Completo</h3>
+            <p id="info-nombre">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Correo Electrónico</h3>
+            <p id="info-email">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Teléfono</h3>
+            <p id="info-phone">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>ID de Cliente</h3>
+            <p id="info-id">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Dirección</h3>
+            <p id="info-direccion">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Número A</h3>
+            <p id="info-numeroA">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Fecha de Registro</h3>
+            <p id="info-registro">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Cuenta USCIS</h3>
+            <p id="info-uscis">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Contraseña</h3>
+            <p id="info-password">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Código de Respaldo</h3>
+            <p id="info-codigo">Cargando...</p>
+          </div>
+          <div class="info-card">
+            <h3>Tipo de Proceso</h3>
+            <p id="info-proceso">Cargando...</p>
           </div>
         </div>
       </section>
 
       <!-- Documents Panel -->
-      <section id="vista-documentos" class="content-panel oculto">
-        <div class="documents-container">
+      <section id="vista-documentos" class="content-panel">
+        <div class="progress-container">
           <h2>Mis Documentos</h2>
+          <p class="progress-description">Aquí encontrarás todos los documentos relacionados con tu caso</p>
+          
           <div class="documents-list" id="documents-list">
             <div class="empty-state">
               <i class="fas fa-folder-open"></i>
@@ -872,7 +1228,7 @@
       </section>
 
       <!-- Progress Panel -->
-      <section id="vista-progreso" class="content-panel oculto">
+      <section id="vista-progreso" class="content-panel">
         <div class="progress-container">
           <h2>Progreso de mi Caso</h2>
           <p class="progress-description">Aquí puedes ver el avance de tu proceso</p>
@@ -895,23 +1251,81 @@
       </section>
 
       <!-- Dependientes Panel -->
-      <section id="vista-dependientes" class="content-panel oculto">
-        <div class="info-container">
-          <h2>Mis Dependientes</h2>
-          <p class="progress-description">Aquí verás la información de los familiares incluidos en tu caso.</p>
+      <section id="vista-dependientes" class="content-panel">
+        <div class="dependientes-header">
+          <h2 class="section-title">Mis Dependientes</h2>
+          <p class="section-subtitle">Administra los familiares incluidos en tu caso</p>
+        </div>
+
+        <div class="milestone-card">
+          <h3 class="form-title">Añadir nuevo dependiente</h3>
           
-          <div class="info-grid" id="dependientes-lista">
-            <!-- Los dependientes se mostrarán aquí -->
-            <div class="info-card">
-              <h3>Ejemplo</h3>
-              <p>Nombre: María López</p>
-              <p>Parentesco: Hija</p>
-              <p>Edad: 12 años</p>
+          <div class="form-group">
+            <label for="dep-nombre" class="input-label">Nombre completo</label>
+            <input type="text" id="dep-nombre" class="input-field" placeholder="Ej: María González Pérez" required>
+            <span class="input-hint">Nombre legal como aparece en documentos</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="dep-fecha" class="input-label">Fecha de Nacimiento</label>
+            <input type="date" id="dep-fecha" class="input-field" required>
+            <span class="input-hint">Formato: DD/MM/AAAA</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="dep-alien" class="input-label">Número de Alien</label>
+            <input type="text" id="dep-alien" class="input-field" placeholder="Ej: A123456789" pattern="[A-Za-z]\d{9}" required>
+            <span class="input-hint">Letra seguida de 9 dígitos</span>
+          </div>
+          
+          <button type="button" class="btn-primary" onclick="agregarDependiente()">
+            <i class="fas fa-user-plus"></i> Añadir Dependiente
+          </button>
+        </div>
+
+        <div class="dependientes-list-container">
+          <h3 class="list-title">Tus dependientes registrados</h3>
+          
+          <div class="dependientes-list" id="dependientes-lista">
+            <div class="empty-state">
+              <i class="fas fa-users-slash"></i>
+              <p>No has agregado dependientes aún</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pagos Panel -->
+      <section id="vista-pagos" class="content-panel">
+        <div class="progress-container">
+          <h2>Plan de Pagos</h2>
+          <p class="progress-description">Aquí verás los pagos asignados por tu asesor. Sube un comprobante por cada pago realizado.</p>
+      
+          <div class="progress-wrapper">
+            <div class="progress-title">
+              <span>Pagos Realizados</span>
+              <span id="pago-progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="pago-progress-fill" style="width: 0%; background-color: var(--success);"></div>
+            </div>
+          </div>
+      
+          <div class="progress-container" id="lista-pagos">
+            <div class="empty-state">
+              <i class="fas fa-money-check-alt"></i>
+              <p>No hay pagos programados aún</p>
             </div>
           </div>
         </div>
       </section>
     </main>
+  </div>
+
+  <!-- MODAL PARA AMPLIAR FOTO -->
+  <div id="modal-foto" class="modal-foto">
+    <span class="cerrar-modal">&times;</span>
+    <img id="foto-ampliada" class="contenido-modal" src="" alt="Foto ampliada">
   </div>
 
   <!-- File Upload Modal -->
@@ -935,39 +1349,46 @@
     </div>
   </div>
 
-  <!-- MODAL PARA AMPLIAR FOTO -->
-  <div id="modal-foto" class="modal-foto">
-    <span class="cerrar-modal">&times;</span>
-    <img id="foto-ampliada" class="contenido-modal" src="" alt="Foto ampliada">
-  </div>
-
   <!-- JavaScript Resources -->
   <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
   <script>
-    // Obtener ID del cliente desde la URL
+    // Al inicio de tu script
     const urlParams = new URLSearchParams(window.location.search);
     const clienteId = urlParams.get('id');
 
+    // Validación temprana
     if (!clienteId) {
+      console.error('No se proporcionó ID de cliente');
       window.location.href = 'login-cliente.html';
+      throw new Error('Ejecución detenida: sin ID de cliente');
     }
 
     console.log('Cliente ID:', clienteId);
 
-    // Conexión con el servidor Socket.io
-    const socket = io('https://jawfish-saving-grossly.ngrok-free.app');
+    // Configuración del menú móvil
+    const menuToggle = document.getElementById('menu-toggle');
+    const sidebar = document.getElementById('sidebar');
+    const sidebarOverlay = document.getElementById('sidebar-overlay');
+
+    menuToggle.addEventListener('click', () => {
+      sidebar.classList.add('active');
+      sidebarOverlay.classList.add('active');
+    });
+
+    sidebarOverlay.addEventListener('click', () => {
+      sidebar.classList.remove('active');
+      sidebarOverlay.classList.remove('active');
+    });
+
+    // Ahora puedes usar clienteId con seguridad
+    const socket = io('https://proyect2-1.onrender.com/');
 
     socket.on('connect', () => {
       console.log('🟢 Conectado al servidor:', socket.id);
-      if (clienteId) {
-        console.log('Uniendo al cliente:', clienteId);
-        socket.emit('unirse', clienteId);
-        cargarDatosDelCliente();
-        cargarMensajesDelCliente(clienteId);
-        cargarProgresoDelCliente(clienteId);
-      } else {
-        console.error('No se proporcionó ID de cliente.');
-      }
+      socket.emit('unirse', clienteId);
+      cargarDatosDelCliente();
+      cargarMensajesDelCliente(clienteId);
+      cargarProgresoDelCliente(clienteId);
     });
 
     socket.on('disconnect', () => {
@@ -977,27 +1398,27 @@
     socket.on('progreso-actualizado', () => {
       console.log('📈 Progreso actualizado recibido del servidor');
       cargarProgresoDelCliente(clienteId);
+      
+      // Animación de la barra de progreso
       const barra = document.getElementById('progress-fill');
       if (barra) {
-        barra.classList.add('resaltado');
-        setTimeout(() => barra.classList.remove('resaltado'), 1000);
+        barra.style.transition = 'none';
+        barra.style.width = '0%';
+        setTimeout(() => {
+          barra.style.transition = 'width 1s ease';
+          cargarProgresoDelCliente(clienteId);
+        }, 50);
       }
     });
 
     let mensajesCargados = new Set();
 
     function scrollToBottom() {
-      const container = document.getElementById('messages-container');
+      const container = document.getElementById('chat-body');
       if (container) {
         setTimeout(() => {
           container.scrollTop = container.scrollHeight;
         }, 50);
-        container.scrollTo({
-          top: container.scrollHeight,
-          behavior: 'smooth'
-        });
-      } else {
-        console.error('Contenedor de mensajes no encontrado.');
       }
     }
 
@@ -1018,51 +1439,136 @@
         container.appendChild(msgEl);
         mensajesCargados.add(msgId);
         scrollToBottom();
-      } else {
-        console.warn('Mensaje duplicado detectado:', msgId);
       }
     });
 
     // Client Data Functions
-    async function cargarDatosDelCliente() {
-      if (!clienteId) {
-        console.error("ID de cliente no proporcionado.");
+    async function cargarPagosCliente(cliente) {
+      const pagos = cliente.pagos || [];
+      const lista = document.getElementById('lista-pagos');
+      lista.innerHTML = '';
+
+      if (pagos.length === 0) {
+        lista.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-money-check-alt"></i>
+            <p>No hay pagos programados aún</p>
+          </div>`;
         return;
       }
 
+      let pagados = 0;
+
+      pagos.forEach((pago, index) => {
+        const esPagado = pago.estado?.toLowerCase() === 'pagado';
+        if (esPagado) pagados++;
+
+        const card = document.createElement('div');
+        card.className = 'pago-step';
+        card.innerHTML = `
+          <h3>Pago ${index + 1}</h3>
+          <p><strong>Monto:</strong> $${pago.monto}</p>
+          <p><strong>Fecha:</strong> ${pago.fecha || 'No especificada'}</p>
+          <p class="estado-pago"><strong>Estado:</strong> <span style="color: ${esPagado ? 'var(--success)' : 'var(--warning)'}">${pago.estado}</span></p>
+          ${
+            !esPagado
+              ? `<input type="file" id="comprobante-${index}" class="input-comprobante">
+                 <button class="btn-comprobante" onclick="subirComprobante('${cliente.id}', ${index})">Subir Comprobante</button>`
+              : `<span style="color: var(--success);">✔️ Comprobante confirmado</span>`
+          }
+        `;
+        lista.appendChild(card);
+      });
+
+      // Barra de progreso de pagos con animación
+      const porcentaje = Math.round((pagados / pagos.length) * 100);
+      const barraPagos = document.getElementById('pago-progress-fill');
+      barraPagos.style.transition = 'none';
+      barraPagos.style.width = '0%';
+      
+      setTimeout(() => {
+        barraPagos.style.transition = 'width 1s ease';
+        barraPagos.style.width = `${porcentaje}%`;
+        document.getElementById('pago-progress-percent').textContent = `${porcentaje}%`;
+      }, 50);
+    }
+
+    async function cargarDatosDelCliente() {
       try {
-        const res = await fetch(`https://proyect2-1.onrender.com/clientes`);
-        const data = await res.json();
-
-        const cliente = data.find(c => c.id === clienteId);
-        if (!cliente) {
-          console.error("Cliente no encontrado.");
-          return;
+        const res = await fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}`);
+        const cliente = await res.json();
+        
+        if (!cliente || Object.keys(cliente).length === 0) {
+          throw new Error('Datos del cliente vacíos');
         }
-
+        
         actualizarInterfazCliente(cliente);
+        cargarArchivosDelCliente(clienteId);
+        cargarPagosCliente(cliente);
+        
+        return cliente;
       } catch (err) {
-        console.error("Error al obtener cliente:", err);
+        console.error('❌ Error al cargar datos del cliente:', err);
+        mostrarError(err.message);
+        return null;
       }
     }
 
     function actualizarInterfazCliente(cliente) {
-      document.getElementById('client-name').textContent = cliente.nombre;
-      document.getElementById('client-name-chat').textContent = cliente.nombre.split(' ')[0];
-      document.getElementById('info-nombre').textContent = cliente.nombre;
-      document.getElementById('info-email').textContent = cliente.correo || 'No proporcionado';
-      document.getElementById('info-phone').textContent = cliente.telefono || 'No proporcionado';
-      document.getElementById('info-id').textContent = cliente.id;
-      document.getElementById('info-registro').textContent = new Date(cliente.fechaCreacion).toLocaleDateString();
-      document.getElementById('info-uscis').textContent = cliente.uscis || 'No registrado';
-      document.getElementById('info-password').textContent = cliente.password || 'No proporcionada';
-      document.getElementById('info-detalles').textContent = cliente.detalles || 'Sin detalles disponibles';
-      document.getElementById('info-proceso').textContent = cliente.proceso || 'No especificado';
+      const setText = (id, texto) => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = texto || 'No disponible';
+      };
       
+      setText('client-name', cliente.nombre);
+      setText('client-name-chat', cliente.nombre);
+      
+      setText('info-nombre', cliente.nombre);
+      setText('info-email', cliente.correo);
+      setText('info-phone', cliente.telefono);
+      setText('info-id', cliente.id);
+      setText('info-direccion', cliente.direccion);
+      setText('info-numeroA', cliente.numeroA);
+      setText('info-registro', new Date(cliente.fechaCreacion).toLocaleDateString());
+      setText('info-uscis', cliente.uscis);
+      setText('info-password', cliente.contrasena);
+      setText('info-codigo', cliente.codigoRespaldo);
+      setText('info-proceso', cliente.proceso);
+
+      // Foto
       if (cliente.foto) {
         const img = document.getElementById('client-photo');
-        img.src = cliente.foto;
+        if (img) img.src = cliente.foto;
       }
+    }
+
+    function mostrarError(mensaje) {
+      const errorBox = document.createElement('div');
+      errorBox.style.position = 'fixed';
+      errorBox.style.top = '20px';
+      errorBox.style.left = '50%';
+      errorBox.style.transform = 'translateX(-50%)';
+      errorBox.style.backgroundColor = 'var(--danger)';
+      errorBox.style.color = 'white';
+      errorBox.style.padding = '12px 20px';
+      errorBox.style.borderRadius = '8px';
+      errorBox.style.zIndex = '1000';
+      errorBox.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+      errorBox.style.display = 'flex';
+      errorBox.style.alignItems = 'center';
+      errorBox.style.gap = '10px';
+      errorBox.style.animation = 'slideDown 0.3s ease';
+      errorBox.innerHTML = `
+        <i class="fas fa-exclamation-circle"></i>
+        <span>${mensaje}</span>
+      `;
+      
+      document.body.appendChild(errorBox);
+      
+      setTimeout(() => {
+        errorBox.style.animation = 'fadeOut 0.5s ease';
+        setTimeout(() => errorBox.remove(), 500);
+      }, 5000);
     }
 
     // Ampliar foto de perfil
@@ -1088,34 +1594,24 @@
 
     async function cargarMensajesDelCliente(id) {
       if (!id) {
-        console.error("ID de cliente no proporcionado en cargarMensajesDelCliente.");
+        console.error("ID de cliente no proporcionado");
         return;
       }
 
       try {
-        console.log('Intentando cargar mensajes para el cliente:', id);
         const res = await fetch(`https://proyect2-1.onrender.com/mensajes/${id}`);
-        
-        if (!res.ok) {
-          throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
-        }
-
         const mensajes = await res.json();
-        console.log('Mensajes recibidos del servidor:', mensajes);
-
         const messagesContainer = document.getElementById('messages-container');
+        
         if (!messagesContainer) {
-          console.error('Contenedor de mensajes (#messages-container) no encontrado.');
+          console.error('Contenedor de mensajes no encontrado');
           return;
         }
 
-        // Limpiar el contenedor y resetear el historial
         messagesContainer.innerHTML = '';
         mensajesCargados.clear();
 
-        // Mostrar mensaje de bienvenida solo si NO hay mensajes en la base de datos
         if (!Array.isArray(mensajes) || mensajes.length === 0) {
-          console.log('No hay mensajes previos. Mostrando mensaje de bienvenida.');
           const welcomeMsg = document.createElement('div');
           welcomeMsg.className = 'welcome-chat-message';
           welcomeMsg.innerHTML = `
@@ -1129,9 +1625,8 @@
           return;
         }
 
-        // Renderizar mensajes del historial
         mensajes.forEach(msg => {
-          const msgId = msg._id || msg.fecha;
+          const msgId = msg._id ? `msg-${msg._id}` : `temp-${Date.parse(msg.fecha)}`;
 
           if (!mensajesCargados.has(msgId)) {
             const msgEl = document.createElement('div');
@@ -1144,22 +1639,13 @@
             `;
             messagesContainer.appendChild(msgEl);
             mensajesCargados.add(msgId);
-          } else {
-            console.warn('Mensaje duplicado detectado (historial):', msgId);
           }
         });
 
         scrollToBottom();
       } catch (err) {
         console.error("Error cargando mensajes:", err);
-        const messagesContainer = document.getElementById('messages-container');
-        if (messagesContainer) {
-          const errorMsg = document.createElement('div');
-          errorMsg.className = 'message error';
-          errorMsg.textContent = 'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
-          messagesContainer.appendChild(errorMsg);
-          scrollToBottom();
-        }
+        mostrarError("No se pudieron cargar los mensajes");
       }
     }
 
@@ -1167,7 +1653,6 @@
       try {
         const res = await fetch(`https://proyect2-1.onrender.com/archivos/${id}`);
         const archivos = await res.json();
-
         const lista = document.getElementById('documents-list');
         lista.innerHTML = '';
 
@@ -1182,25 +1667,34 @@
 
         archivos.forEach(file => {
           const card = document.createElement('div');
-          card.className = 'document-card';
-
+          card.className = 'info-card';
+          card.style.cursor = 'pointer';
+          card.style.transition = 'transform 0.3s ease';
+          
           const isPDF = file.nombre.toLowerCase().endsWith('.pdf');
           const icon = isPDF
-            ? `<i class="fas fa-file-pdf fa-3x"></i>`
-            : `<img src="${file.url}" alt="${file.nombre}" class="thumbnail">`;
+            ? `<i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--danger); margin-bottom: 0.5rem;"></i>`
+            : `<i class="fas fa-file" style="font-size: 2rem; color: var(--primary); margin-bottom: 0.5rem;"></i>`;
 
           card.innerHTML = `
-            <div class="document-preview">${icon}</div>
-            <div class="document-info">
-              <p class="file-name">${file.nombre}</p>
-               <a href="${file.base64}" download="${file.nombre}" class="btn-download"><i class="fas fa-download"></i> Descargar</a>
+            <div style="text-align: center;">
+              ${icon}
+              <p style="font-weight: 500; margin-bottom: 0.5rem;">${file.nombre}</p>
+              <a href="${file.base64}" download="${file.nombre}" class="btn-primary" style="padding: 0.5rem; font-size: 0.8rem;">
+                <i class="fas fa-download"></i> Descargar
+              </a>
             </div>
           `;
+
+          card.addEventListener('click', () => {
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => card.style.transform = 'scale(1)', 200);
+          });
 
           lista.appendChild(card);
         });
       } catch (err) {
-        console.error("❌ Error cargando archivos:", err);
+        console.error("Error cargando archivos:", err);
       }
     }
 
@@ -1228,12 +1722,19 @@
       const container = document.getElementById('progress-steps');
       container.innerHTML = '';
 
+      if (hitos.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state" style="padding: 1rem;">
+            <i class="fas fa-tasks"></i>
+            <p>No hay hitos registrados aún</p>
+          </div>`;
+        return;
+      }
+
       hitos.forEach((hito, index) => {
         const estadoOriginal = hito.estado?.toLowerCase() || 'pendiente';
-
-        // Normaliza el estado a clases válidas
         let estadoClase = 'pending';
-        let icon = '<i class="fas fa-clock"></i>'; // por defecto
+        let icon = '<i class="fas fa-clock"></i>';
         
         if (estadoOriginal.includes('completado') || estadoOriginal.includes('completed')) {
           estadoClase = 'completed';
@@ -1245,54 +1746,34 @@
 
         const step = document.createElement('div');
         step.className = `step ${estadoClase}`;
-
-        const nota = hito.descripcion || hito.notas;
-        const notasElement = nota ? `
-          <div class="step-notes-container">
-            <button class="step-notes-trigger">i</button>
-            <div class="step-notes-bubble">${nota}</div>
-          </div>
-        ` : '';
+        step.style.animationDelay = `${index * 0.1}s`;
 
         step.innerHTML = `
           <div class="step-icon">${icon}</div>
           <div class="step-info">
             <h3>${hito.nombre}</h3>
             <p>${hito.fecha || 'Sin fecha'}</p>
-            ${nota ? `<small class="step-notes">${nota}</small>` : ''}
+            ${hito.descripcion ? `<small style="color: var(--text); font-size: 0.8rem;">${hito.descripcion}</small>` : ''}
           </div>
         `;
 
         container.appendChild(step);
         
-        // Animación de aparición escalonada
+        // Animación de aparición
         setTimeout(() => {
           step.classList.add('visible');
-        }, 150 * index);
-        
-        // Efecto click en iconos
-        const iconElement = step.querySelector('.step-icon');
-        iconElement.addEventListener('click', () => {
-          iconElement.style.transform = 'scale(0.9)';
-          setTimeout(() => {
-            iconElement.style.transform = 'scale(1.1)';
-          }, 100);
-        });
+        }, index * 150);
       });
     }
 
     function actualizarBarraProgreso(hitos) {
       const totalHitos = hitos.length;
-      
-      // Normaliza el estado y filtra los completados
       const completados = hitos.filter(h => 
         h.estado?.toLowerCase() === 'completado' || 
         h.estado?.toLowerCase() === 'completed'
       ).length;
 
       const porcentaje = Math.round((completados / totalHitos) * 100) || 0;
-
-      // Actualiza la UI
       document.getElementById('progress-percent').textContent = `${porcentaje}%`;
       document.getElementById('progress-fill').style.width = `${porcentaje}%`;
 
@@ -1315,20 +1796,21 @@
       if (!message || !clienteId) return;
 
       try {
-        const msgId = 'msg-' + Date.now(); // ID temporal hasta que el servidor responda
+        const msgId = 'msg-' + Date.now();
+        const messagesContainer = document.getElementById('messages-container');
 
-        // Mostrar mensaje localmente como enviado
+        // Mostrar mensaje localmente
         const msgEl = document.createElement('div');
         msgEl.className = 'message sent';
-        msgEl.setAttribute('data-id', msgId); // Añadir ID al elemento
+        msgEl.setAttribute('data-id', msgId);
         msgEl.innerHTML = `
           ${message}
           <span class="message-time">
             ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
           </span>
         `;
-        document.getElementById('messages-container').appendChild(msgEl);
-        mensajesCargados.add(msgId); // Marcar como cargado inmediatamente
+        messagesContainer.appendChild(msgEl);
+        mensajesCargados.add(msgId);
         scrollToBottom();
 
         // Enviar al servidor
@@ -1339,13 +1821,13 @@
         }, (response) => {
           if (response.status === 'error') {
             console.error('Error del servidor:', response.error);
+            mostrarError("No se pudo enviar el mensaje");
           } else if (response._id) {
-            // Actualizar el ID del mensaje con el del servidor
             const localMsg = document.querySelector(`[data-id="${msgId}"]`);
             if (localMsg) {
               localMsg.setAttribute('data-id', response._id);
-              mensajesCargados.delete(msgId); // Eliminar el ID temporal
-              mensajesCargados.add(response._id); // Añadir el ID del servidor
+              mensajesCargados.delete(msgId);
+              mensajesCargados.add(response._id);
             }
           }
         });
@@ -1364,6 +1846,7 @@
         scrollToBottom();
       } catch (err) {
         console.error('Error al enviar mensaje:', err);
+        mostrarError("Error al enviar mensaje");
       }
     }
 
@@ -1372,20 +1855,37 @@
       setupNavigation();
       setupChat();
       setupFileModal();
-      setupProgressPanel();
-      setupDependientesPanel();
+      cargarDependientesGuardados();
+
+      // Ocultar mensaje de bienvenida
+      setTimeout(() => {
+        const welcomeBox = document.getElementById('welcome-box');
+        if (welcomeBox) welcomeBox.classList.add('fade-out');
+      }, 3000);
+
+      // Cargar datos reales
+      if (clienteId) {
+        cargarDatosDelCliente().then(cliente => {
+          if (cliente) {
+            cargarMensajesDelCliente(cliente.id);
+            cargarProgresoDelCliente(cliente.id);
+            cargarPagosCliente(cliente);
+          }
+        });
+      }
     });
 
     function setupNavigation() {
-      const menuToggle = document.getElementById('menu-toggle');
-      const sidebar = document.getElementById('sidebar');
-      
-      // Toggle del menú móvil
-      menuToggle.addEventListener('click', () => {
-        sidebar.classList.toggle('active');
-      });
-      
       const navItems = document.querySelectorAll('.nav-item');
+      const mobileTitle = document.getElementById('mobile-title');
+      const titles = {
+        chat: 'Chat con Asesor',
+        info: 'Mi Información',
+        documentos: 'Mis Documentos',
+        progreso: 'Progreso del Caso',
+        dependientes: 'Dependientes',
+        pagos: 'Plan de Pagos'
+      };
       
       navItems.forEach(item => {
         item.addEventListener('click', function() {
@@ -1396,23 +1896,15 @@
           document.querySelectorAll('.content-panel').forEach(panel => {
             panel.classList.remove('active');
           });
-          document.getElementById('welcome-box').classList.add('oculto');
           
           if (view) {
             document.getElementById(`vista-${view}`).classList.add('active');
-            
-            const titles = {
-              chat: 'Chat con Asesor',
-              info: 'Mi Información',
-              documentos: 'Mis Documentos',
-              progreso: 'Progreso del Caso',
-              dependientes: 'Mis Dependientes'
-            };
-            document.getElementById('vista-titulo').textContent = titles[view];
+            mobileTitle.textContent = titles[view];
           }
           
-          // Cerrar el menú en móvil después de seleccionar una opción
+          // Cerrar menú en móvil
           sidebar.classList.remove('active');
+          sidebarOverlay.classList.remove('active');
           
           if (view === 'chat') {
             scrollToBottom();
@@ -1423,36 +1915,11 @@
           if (view === 'progreso') {
             cargarProgresoDelCliente(clienteId);
           }
+          if (view === 'pagos') {
+            cargarDatosDelCliente();
+          }
         });
       });
-    }
-
-    function setupDependientesPanel() {
-      const lista = document.getElementById('dependientes-lista');
-
-      // Ejemplo de datos estáticos. Puedes hacer fetch aquí si los quieres traer del servidor
-      const dependientes = [
-        { nombre: 'María López', parentesco: 'Hija', edad: 12 },
-        { nombre: 'Carlos López', parentesco: 'Hijo', edad: 10 }
-      ];
-
-      lista.innerHTML = ''; // Limpia antes de insertar
-
-      dependientes.forEach(dep => {
-        const card = document.createElement('div');
-        card.className = 'info-card';
-        card.innerHTML = `
-          <h3>${dep.nombre}</h3>
-          <p>Parentesco: ${dep.parentesco}</p>
-          <p>Edad: ${dep.edad} años</p>
-        `;
-        lista.appendChild(card);
-      });
-    }
-
-    function setupProgressPanel() {
-      // Esta función se mantiene igual que en la versión original
-      // pero se ha simplificado para móvil eliminando el formulario de hitos
     }
 
     function setupChat() {
@@ -1475,7 +1942,7 @@
       const modal = document.getElementById('file-modal');
       const closeModal = document.querySelector('.close-modal');
       
-      fileBtn.addEventListener('click', () => modal.style.display = 'flex');
+      fileBtn.addEventListener('click', () => modal.style.display = 'block');
       closeModal.addEventListener('click', () => modal.style.display = 'none');
       btnCancel.addEventListener('click', () => modal.style.display = 'none');
       btnSelectFile.addEventListener('click', () => fileInput.click());
@@ -1549,10 +2016,145 @@
       }
       
       btnSend.addEventListener('click', () => {
-        alert('Archivo enviado con éxito');
+        mostrarNotificacion('Archivo enviado con éxito');
         modal.style.display = 'none';
         document.getElementById('file-preview').innerHTML = '';
         btnSend.disabled = true;
+      });
+    }
+
+    function mostrarNotificacion(mensaje) {
+      const notificacion = document.createElement('div');
+      notificacion.style.position = 'fixed';
+      notificacion.style.bottom = '20px';
+      notificacion.style.left = '50%';
+      notificacion.style.transform = 'translateX(-50%)';
+      notificacion.style.backgroundColor = 'var(--success)';
+      notificacion.style.color = 'white';
+      notificacion.style.padding = '12px 24px';
+      notificacion.style.borderRadius = '8px';
+      notificacion.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+      notificacion.style.zIndex = '1000';
+      notificacion.style.animation = 'slideUp 0.3s ease';
+      notificacion.innerHTML = `
+        <i class="fas fa-check-circle"></i> ${mensaje}
+      `;
+      
+      document.body.appendChild(notificacion);
+      
+      setTimeout(() => {
+        notificacion.style.animation = 'fadeOut 0.5s ease';
+        setTimeout(() => notificacion.remove(), 500);
+      }, 3000);
+    }
+
+    // Dependientes
+    let dependientes = [];
+
+    function agregarDependiente() {
+      const nombre = document.getElementById('dep-nombre').value.trim();
+      const fecha = document.getElementById('dep-fecha').value;
+      const alien = document.getElementById('dep-alien').value.trim();
+
+      if (!nombre || !fecha || !alien) {
+        mostrarError('Por favor completa todos los campos');
+        return;
+      }
+
+      const nuevoDep = { 
+        nombre, 
+        fechaNacimiento: fecha, 
+        alien,
+        fechaRegistro: new Date().toISOString()
+      };
+
+      dependientes.push(nuevoDep);
+      localStorage.setItem('dependientes_' + clienteId, JSON.stringify(dependientes));
+      renderizarDependientes();
+      mostrarNotificacion('Dependiente agregado');
+
+      // Limpiar el formulario
+      document.getElementById('dep-nombre').value = '';
+      document.getElementById('dep-fecha').value = '';
+      document.getElementById('dep-alien').value = '';
+    }
+
+    function renderizarDependientes() {
+      const lista = document.getElementById('dependientes-lista');
+      lista.innerHTML = '';
+
+      if (dependientes.length === 0) {
+        lista.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <p>No has agregado dependientes aún</p>
+          </div>
+        `;
+        return;
+      }
+
+      dependientes.forEach((dep, index) => {
+        const item = document.createElement('div');
+        item.className = 'dependiente-item';
+        item.style.animationDelay = `${index * 0.1}s`;
+        
+        item.innerHTML = `
+          <div class="dependiente-info">
+            <span class="dependiente-nombre">${dep.nombre}</span>
+            <span class="dependiente-details">
+              Nacimiento: ${new Date(dep.fechaNacimiento).toLocaleDateString()} • Alien: ${dep.alien}
+            </span>
+          </div>
+          <button class="btn-icon" onclick="eliminarDependiente(${index})" title="Eliminar dependiente">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        `;
+
+        lista.appendChild(item);
+      });
+    }
+
+    function eliminarDependiente(index) {
+      if (confirm('¿Eliminar este dependiente?')) {
+        dependientes.splice(index, 1);
+        localStorage.setItem('dependientes_' + clienteId, JSON.stringify(dependientes));
+        renderizarDependientes();
+        mostrarNotificacion('Dependiente eliminado');
+      }
+    }
+
+    function cargarDependientesGuardados() {
+      const guardados = localStorage.getItem('dependientes_' + clienteId);
+      if (guardados) {
+        dependientes = JSON.parse(guardados);
+        renderizarDependientes();
+      }
+    }
+
+    function subirComprobante(clienteId, indexPago) {
+      const input = document.getElementById(`comprobante-${indexPago}`);
+      if (!input || !input.files[0]) {
+        mostrarError('Selecciona un archivo primero');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append("archivo", input.files[0]);
+      formData.append("pagoId", indexPago);
+      formData.append("clienteId", clienteId);
+
+      fetch('https://proyect2-1.onrender.com/pagos/comprobante', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => res.json())
+      .then(data => {
+        mostrarNotificacion('Comprobante enviado con éxito');
+        cargarDatosDelCliente(); // Recargar datos
+      })
+      .catch(err => {
+        console.error("Error al subir comprobante:", err);
+        mostrarError("Hubo un problema al enviar el comprobante");
       });
     }
   </script>
