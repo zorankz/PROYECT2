@@ -681,7 +681,7 @@
       showLoader();
       
       try {
-        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/obtener-datos', {
+        const res = await fetch('https://proyect2-1.onrender.com/obtener-datos', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ numeroA })
@@ -790,7 +790,7 @@
       showLoader();
       
       try {
-        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/crear-etiqueta", {
+        const res = await fetch("https://proyect2-1.onrender.com/crear-etiqueta", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ address_to })
@@ -919,7 +919,7 @@
   showLoader();
 
   try {
-    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/guardar-cliente', {
+    const res = await fetch('https://proyect2-1.onrender.com/guardar-cliente', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datos)
@@ -952,7 +952,7 @@ async function enviarCliente(datos) {
   showLoader();
 
   try {
-    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/guardar-cliente', {
+    const res = await fetch('https://proyect2-1.onrender.com/guardar-cliente', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(datos)
@@ -1117,7 +1117,7 @@ function limpiarFormularioCliente() {
       `;
       
       try {
-        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/lista-espera');
+        const res = await fetch('https://proyect2-1.onrender.com/lista-espera');
         const lista = await res.json();
         
         if (lista.length === 0) {
@@ -1159,7 +1159,7 @@ function limpiarFormularioCliente() {
       `;
       
       try {
-        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/citas-google");
+        const res = await fetch("https://proyect2-1.onrender.com/citas-google");
         const citas = await res.json();
         
         if (citas.length === 0) {
@@ -1317,7 +1317,7 @@ function limpiarFormularioCliente() {
       showLoader();
       
       try {
-        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/cancelar-cita", {
+        const res = await fetch("https://proyect2-1.onrender.com/cancelar-cita", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ eventId: cita.id })
@@ -1434,7 +1434,7 @@ btnFinalizar.onclick = async () => {
 };
 
       function finalizarCliente(id) {
-        fetch(`https://jawfish-saving-grossly.ngrok-free.app/finalizar-caso/${id}`, {
+        fetch(`https://proyect2-1.onrender.com/finalizar-caso/${id}`, {
   method: 'PUT',
 })
 
@@ -1496,7 +1496,7 @@ btnFinalizar.onclick = async () => {
       showLoader();
       
       try {
-        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`);
+        const res = await fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}`);
 
         if (!res.ok) throw new Error('Error en la respuesta');
         
@@ -1742,7 +1742,7 @@ async function mostrarFormularioHito(clienteId) {
   });
 
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/agregar-hito/${clienteId}`, {
+    const res = await fetch(`https://proyect2-1.onrender.com/agregar-hito/${clienteId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(formValues)
@@ -1909,7 +1909,7 @@ async function mostrarFormularioHito(clienteId) {
       });
 
       try {
-        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/editar-hito/${clienteId}/${hitoId}`, {
+        const res = await fetch(`https://proyect2-1.onrender.com/editar-hito/${clienteId}/${hitoId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(formValues)
@@ -1969,7 +1969,7 @@ async function mostrarFormularioHito(clienteId) {
       showLoader();
 
       try {
-        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/eliminar-hito/${clienteId}/${hitoId}`, {
+        const res = await fetch(`https://proyect2-1.onrender.com/eliminar-hito/${clienteId}/${hitoId}`, {
           method: 'DELETE'
         });
 
@@ -2082,7 +2082,7 @@ async function mostrarFormularioHito(clienteId) {
       showLoader();
       
       try {
-        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/eliminar-cliente', {
+        const res = await fetch('https://proyect2-1.onrender.com/eliminar-cliente', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
@@ -2109,7 +2109,7 @@ async function mostrarFormularioHito(clienteId) {
       showLoader();
       
       try {
-        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/finalizar-cliente', {
+        const res = await fetch('https://proyect2-1.onrender.com/finalizar-cliente', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ id })
@@ -2353,7 +2353,7 @@ async function mostrarFormularioHito(clienteId) {
       `;
       
       try {
-        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/lista-espera');
+        const res = await fetch('https://proyect2-1.onrender.com/lista-espera');
         const lista = await res.json();
         
         panel.innerHTML = '';
@@ -2510,7 +2510,7 @@ async function mostrarFormularioHito(clienteId) {
     // Envío al servidor con mejor manejo de errores
     async function actualizarProgreso(id, valor) {
       try {
-        const response = await fetch('https://jawfish-saving-grossly.ngrok-free.app/actualizar-progreso', {
+        const response = await fetch('https://proyect2-1.onrender.com/actualizar-progreso', {
           method: 'POST',
           headers: { 
             'Content-Type': 'application/json',
@@ -2611,7 +2611,7 @@ async function mostrarFormularioHito(clienteId) {
 
       // Cargar archivos del servidor
       try {
-        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/archivos/${clienteId}`);
+        const res = await fetch(`https://proyect2-1.onrender.com/archivos/${clienteId}`);
         const archivos = await res.json();
 
         archivos.forEach((archivo, index) => {
@@ -2712,7 +2712,7 @@ async function mostrarFormularioHito(clienteId) {
     function mostrarDetallesCliente(clienteId) {
       showLoader();
       
-      fetch(`https://jawfish-saving-grossly.ngrok-free.app/cliente/${clienteId}`)
+      fetch(`https://proyect2-1.onrender.com/cliente/${clienteId}`)
         .then(res => res.json())
         .then(cliente => {
           hideLoader();
@@ -2824,7 +2824,7 @@ async function mostrarFormularioHito(clienteId) {
     });
     async function verDetallesDesdeGestion(id) {
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${id}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/clientes/${id}`);
     const datos = await res.json();
     verDetalles(datos); // reutiliza tu función existente
   } catch (error) {
@@ -2849,7 +2849,7 @@ async function eliminarPago(clienteId, index) {
   if (!confirmacion.isConfirmed) return;
 
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}/pagos/${index}`, {
+    const res = await fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}/pagos/${index}`, {
       method: 'DELETE'
     });
 
@@ -2874,7 +2874,7 @@ async function cargarPanelPagos() {
   contenedor.innerHTML = '<div class="loader">Cargando pagos...</div>';
 
   try {
-    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/clientes');
+    const res = await fetch('https://proyect2-1.onrender.com/clientes');
     if (!res.ok) throw new Error('Error al cargar clientes');
     
     const clientes = await res.json();
@@ -2962,7 +2962,7 @@ async function agregarPago(clienteId) {
   if (!fecha) return alert('Fecha inválida');
 
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}`);
     const cliente = await res.json();
 
     if (!cliente.pagos) cliente.pagos = [];
@@ -2973,7 +2973,7 @@ async function agregarPago(clienteId) {
       fecha
     });
 
-    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`, {
+    await fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(cliente)
@@ -3012,7 +3012,7 @@ function abrirModalPago(clienteId, index = null) {
   if (index !== null) {
     titulo.textContent = 'Editar Pago';
 
-    fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`)
+    fetch(`https://proyect2-1.onrender.com/clientes/${clienteId}`)
       .then(res => res.json())
       .then(cliente => {
         const pago = cliente.pagos?.[index];
@@ -3063,7 +3063,7 @@ document.getElementById('btnGuardarPago').onclick = async function() {
   
   try {
     // Obtener cliente actual
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clientePagoActual}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/clientes/${clientePagoActual}`);
     const cliente = await res.json();
     
     if (!cliente.pagos) cliente.pagos = [];
@@ -3079,7 +3079,7 @@ delete cliente.pagos[pagoIndexActual].tipo; // ← elimina tipo si existía
     }
     
     // Guardar cambios
-    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/editar-cliente/${clientePagoActual}`, {
+    await fetch(`https://proyect2-1.onrender.com/editar-cliente/${clientePagoActual}`, {
   method: 'PUT',
   headers: { 'Content-Type': 'application/json' },
   body: JSON.stringify(cliente)
