@@ -724,7 +724,7 @@
     async function cargarClientes() {
       showLoading();
       try {
-        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/clientes");
+        const res = await fetch("https://proyect2-1.onrender.com/clientes");
         if (!res.ok) throw new Error('Error al cargar clientes');
         
         const lista = await res.json();
@@ -941,7 +941,7 @@
       };
 
       try {
-        const response = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/editar-cliente/${clienteActual.id}`, {
+        const response = await fetch(`https://proyect2-1.onrender.com/editar-cliente/${clienteActual.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(datosActualizados)
@@ -977,7 +977,7 @@
       if (!confirmacion) return;
 
       try {
-        const response = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/eliminar-cliente/${clienteActual.id}`, {
+        const response = await fetch(`https://proyect2-1.onrender.com/eliminar-cliente/${clienteActual.id}`, {
           method: "DELETE"
         });
 
