@@ -872,7 +872,7 @@ async function cargarPagosCliente(cliente) {
 }
 async function cargarDatosDelCliente() {
   try {
-    const url = `https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`;
+    const url = `https://proyect2-1.onrender.com/clientes/${clienteId}`;
     console.log('Intentando cargar datos desde:', url);
     
     const res = await fetch(url, {
@@ -990,7 +990,7 @@ async function cargarMensajesDelCliente(id) {
 
   try {
     console.log('Intentando cargar mensajes para el cliente:', id);
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/mensajes/${id}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/mensajes/${id}`);
     
     if (!res.ok) {
       throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
@@ -1089,7 +1089,7 @@ document.getElementById('welcome-box').classList.add('oculto'); // Oculta el men
 
 async function cargarArchivosDelCliente(id) {
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/archivos/${id}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/archivos/${id}`);
     const archivos = await res.json();
 
     const lista = document.getElementById('documents-list');
@@ -1131,7 +1131,7 @@ async function cargarArchivosDelCliente(id) {
 // Funciones para manejar el progreso del cliente
 async function cargarProgresoDelCliente(id) {
   try {
-    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/progreso/${id}`);
+    const res = await fetch(`https://proyect2-1.onrender.com/progreso/${id}`);
     const progreso = await res.json();
     
     if (progreso && progreso.hitos) {
@@ -1490,7 +1490,7 @@ async function sendMessage() {
       }
     });
 
-    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/mensajes/${clienteId}`, {
+    await fetch(`https://proyect2-1.onrender.com/mensajes/${clienteId}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
@@ -1886,7 +1886,7 @@ function enviarComprobante() {
   formData.append("pagoId", pagoSeleccionadoId);
   formData.append("clienteId", clienteId); // usa tu clienteId
 
-  fetch('https://jawfish-saving-grossly.ngrok-free.app/pagos/comprobante', {
+  fetch('https://proyect2-1.onrender.com/pagos/comprobante', {
     method: 'POST',
     body: formData
   })
