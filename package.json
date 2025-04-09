@@ -1,0 +1,29 @@
+{
+  "name": "autollenado-formulario-eoir",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@antiadmin/anticaptchaofficial": "^1.0.51",
+    "anti-captcha": "^0.0.3",
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "googleapis": "^148.0.0",
+    "multer": "^1.4.5-lts.2",
+    "puppeteer": "^21.11.0",
+    "puppeteer-extra": "^3.3.6",
+    "puppeteer-extra-plugin-stealth": "^2.11.2",
+    "shipengine": "^1.0.7",
+    "socket.io": "^4.8.1",
+    "twilio": "^5.5.1",
+    "venom-bot": "^5.3.0"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}

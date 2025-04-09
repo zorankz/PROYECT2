@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Acceso Cliente | Panel Profesional</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-dark: #4338ca;
+      --primary-light: #6366f1;
+      --secondary: #10b981;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --gray: #94a3b8;
+      --success: #10b981;
+      --error: #ef4444;
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+      --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f3f4f6 0%, #e5e7eb 100%);
+      color: var(--dark);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .background {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: -2;
+      background: linear-gradient(45deg, #e0e7ff 0%, #c7d2fe 100%);
+    }
+
+    .shape {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(60px);
+      opacity: 0.6;
+      z-index: -1;
+    }
+
+    .shape-1 {
+      width: 400px;
+      height: 400px;
+      background: var(--primary-light);
+      top: -100px;
+      left: -100px;
+      animation: float 15s infinite alternate ease-in-out;
+    }
+
+    .shape-2 {
+      width: 300px;
+      height: 300px;
+      background: var(--secondary);
+      bottom: -50px;
+      right: -50px;
+      animation: float 12s infinite alternate-reverse ease-in-out;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0) rotate(0deg); }
+      50% { transform: translate(30px, 50px) rotate(5deg); }
+      100% { transform: translate(-20px, -30px) rotate(-5deg); }
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 500px;
+      padding: 0 20px;
+      perspective: 1000px;
+    }
+
+    .login-box {
+      background: rgba(255, 255, 255, 0.96);
+      backdrop-filter: blur(12px);
+      padding: 50px 60px;
+      border-radius: 24px;
+      box-shadow: var(--shadow-lg);
+      width: 100%;
+      transform-style: preserve-3d;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transform: translateZ(20px);
+    }
+
+    .login-box::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        to bottom right,
+        rgba(79, 70, 229, 0.05) 0%,
+        rgba(255, 255, 255, 0) 50%,
+        rgba(16, 185, 129, 0.05) 100%
+      );
+      transform: rotate(30deg);
+      animation: shine 8s infinite linear;
+    }
+
+    @keyframes shine {
+      0% { transform: rotate(30deg) translate(-30%, -30%); }
+      100% { transform: rotate(30deg) translate(30%, 30%); }
+    }
+
+    .login-box:hover {
+      transform: translateZ(30px) rotateY(2deg) rotateX(1deg);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-header {
+      text-align: center;
+      margin-bottom: 40px;
+      position: relative;
+    }
+
+    .login-header img {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 6px rgba(79, 70, 229, 0.2));
+      animation: pulse 2s infinite alternate;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      100% { transform: scale(1.05); }
+    }
+
+    .login-header h2 {
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--primary-dark);
+      margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .login-header h2::after {
+      content: '';
+      position: absolute;
+      bottom: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(to right, var(--primary), var(--secondary));
+      border-radius: 4px;
+      animation: lineGrow 0.8s ease-out;
+    }
+
+    @keyframes lineGrow {
+      0% { width: 0; opacity: 0; }
+      100% { width: 60px; opacity: 1; }
+    }
+
+    .login-header p {
+      color: var(--gray);
+      font-size: 16px;
+      margin-top: 20px;
+      line-height: 1.6;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 30px;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 18px 25px;
+      border: 2px solid #e2e8f0;
+      border-radius: 12px;
+      font-size: 16px;
+      transition: var(--transition);
+      background-color: #f8fafc;
+      color: var(--dark);
+      font-weight: 500;
+      box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .input-group input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.15);
+      outline: none;
+      background-color: white;
+    }
+
+    .input-group label {
+      position: absolute;
+      top: 18px;
+      left: 25px;
+      color: var(--gray);
+      font-size: 16px;
+      transition: var(--transition);
+      pointer-events: none;
+      background: linear-gradient(to bottom, rgba(255,255,255,0.96) 50%, rgba(248,250,252,0.96) 50%);
+      padding: 0 8px;
+    }
+
+    .input-group input:focus + label,
+    .input-group input:not(:placeholder-shown) + label {
+      top: -10px;
+      left: 15px;
+      font-size: 13px;
+      color: var(--primary);
+      font-weight: 600;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 20px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      transition: var(--transition);
+    }
+
+    .input-group input:focus ~ .input-icon {
+      color: var(--primary);
+    }
+
+    .login-button {
+      width: 100%;
+      padding: 18px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      border: none;
+      color: white;
+      font-size: 17px;
+      font-weight: 600;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
+      margin-top: 10px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+
+    .login-button:hover {
+      background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+      transform: translateY(-3px);
+      box-shadow: 0 15px 25px rgba(79, 70, 229, 0.4);
+    }
+
+    .login-button:active {
+      transform: translateY(0);
+    }
+
+    .login-button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transition: 0.5s;
+    }
+
+    .login-button:hover::before {
+      left: 100%;
+    }
+
+    .loading {
+      display: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 12px;
+      z-index: 10;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+    }
+
+    .loading.active {
+      display: flex;
+      animation: fadeIn 0.3s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    .spinner {
+      width: 50px;
+      height: 50px;
+      border: 4px solid rgba(79, 70, 229, 0.1);
+      border-radius: 50%;
+      border-top-color: var(--primary);
+      animation: spin 1s linear infinite;
+      margin-bottom: 20px;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .loading p {
+      color: var(--primary-dark);
+      font-weight: 500;
+      font-size: 16px;
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 14px;
+      text-align: center;
+      margin-top: 20px;
+      opacity: 0;
+      height: 0;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+
+    .error-message.show {
+      opacity: 1;
+      height: auto;
+      margin-top: 15px;
+    }
+
+    /* Animaciones personalizadas */
+    .animate-in {
+      animation: fadeInUp 0.8s both;
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .delay-1 {
+      animation-delay: 0.2s;
+    }
+
+    .delay-2 {
+      animation-delay: 0.4s;
+    }
+
+    .delay-3 {
+      animation-delay: 0.6s;
+    }
+
+    /* Responsive */
+    @media (max-width: 600px) {
+      .login-box {
+        padding: 40px 30px;
+      }
+      
+      .login-header h2 {
+        font-size: 28px;
+      }
+      
+      .input-group input {
+        padding: 16px 20px;
+      }
+    }
+    body.mobile .login-box {
+  transform: none !important;
+}
+
+body.desktop .login-box:hover {
+  transform: translateZ(30px) rotateY(2deg) rotateX(1deg);
+}
+
+  </style>
+</head>
+<body>
+  <div class="background"></div>
+  <div class="shape shape-1"></div>
+  <div class="shape shape-2"></div>
+  
+  <div class="login-container animate__animated animate__fadeIn">
+    <div class="login-box animate-in">
+      <div class="login-header">
+        <h2 class="animate-in delay-1">Acceso al Panel</h2>
+        <p class="animate-in delay-2">Ingrese sus credenciales para acceder al sistema</p>
+      </div>
+      
+      <form id="loginForm">
+        <div class="input-group animate-in delay-1">
+          <input type="text" id="loginNombre" placeholder=" " autocomplete="off" required>
+          <label for="loginNombre">Nombre completo</label>
+          <i class="input-icon fas fa-user"></i>
+        </div>
+        
+        <div class="input-group animate-in delay-2">
+          <input type="text" id="loginNumeroA" placeholder=" " autocomplete="off" required>
+          <label for="loginNumeroA">Número de identificación</label>
+          <i class="input-icon fas fa-id-card"></i>
+        </div>
+        
+        <button type="button" class="login-button animate-in delay-3" onclick="loginCliente()">
+          <span>Ingresar al sistema</span>
+        </button>
+        
+        <div class="error-message" id="errorMessage"></div>
+      </form>
+      
+      <div class="loading" id="loadingIndicator">
+        <div class="spinner"></div>
+        <p>Autenticando...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Font Awesome para iconos -->
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  
+  <script>
+    // Inicialización de efectos
+    document.addEventListener('DOMContentLoaded', function() {
+      // Agregar clase de animación a los inputs al enfocar
+      const inputs = document.querySelectorAll('input');
+      inputs.forEach(input => {
+        input.addEventListener('focus', function() {
+          this.parentNode.classList.add('active');
+        });
+        
+        input.addEventListener('blur', function() {
+          if (!this.value) {
+            this.parentNode.classList.remove('active');
+          }
+        });
+      });
+      document.addEventListener('DOMContentLoaded', () => {
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  document.body.classList.add(isMobile ? 'mobile' : 'desktop');
+});
+
+      
+      // Efecto de hover 3D para el login-box
+      const loginBox = document.querySelector('.login-box');
+      loginBox.addEventListener('mousemove', (e) => {
+        const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+        const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+        loginBox.style.transform = `translateZ(30px) rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+      });
+      
+      loginBox.addEventListener('mouseleave', () => {
+        loginBox.style.transform = 'translateZ(20px) rotateY(0) rotateX(0)';
+      });
+    });
+
+    async function loginCliente() {
+      const nombre = document.getElementById('loginNombre').value.trim().toLowerCase();
+      const numeroA = document.getElementById('loginNumeroA').value.trim();
+      const loadingIndicator = document.getElementById('loadingIndicator');
+      const errorMessage = document.getElementById('errorMessage');
+      const loginBox = document.querySelector('.login-box');
+      
+      // Validación
+      if (!nombre || !numeroA) {
+        showError("Por favor complete todos los campos requeridos");
+        return;
+      }
+      
+      // Mostrar loading
+      loadingIndicator.classList.add('active');
+      errorMessage.classList.remove('show');
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/clientes');
+        
+        if (!res.ok) {
+          throw new Error('Error en la conexión con el servidor');
+        }
+        
+        const data = await res.json();
+        const cliente = Object.values(data).find(c => 
+          c.nombre.toLowerCase() === nombre && 
+          (c.numeroA === numeroA || c.numeroA?.toLowerCase() === numeroA.toLowerCase())
+        );
+
+        // Simular delay para mejor UX (opcional)
+        await new Promise(resolve => setTimeout(resolve, 1500));
+        
+        if (cliente) {
+          // Animación de éxito
+          loginBox.classList.add('animate__animated', 'animate__zoomOut');
+          setTimeout(() => {
+            const isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+const destino = isMobile 
+  ? `cliente-tel.html?id=${cliente.id}` 
+  : `cliente.html?id=${cliente.id}`;
+window.location.href = destino;
+
+          }, 500);
+        } else {
+          showError("Credenciales incorrectas. Verifique sus datos.");
+        }
+      } catch (err) {
+        console.error("Error al buscar cliente:", err);
+        showError("Error de conexión. Intente nuevamente.");
+      } finally {
+        loadingIndicator.classList.remove('active');
+      }
+    }
+    
+    function showError(message) {
+      const errorElement = document.getElementById('errorMessage');
+      errorElement.textContent = message;
+      errorElement.classList.add('show');
+      
+      // Animación de error
+      const loginBox = document.querySelector('.login-box');
+      loginBox.classList.add('animate__animated', 'animate__headShake');
+      setTimeout(() => {
+        loginBox.classList.remove('animate__animated', 'animate__headShake');
+      }, 1000);
+    }
+    
+    // Permitir login con Enter
+    document.addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        loginCliente();
+      }
+    });
+  </script>
+</body>
+</html>

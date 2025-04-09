@@ -1,0 +1,3102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <title>EOIR + Envío</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf-lib/1.17.1/pdf-lib.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js"></script>
+  <link rel="stylesheet" href="index.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+</head>
+<body>
+  <!-- Estructura principal -->
+  <div class="app-container">
+    <!-- Barra lateral izquierda -->
+    <div class="sidebar-left" id="listaEsperaPanel">
+      <div class="sidebar-header">
+        <h3 class="card-title"><i class="fas fa-list"></i> Lista de Espera</h3>
+        <button class="btn btn-sm btn-outline" onclick="cargarListaEspera()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+      <div id="contenedorListaEspera"></div>
+    </div>
+    
+    <!-- Barra lateral derecha -->
+    <div class="sidebar-right" id="citasPanel">
+      <div class="sidebar-header">
+        <h3 class="card-title"><i class="fas fa-calendar-alt"></i> Citas Programadas</h3>
+        <button class="btn btn-sm btn-outline" onclick="recargarCitasAnimado()">
+          <i class="fas fa-sync-alt"></i>
+        </button>
+      </div>
+      <div id="contenedorCitas"></div>
+    </div>
+    
+    <!-- Contenido principal -->
+    <div class="main-content">
+      <!-- Barra de pestañas -->
+      <div class="tab-header">
+        <button class="tab-button active" onclick="showTab('formal', this)">
+          <i class="fas fa-file-signature"></i> FORMAL
+        </button>
+        <button class="tab-button" onclick="showTab('envios', this)">
+          <i class="fas fa-truck"></i> ENVIOS
+        </button>
+        <button class="tab-button" onclick="showTab('permiso', this)">
+          <i class="fas fa-file-alt"></i> CLIENTES
+        </button>
+        <button class="tab-button" onclick="showTab('gestion', this)">
+          <i class="fas fa-tasks"></i> GESTIÓN
+        </button>
+        <button class="tab-button" onclick="showTab('pagos', this)">
+          <i class="fas fa-tasks"></i> ADMIN-PAGOS
+        </button>
+      </div>
+      
+      <!-- Contenedor de formularios -->
+      <div class="container">
+        <!-- Pestaña FORMAL -->
+        <div id="formal" class="tab-content active">
+          <h2 style="margin-bottom: 20px; color: var(--primary);">
+            <i class="fas fa-file-signature"></i> Formulario EOIR
+          </h2>
+          
+          <div class="form-group">
+            <label for="alienNumber">Número A</label>
+            <div style="display: flex; gap: 10px;">
+              <input type="text" id="alienNumber" maxlength="11" oninput="formatearAlien(this)" required>
+              <button type="button" class="btn btn-primary" onclick="consultarDatos()">
+                <i class="fas fa-search"></i> Consultar
+              </button>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="nombre">Tu Nombre</label>
+            <input type="text" id="nombre" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="nombreFirmante">Nombre del Firmante</label>
+            <input type="text" id="nombreFirmante" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="nombreParte">Nombre de la Parte Servida</label>
+            <input type="text" id="nombreParte" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="direccionParte">Dirección de la Parte Servida</label>
+            <input type="text" id="direccionParte" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="metodoServicio">Método de Servicio</label>
+            <input type="text" id="metodoServicio" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="fecha">Fecha</label>
+            <input type="date" id="fecha" required>
+          </div>
+          
+          <div class="button-group">
+            <button type="button" class="btn btn-primary" onclick="rellenarPDF()">
+              <i class="fas fa-file-pdf"></i> Generar FORMAL
+            </button>
+            <button type="button" class="btn btn-secondary" onclick="rellenarPDFSeccion9()">
+              <i class="fas fa-file-alt"></i> Generar SECCIÓN 9
+            </button>
+          </div>
+        </div>
+
+
+        <!-- Pestaña ENVIOS -->
+        <div id="envios" class="tab-content">
+          <h2 style="margin-bottom: 20px; color: var(--primary);">
+            <i class="fas fa-truck"></i> Generar Envío (ShipStation)
+          </h2>
+          
+          <button type="button" class="btn btn-primary" onclick="autocompletarEnvio()" style="margin-bottom: 20px;">
+            <i class="fas fa-map-marker-alt"></i> Obtener Dirección
+          </button>
+          
+          <div class="form-group">
+            <label for="destName">Nombre del Destinatario</label>
+            <input type="text" id="destName" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destStreet">Calle y Número</label>
+            <input type="text" id="destStreet" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destStreet2">Dirección 2 (Apt, Unidad, etc)</label>
+            <input type="text" id="destStreet2">
+          </div>
+          
+          <div class="form-group">
+            <label for="destCity">Ciudad</label>
+            <input type="text" id="destCity" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destState">Estado</label>
+            <input type="text" id="destState" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destZip">Código Postal</label>
+            <input type="text" id="destZip" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="destPhone">Teléfono</label>
+            <input type="tel" id="destPhone">
+          </div>
+          
+          <div class="form-group">
+            <label for="destEmail">Email</label>
+            <input type="email" id="destEmail">
+          </div>
+          
+          <button type="button" class="btn btn-primary" onclick="crearEnvio(event)" style="margin-top: 10px;">
+            <i class="fas fa-truck"></i> Generar Etiqueta de Envío
+          </button>
+        </div>
+        
+        <!-- Pestaña SOLICITUDES -->
+        <div id="permiso" class="tab-content">
+          <h2 style="margin-bottom: 20px; color: var(--primary);">
+            <i class="fas fa-file-alt"></i> Datos del Cliente
+          </h2>
+          
+          <div class="form-group">
+            <label for="nombreCliente">Nombre</label>
+            <input type="text" id="nombreCliente">
+          </div>
+          
+          <div class="form-group">
+            <label for="direccionCliente">Dirección</label>
+            <input type="text" id="direccionCliente">
+          </div>
+          
+          <div class="form-group">
+            <label for="numeroACliente">Número A</label>
+            <input type="text" id="numeroACliente">
+          </div>
+          
+          <div class="form-group">
+            <label for="correoCliente">Correo Electrónico</label>
+            <input type="email" id="correoCliente">
+          </div>
+          
+          <div class="form-group">
+            <label for="telefonoCliente">Teléfono</label>
+            <input type="tel" id="telefonoCliente">
+          </div>
+          
+          <div class="form-group">
+            <label for="fechaInicio">Fecha de Inicio</label>
+            <input type="date" id="fechaInicio">
+          </div>
+          
+          <div class="form-group">
+            <label for="fechaFin">Fecha Estimada de Finalización</label>
+            <input type="date" id="fechaFin">
+          </div>
+          
+          <div class="form-group" id="grupoCosto">
+            <label for="costoSolicitud">Costo de la Solicitud</label>
+            <input type="text" id="costoSolicitud">
+          </div>
+
+          <div class="form-group">
+            <label for="uscisCliente">USCIS</label>
+            <input id="uscisCliente" type="text">
+          </div>
+
+          <div class="form-group">
+            <label for="contrasenaCliente">Contraseña</label>
+            <input id="contrasenaCliente" type="text">
+          </div>
+
+          <div class="form-group">
+            <label for="codigoRespaldoCliente">Código de Respaldo</label>
+            <input id="codigoRespaldoCliente" type="text">
+          </div>
+          
+          
+          <div class="form-group">
+            <label for="tipoProceso">Tipo de Proceso</label>
+            <select id="tipoProceso">
+              <option value="">Seleccione una opción</option>
+              <option value="asilo">ASILO AFIRMATIVO</option>
+              <option value="asilo">ASILO DEFENSIVO</option>
+              <option value="permiso">PERMISO DE TRABAJO</option>
+              <option value="cambio">CAMBIO DE DIRECCIÓN</option>
+            </select>
+          </div>
+          
+          <div class="checkbox-container">
+            <input type="checkbox" id="yaProceso" class="checkbox-input" onchange="toggleCosto()">
+            <span class="checkbox-custom"></span>
+            <label class="checkbox-label">Ya ha tenido un proceso</label>
+          </div>
+          
+          <button type="button" class="btn btn-primary" onclick="guardarDatosCliente()" style="margin-top: 20px;">
+            <i class="fas fa-save"></i> Guardar Datos
+          </button>
+        </div>
+        <!-- Pestaña ADMIN-PAGOS -->
+<div id="pagos" class="tab-content">
+  <h2 style="margin-bottom: 20px; color: var(--primary); font-weight: bold;">
+    <i class="fas fa-money-check-alt"></i> Panel de Administración de Pagos
+  </h2>
+  <div id="contenedor-pagos"></div>
+</div>
+
+        <!-- Pestaña GESTIÓN -->
+        <div id="gestion" class="tab-content">
+          <h2 style="margin-bottom: 20px; color: var(--primary);">
+            <i class="fas fa-tasks"></i> Gestión de Clientes
+          </h2>
+          <div id="panelGestionClientes" style="display: flex; flex-direction: column; gap: 20px;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Barra de tareas inferior -->
+    <div class="taskbar">
+      <button class="taskbar-btn tooltip" onclick="abrirPerfil()" title="Perfil">
+        <img id="perfilFlotante" src="https://i.imgur.com/JRBQ9Vq.png" alt="Perfil" style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
+        <span class="tooltip-text">Perfil</span>
+      </button>
+      
+      <button class="taskbar-btn tooltip" onclick="mostrarListaClientes()" title="Clientes">
+        <i class="fas fa-users"></i>
+        <span class="tooltip-text">Clientes</span>
+      </button>
+      
+      <button class="taskbar-btn tooltip" onclick="abrirModalDocs()" title="Documentos">
+        <i class="fas fa-folder-open"></i>
+        <span class="tooltip-text">Documentos</span>
+      </button>
+      
+      <button class="taskbar-btn tooltip" onclick="abrirWhatsapp()" title="WhatsApp">
+        <i class="fab fa-whatsapp"></i>
+        <span class="tooltip-text">WhatsApp</span>
+      </button>
+      
+      <button class="taskbar-btn tooltip" onclick="toggleSidebar('left')" title="Lista de espera">
+        <i class="fas fa-list"></i>
+        <span class="tooltip-text">Lista de espera</span>
+      </button>
+      
+      <button class="taskbar-btn tooltip" onclick="toggleSidebar('right')" title="Citas">
+        <i class="fas fa-calendar-alt"></i>
+        <span class="tooltip-text">Citas</span>
+      </button>
+    </div>
+    
+    <!-- Menú de usuario -->
+    <div class="user-menu">
+      <button class="user-btn" id="usuarioBtn" onclick="toggleUserMenu()">
+        <img id="fotoUsuarioBtn" src="https://i.imgur.com/JRBQ9Vq.png" alt="Usuario">
+      </button>
+      
+      <div class="user-dropdown" id="userDropdown">
+        <div class="user-info">
+          <img id="dropdownUserImg" src="https://i.imgur.com/JRBQ9Vq.png" alt="Usuario">
+          <div>
+            <div class="user-name" id="dropdownUserName">Usuario</div>
+            <div class="user-email">usuario@ejemplo.com</div>
+          </div>
+        </div>
+        
+        <div class="dropdown-divider"></div>
+        
+        <a href="#" class="dropdown-item" onclick="abrirPerfil()">
+          <i class="fas fa-user"></i> Mi perfil
+        </a>
+        
+        <a href="#" class="dropdown-item">
+          <i class="fas fa-cog"></i> Configuración
+        </a>
+        
+        <div class="dropdown-divider"></div>
+        
+        <a href="#" class="dropdown-item" onclick="cerrarSesion()">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a>
+      </div>
+    </div>
+    
+    <!-- Modal de detalles -->
+    <div class="modal-overlay" id="overlayDetalle" onclick="cerrarDetalles()">
+      <div class="modal" id="detalleCliente" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fas fa-file-alt"></i> Detalles del Cliente</h3>
+          <button class="modal-close" onclick="cerrarDetalles()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div id="contenidoDetalle"></div>
+          <div id="contenedorCuentaRegresiva" style="margin-top: 20px; display: none;">
+            <strong><i class="fas fa-clock"></i> Tiempo restante:</strong>
+            <span id="cuentaRegresiva" class="countdown"></span>
+          </div>
+          <div id="contenedorHitos" style="margin-top: 30px;">
+            <div class="hitos-header animate__animated animate__fadeIn">
+              <h4 class="hitos-title">
+                <i class="fas fa-tasks icon-pulse"></i> 
+                <span class="title-text">Hitos del Cliente</span>
+                <span class="badge-pill badge-counter animate__animated animate__bounceIn" id="contadorHitos">0</span>
+              </h4>
+              
+              <div class="hitos-actions">
+                <button class="btn btn-sm btn-primary btn-add-hito" onclick="mostrarFormularioHito(clienteActivoId)"
+                >
+                  <i class="fas fa-plus-circle"></i> 
+                  <span class="btn-text">Añadir Hito</span>
+                </button>
+                
+                <button class="btn btn-sm btn-success btn-save-hitos" onclick="guardarTodosLosHitos(clienteActivoId)">
+                  <i class="fas fa-save"></i> 
+                  <span class="btn-text">Guardar Todo</span>
+                  <span class="save-badge animate__animated" id="saveBadge"></span>
+                </button>
+              </div>
+            </div>
+            
+            <!-- Contenedor donde se renderizan los hitos -->
+            <div id="listaHitos" class="hitos-grid animate__animated animate__fadeIn"></div>
+            
+            <!-- Mensaje cuando no hay hitos -->
+            <div id="emptyHitos" class="empty-state animate__animated animate__fadeIn">
+              <i class="fas fa-clipboard-list empty-icon"></i>
+              <p>No hay hitos registrados</p>
+              <button class="btn btn-sm btn-primary"onclick="mostrarFormularioHito(clienteActivoId)"
+
+                <i class="fas fa-plus"></i> Crear primer hito
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="cerrarDetalles()">
+            <i class="fas fa-times"></i> Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Loader -->
+    <div class="loader-overlay" id="overlayLoader">
+      <div class="loader"></div>
+      <p class="loader-text">Consultando datos...</p>
+    </div>
+    
+    <!-- Notificación -->
+    <div class="notification" id="notification">
+      <div class="notification-icon">
+        <i class="fas fa-check"></i>
+      </div>
+      <div class="notification-content">
+        <div class="notification-title" id="notificationTitle">Éxito</div>
+        <div class="notification-message" id="notificationMessage">Operación completada correctamente</div>
+      </div>
+      <button class="notification-close" onclick="hideNotification()">
+        &times;
+      </button>
+    </div>
+    
+    <!-- Modal de documentos -->
+    <div class="modal-overlay" id="modalDocsOverlay">
+      <div class="modal" onclick="event.stopPropagation()">
+        <div class="modal-header">
+          <h3 class="modal-title"><i class="fas fa-folder-open"></i> Documentos</h3>
+          <button class="modal-close" onclick="cerrarModalDocs()">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="file-grid" id="contenedorArchivos"></div>
+          <div class="progress-bar" id="barraProgreso">
+            <div class="progress-fill" id="barraProgresoInterna"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Modal WhatsApp -->
+    <div id="whatsappModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;">
+      <div style="width: 95%; height: 90%; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; position: relative; transform: translateY(20px); transition: transform 0.3s ease;">
+        <iframe src="whatsapp.html" style="border:none; width:100%; height:100%;"></iframe>
+        <button onclick="cerrarWhatsapp()" style="position: absolute; top: 10px; right: 10px; background: #ef233c; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease;">&times;</button>
+      </div>
+    </div>
+
+    <!-- Modal Clientes -->
+    <div id="clientesModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); backdrop-filter: blur(5px); z-index: 9999; justify-content: center; align-items: center; opacity: 0; transition: opacity 0.3s ease;">
+      <div style="width: 95%; height: 90%; background: white; border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); overflow: hidden; position: relative; transform: translateY(20px); transition: transform 0.3s ease;">
+        <iframe src="clientes-registro.html" style="border:none; width:100%; height:100%;"></iframe>
+        <button onclick="cerrarClientes()" style="position: absolute; top: 10px; right: 10px; background: #ef233c; color: white; border: none; border-radius: 50%; width: 36px; height: 36px; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all 0.3s ease;">&times;</button>
+      </div>
+    </div>
+    
+    <!-- Modal de perfil -->
+    <div class="modal-overlay" id="iframePerfilOverlay">
+      <div class="modal" style="width: 90%; height: 90%; padding: 0;">
+        <div class="modal-header" style="margin: 0;">
+          <h3 class="modal-title"><i class="fas fa-user-edit"></i> Editar perfil</h3>
+          <button class="modal-close" onclick="cerrarIframePerfil()">&times;</button>
+        </div>
+        <iframe src="perfil-editor.html" style="border: none; width: 100%; height: calc(100% - 60px);"></iframe>
+      </div>
+    </div>
+  </div>
+  <div id="modalPago" class="modal-pago">
+    <div class="modal-pago-content animate__animated animate__fadeInDown">
+      <h3 id="modalPagoTitulo">Agregar Pago</h3>
+      <div class="pago-form-group">
+        <label for="pagoMonto">Monto ($)</label>
+        <input type="number" id="pagoMonto" step="0.01" min="0">
+      </div>
+      <div class="pago-form-group">
+        <label for="pagoEstado">Estado</label>
+        <select id="pagoEstado">
+          <option value="Pagado">Pagado</option>
+          <option value="Pendiente">Pendiente</option>
+        </select>
+      </div>
+      <div class="pago-form-group">
+        <label for="pagoFecha">Fecha</label>
+        <input type="date" id="pagoFecha">
+      </div>
+      <div class="pago-actions">
+        <button class="btn btn-outline" onclick="cerrarModalPago()">Cancelar</button>
+        <button class="btn btn-primary" id="btnGuardarPago">Guardar</button>
+      </div>
+    </div>
+  <form id="formArchivo" style="display:none">
+    <input type="file" id="inputArchivo" name="archivo" onchange="subirArchivoCliente()" accept=".pdf,.png,.jpg,.jpeg">
+  </form>
+  <iframe id="iframePlanPagos" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; border:none; z-index:9999; background:white; animation: fadeIn 0.5s ease forwards;"></iframe>
+
+  <script>
+    // Variables globales
+    let intervaloReloj = null;
+    let citasCargadas = false;
+    let clienteActivoId = null;
+    const archivos = [
+      {
+        nombre: "I-589.pdf",
+        id: "1YWhIBkym_jqCP7igx4A_NZyN96uNBUBM",
+        icono: "file-pdf",
+        color: "#FF5252"
+      },
+      {
+        nombre: "I-765.pdf",
+        id: "1YWhIBkym_jqCP7igx4A_NZyN96uNBUBM",
+        icono: "file-pdf",
+        color: "#4CAF50"
+      },
+      {
+        nombre: "I-130.pdf",
+        id: "1YWhIBkym_jqCP7igx4A_NZyN96uNBUBM",
+        icono: "file-pdf",
+        color: "#2196F3"
+      },
+      {
+        nombre: "Guía USCIS.pdf",
+        id: "1YWhIBkym_jqCP7igx4A_NZyN96uNBUBM",
+        icono: "file-alt",
+        color: "#FF9800"
+      }
+    ];
+
+    // Objeto para almacenar hitos por cliente
+    let hitosPorCliente = {};
+
+    // Funciones de UI
+    function showNotification(type, title, message) {
+      const notification = document.getElementById('notification');
+      const icon = notification.querySelector('.notification-icon i');
+      const notificationTitle = document.getElementById('notificationTitle');
+      const notificationMessage = document.getElementById('notificationMessage');
+      
+      // Reset classes
+      notification.className = 'notification';
+      notification.classList.add(`notification-${type}`);
+      
+      // Set icon based on type
+      if (type === 'success') {
+        icon.className = 'fas fa-check';
+      } else if (type === 'error') {
+        icon.className = 'fas fa-times';
+      } else if (type === 'warning') {
+        icon.className = 'fas fa-exclamation';
+      }
+      
+      notificationTitle.textContent = title;
+      notificationMessage.textContent = message;
+      
+      notification.classList.add('active');
+      
+      // Auto hide after 5 seconds
+      setTimeout(() => {
+        notification.classList.remove('active');
+      }, 5000);
+    }
+
+    function hideNotification() {
+      document.getElementById('notification').classList.remove('active');
+    }
+
+    function showLoader() {
+      document.getElementById('overlayLoader').classList.add('active');
+    }
+
+    function hideLoader() {
+      document.getElementById('overlayLoader').classList.remove('active');
+    }
+
+    function toggleSidebar(side) {
+      const sidebar = document.querySelector(`.sidebar-${side}`);
+      sidebar.classList.toggle('active');
+      ajustarPosicionUsuario();
+
+      // Animación de icono en la barra de tareas
+      const taskbarBtn = document.querySelector(`.taskbar-btn:nth-child(${side === 'left' ? 5 : 6})`);
+      taskbarBtn.classList.toggle('active');
+      
+      // Animación con anime.js
+      anime({
+        targets: taskbarBtn,
+        scale: [1, 1.2, 1],
+        duration: 500,
+        easing: 'easeInOutQuad'
+      });
+    }
+
+    function toggleUserMenu() {
+      const dropdown = document.getElementById('userDropdown');
+      dropdown.classList.toggle('active');
+      
+      // Animación con anime.js
+      anime({
+        targets: dropdown,
+        opacity: dropdown.classList.contains('active') ? 1 : 0,
+        translateY: dropdown.classList.contains('active') ? 0 : -10,
+        duration: 300,
+        easing: 'easeInOutQuad'
+      });
+    }
+
+    // Cerrar menú desplegable al hacer clic fuera
+    document.addEventListener('click', function(event) {
+      const dropdown = document.getElementById('userDropdown');
+      const userBtn = document.getElementById('usuarioBtn');
+      
+      if (!userBtn.contains(event.target) && !dropdown.contains(event.target)) {
+        dropdown.classList.remove('active');
+      }
+    });
+
+    function showTab(tabId, btn) {
+  document.querySelectorAll('.tab-content').forEach(tab => {
+    tab.classList.remove('active');
+    tab.style.opacity = 0;
+  });
+
+  document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+
+  const activeTab = document.getElementById(tabId);
+  activeTab.classList.add('active');
+
+  anime({
+    targets: activeTab,
+    opacity: [0, 1],
+    duration: 300,
+    easing: 'easeInOutQuad'
+  });
+
+  anime({
+    targets: btn,
+    scale: [1, 1.1, 1],
+    duration: 500,
+    easing: 'easeInOutQuad'
+  });
+
+  // Llamadas específicas
+  if (tabId === 'gestion') {
+    cargarClientesGestion();
+  } else if (tabId === 'pagos') {
+    cargarPanelPagos(); // <-- ¡IMPORTANTE!
+  }
+}
+
+    function toggleCosto() {
+      const check = document.getElementById('yaProceso').checked;
+      const grupoCosto = document.getElementById('grupoCosto');
+      
+      anime({
+        targets: grupoCosto,
+        height: check ? 0 : 'auto',
+        opacity: check ? 0 : 1,
+        duration: 300,
+        easing: 'easeInOutQuad',
+        begin: () => {
+          if (!check) grupoCosto.style.display = 'block';
+        },
+        complete: () => {
+          if (check) grupoCosto.style.display = 'none';
+        }
+      });
+    }
+
+    // Funciones de datos
+    async function fetchPDFasBytes(url) {
+      const res = await fetch(url);
+      return await res.arrayBuffer();
+    }
+
+    function formatearAlien(input) {
+      let value = input.value.replace(/[\D]/g, '').slice(0, 9);
+      input.value = value.match(/.{1,3}/g)?.join('-') || '';
+    }
+
+    async function consultarDatos() {
+      const numeroA = document.getElementById('alienNumber').value.replace(/-/g, '');
+      if (numeroA.length !== 9) {
+        showNotification('error', 'Error', 'Número A inválido. Debe tener 9 dígitos.');
+        return;
+      }
+
+      showLoader();
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/obtener-datos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ numeroA })
+        });
+        const datos = await res.json();
+
+        if (datos.error) {
+          showNotification('error', 'Error', datos.error);
+          return;
+        }
+
+        // Animación de llenado de campos
+        const campos = [
+          { id: 'nombre', valor: datos.nombre || '' },
+          { id: 'nombreFirmante', valor: datos.nombreFirmante || '' },
+          { id: 'nombreParte', valor: datos.parteServida || '' },
+          { id: 'direccionParte', valor: datos.direccionParteServida || '' },
+          { id: 'metodoServicio', valor: datos.metodoServicio || '' },
+          { id: 'fecha', valor: datos.fecha?.split('/').reverse().join('-') || '' }
+        ];
+
+        campos.forEach((campo, index) => {
+          setTimeout(() => {
+            const input = document.getElementById(campo.id);
+            input.value = campo.valor;
+            
+            // Efecto de resaltado
+            anime({
+              targets: input,
+              backgroundColor: ['rgba(67, 97, 238, 0.2)', 'rgba(255, 255, 255, 1)'],
+              duration: 1000,
+              easing: 'easeOutExpo'
+            });
+          }, index * 100);
+        });
+
+        showNotification('success', 'Éxito', 'Datos consultados correctamente');
+      } catch (error) {
+        console.error("Error consultando:", error);
+        showNotification('error', 'Error', "Error al consultar los datos");
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function autocompletarEnvio() {
+      const direccionCruda = document.getElementById("direccionParte").value.trim();
+      const nombreParte = document.getElementById("nombreParte").value;
+
+      const direccion = direccionCruda.replace(/\s*-\s*/g, ",").replace(/\s{2,}/g, " ");
+      const regex = /^(.+?),\s*(SUITE\s*\d+|APT\s*\d+|UNIT\s*\d+)?\s*([A-Z ]+),\s*([A-Z]{2})\s*(\d{5})$/i;
+      const partes = direccion.match(regex);
+
+      if (partes) {
+        const campos = [
+          { id: "destStreet", valor: partes[1].trim() },
+          { id: "destStreet2", valor: partes[2]?.trim() || "" },
+          { id: "destCity", valor: partes[3].trim() },
+          { id: "destState", valor: partes[4].trim() },
+          { id: "destZip", valor: partes[5].trim() },
+          { id: "destName", valor: nombreParte }
+        ];
+
+        campos.forEach((campo, index) => {
+          setTimeout(() => {
+            document.getElementById(campo.id).value = campo.valor;
+            
+            // Efecto de resaltado
+            anime({
+              targets: document.getElementById(campo.id),
+              backgroundColor: ['rgba(76, 201, 240, 0.2)', 'rgba(255, 255, 255, 1)'],
+              duration: 800,
+              easing: 'easeOutExpo'
+            });
+          }, index * 100);
+        });
+
+        showNotification('success', 'Éxito', 'Dirección autocompletada correctamente');
+      } else {
+        showNotification('error', 'Error', 'Formato de dirección no reconocido. Usa: "800 DOLOROSA ST - SUITE 300 SAN ANTONIO, TX 78207"');
+      }
+    }
+
+    async function crearEnvio(event) {
+      event.preventDefault();
+      
+      let phone = document.getElementById('destPhone').value.trim();
+      let email = document.getElementById('destEmail').value.trim();
+
+      if (!phone) phone = "+15555555555";
+      if (!email) email = "sandbox@shipengine.test";
+      if (!phone.startsWith('+1')) phone = '+1' + phone.replace(/[^0-9]/g, '');
+
+      const address_to = {
+        name: document.getElementById('destName').value || "Destinatario",
+        street1: document.getElementById('destStreet').value,
+        street2: document.getElementById('destStreet2').value || "",
+        city: document.getElementById('destCity').value,
+        state: document.getElementById('destState').value,
+        zip: document.getElementById('destZip').value,
+        phone,
+        email,
+        countryCode: "US"
+      };
+
+      showLoader();
+      
+      try {
+        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/crear-etiqueta", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ address_to })
+        });
+
+        const data = await res.json();
+        
+        if (data.error) {
+          console.error("Error al generar etiqueta:", data);
+          showNotification('error', 'Error', "Error creando etiqueta de envío");
+        } else {
+          showNotification('success', 'Éxito', "Etiqueta generada correctamente");
+          window.open(data.etiqueta_pdf, "_blank");
+        }
+      } catch (error) {
+        console.error("Error:", error);
+        showNotification('error', 'Error', "Error de conexión con el servidor");
+      } finally {
+        hideLoader();
+      }
+    }
+
+    async function guardarDatosCliente() {
+  const datos = {
+    id: crypto.randomUUID(),
+    nombre: document.getElementById('nombreCliente').value,
+    direccion: document.getElementById('direccionCliente').value,
+    numeroA: document.getElementById('numeroACliente').value,
+    correo: document.getElementById('correoCliente').value,
+    telefono: document.getElementById('telefonoCliente').value,
+    inicio: document.getElementById('fechaInicio').value,
+    fin: document.getElementById('fechaFin').value,
+    costo: document.getElementById('costoSolicitud').value,
+    proceso: document.getElementById('tipoProceso').value,
+    uscis: document.getElementById('uscisCliente').value,
+    contrasena: document.getElementById('contrasenaCliente').value,
+    codigoRespaldo: document.getElementById('codigoRespaldoCliente').value,
+    estado: "pendientes"
+  };
+
+  if (!datos.nombre || !datos.proceso) {
+    showNotification('error', 'Error', 'Nombre y tipo de proceso son requeridos');
+    return;
+  }
+
+  // PLAN DE PAGOS: Solo mostrar una vez aquí
+  const { value: planPago } = await Swal.fire({
+    title: 'Configurar Plan de Pagos',
+    html: `
+      <div style="text-align: left; margin-top: 20px;">
+        <label for="swal-monto-total">Monto Total ($)</label>
+        <input id="swal-monto-total" type="number" class="swal2-input" 
+               placeholder="Ej: 1500" value="${datos.costo || ''}" step="0.01" min="0">
+        <label for="swal-monto-inicial" style="margin-top:15px;">Monto Inicial ($)</label>
+        <input id="swal-monto-inicial" type="number" class="swal2-input" 
+               placeholder="Ej: 500" step="0.01" min="0">
+        <label for="swal-num-semanas" style="margin-top:15px;">Número de Semanas</label>
+        <input id="swal-num-semanas" type="number" class="swal2-input" 
+               placeholder="Ej: 8" min="1" max="52" value="8">
+      </div>
+    `,
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: 'Guardar Plan',
+    cancelButtonText: 'Sin Plan de Pagos',
+    preConfirm: () => {
+      const total = parseFloat(document.getElementById('swal-monto-total').value);
+      const inicial = parseFloat(document.getElementById('swal-monto-inicial').value);
+      const semanas = parseInt(document.getElementById('swal-num-semanas').value);
+
+      if (!total || isNaN(total)) {
+        Swal.showValidationMessage('El monto total es requerido');
+        return false;
+      }
+      if (!inicial || isNaN(inicial) || inicial > total) {
+        Swal.showValidationMessage('El monto inicial debe ser menor al total');
+        return false;
+      }
+      if (!semanas || isNaN(semanas) || semanas < 1) {
+        Swal.showValidationMessage('El número de semanas debe ser mayor a 0');
+        return false;
+      }
+      return { total, inicial, semanas };
+    }
+  });
+
+  if (planPago) {
+    const resto = planPago.total - planPago.inicial;
+    const semanal = Math.round((resto / (planPago.semanas - 1)) * 100) / 100;
+
+    datos.pagos = [];
+
+    datos.pagos.push({
+      monto: planPago.inicial,
+      estado: "Pagado",
+      fecha: new Date().toISOString().split('T')[0],
+      tipo: "Inicial"
+    });
+
+    for (let i = 1; i < planPago.semanas; i++) {
+      const fechaPago = new Date();
+      fechaPago.setDate(fechaPago.getDate() + (i * 7));
+      datos.pagos.push({
+        monto: semanal,
+        estado: "Pendiente",
+        fecha: fechaPago.toISOString().split('T')[0],
+        tipo: `Semana ${i}`
+      });
+    }
+
+    await Swal.fire({
+      title: 'Plan de Pagos Configurado',
+      html: `
+        <div style="text-align: left;">
+          <p><strong>Total:</strong> $${planPago.total.toFixed(2)}</p>
+          <p><strong>Pago Inicial:</strong> $${planPago.inicial.toFixed(2)}</p>
+          <p><strong>Pagos Semanales:</strong> ${planPago.semanas - 1} x $${semanal.toFixed(2)}</p>
+          <hr>
+          <p>Se creará automáticamente el plan de pagos para el cliente.</p>
+        </div>
+      `,
+      icon: 'success'
+    });
+  }
+
+  showLoader();
+
+  try {
+    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/guardar-cliente', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+
+    const respuesta = await res.json();
+
+    if (respuesta.ok && respuesta.id) {
+      datos.id = respuesta.id;
+      showNotification('success', 'Éxito', `Cliente guardado correctamente (ID: ${respuesta.id})`);
+      limpiarFormularioCliente();
+
+      // ⚠️ Solo mostrar el modal de pago aquí
+      if (planPago) {
+        abrirModalPago(respuesta.id);
+      }
+    } else {
+      throw new Error(respuesta.error || 'No se pudo guardar el cliente');
+    }
+
+  } catch (err) {
+    showNotification('error', 'Error', 'Error al guardar el cliente');
+    console.error("Error al guardar cliente:", err);
+  } finally {
+    hideLoader();
+  }
+}
+
+async function enviarCliente(datos) {
+  showLoader();
+
+  try {
+    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/guardar-cliente', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(datos)
+    });
+
+    const respuesta = await res.json();
+
+    if (respuesta.ok && respuesta.id) {
+      datos.id = respuesta.id;
+      showNotification('success', 'Éxito', `Cliente guardado correctamente (ID: ${respuesta.id})`);
+
+      anime({
+        targets: '.container',
+        keyframes: [
+          { translateY: -10, backgroundColor: 'rgba(76, 201, 240, 0.1)' },
+          { translateY: 0, backgroundColor: 'rgba(255, 255, 255, 1)' }
+        ],
+        duration: 1000,
+        easing: 'easeOutElastic'
+      });
+
+      renderizarCliente(datos);
+      limpiarFormularioCliente();
+    } else {
+      showNotification('error', 'Error', 'No se pudo guardar el cliente');
+    }
+  } catch (err) {
+    showNotification('error', 'Error', 'Error de conexión con el servidor');
+    console.error("Error al guardar cliente:", err);
+  } finally {
+    hideLoader();
+  }
+}
+
+
+function limpiarFormularioCliente() {
+  const campos = [
+    'nombreCliente', 'direccionCliente', 'numeroACliente',
+    'correoCliente', 'telefonoCliente', 'fechaInicio',
+    'fechaFin', 'costoSolicitud', 'tipoProceso',
+    'uscisCliente', 'contrasenaCliente', 'codigoRespaldoCliente'
+  ];
+
+  campos.forEach(id => {
+    const campo = document.getElementById(id);
+    if (campo) campo.value = '';
+  });
+
+  document.getElementById('yaProceso').checked = false;
+  document.getElementById('grupoCosto').style.display = 'block';
+}
+
+
+    async function rellenarPDF() {
+      const { PDFDocument } = PDFLib;
+      const url = "/FORMAL.pdf";
+      
+      showLoader();
+      
+      try {
+        const existingPdfBytes = await fetchPDFasBytes(url);
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        const form = pdfDoc.getForm();
+
+        // Obtener valores del formulario HTML
+        const nombre = document.getElementById("nombre").value;
+        const metodoServicio = document.getElementById("metodoServicio").value;
+        const direccionParte = document.getElementById("direccionParte").value;
+        const alienNumber = document.getElementById("alienNumber").value;
+        const nombreParte = document.getElementById("nombreParte").value;
+        const nombreFirmante = document.getElementById("nombreFirmante").value;
+        const fecha = document.getElementById("fecha").value;
+        const hoy = new Date().toLocaleDateString("en-US");
+
+        // Validación básica
+        if (!nombre || !alienNumber || !nombreParte || !nombreFirmante) {
+          showNotification('error', 'Error', 'Complete todos los campos requeridos');
+          return;
+        }
+
+        // Llenar campos del PDF
+        form.getTextField("nombre").setText(nombre);
+        form.getTextField("metodoServicio").setText(metodoServicio);
+        form.getTextField("direccionParte").setText(direccionParte);
+        form.getTextField("alienNumber").setText(alienNumber);
+        form.getTextField("nombreParte").setText(nombreParte);
+        form.getTextField("nombreFirmante").setText(nombreFirmante);
+        form.getTextField("FECHA").setText(fecha);
+        form.getTextField("FECHAHOY").setText(hoy);
+
+        form.flatten(); // Hacer que el PDF no sea editable
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'FORMAL_Filled.pdf';
+        link.click();
+        
+        showNotification('success', 'Éxito', 'PDF generado correctamente');
+      } catch (error) {
+        console.error("Error generando PDF:", error);
+        showNotification('error', 'Error', 'Error al generar el PDF');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    async function rellenarPDFSeccion9() {
+      const { PDFDocument } = PDFLib;
+      const url = "/SECCION 9.pdf";
+      
+      showLoader();
+      
+      try {
+        const existingPdfBytes = await fetchPDFasBytes(url);
+        const pdfDoc = await PDFDocument.load(existingPdfBytes);
+        const form = pdfDoc.getForm();
+
+        const nombre = document.getElementById("nombre").value;
+        const nombreFirmante = document.getElementById("nombreFirmante").value;
+        const fecha = document.getElementById("fecha").value;
+
+        // Validación básica
+        if (!nombre || !nombreFirmante) {
+          showNotification('error', 'Error', 'Complete todos los campos requeridos');
+          return;
+        }
+
+        form.getTextField("nombre").setText(nombre);
+        form.getTextField("nombreFirmante").setText(nombreFirmante);
+        form.getTextField("FECHA").setText(fecha);
+
+        form.flatten();
+
+        const pdfBytes = await pdfDoc.save();
+        const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'SECCION9_Filled.pdf';
+        link.click();
+        
+        showNotification('success', 'Éxito', 'PDF generado correctamente');
+      } catch (error) {
+        console.error("Error generando PDF:", error);
+        showNotification('error', 'Error', 'Error al generar el PDF');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    // Funciones para listas y detalles
+    async function cargarListaEspera() {
+      const contenedor = document.getElementById("contenedorListaEspera");
+      
+      // Animación de carga
+      contenedor.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--primary);"></i>
+          <p style="margin-top: 10px; color: var(--gray);">Cargando lista de espera...</p>
+        </div>
+      `;
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/lista-espera');
+        const lista = await res.json();
+        
+        if (lista.length === 0) {
+          contenedor.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: var(--gray);">
+              <i class="fas fa-inbox" style="font-size: 24px;"></i>
+              <p style="margin-top: 10px;">No hay clientes en lista de espera</p>
+            </div>
+          `;
+          return;
+        }
+        
+        contenedor.innerHTML = '';
+        lista.forEach((cliente, index) => {
+          setTimeout(() => {
+            renderizarCliente(cliente);
+          }, index * 100);
+        });
+      } catch (error) {
+        console.error("Error cargando lista de espera:", error);
+        contenedor.innerHTML = `
+          <div style="text-align: center; padding: 30px; color: var(--danger);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+            <p style="margin-top: 10px;">Error al cargar la lista de espera</p>
+          </div>
+        `;
+      }
+    }
+
+    async function cargarCitas() {
+      const contenedor = document.getElementById("contenedorCitas");
+      
+      // Animación de carga
+      contenedor.innerHTML = `
+        <div style="text-align: center; padding: 30px;">
+          <i class="fas fa-spinner fa-spin" style="font-size: 24px; color: var(--primary);"></i>
+          <p style="margin-top: 10px; color: var(--gray);">Cargando citas...</p>
+        </div>
+      `;
+      
+      try {
+        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/citas-google");
+        const citas = await res.json();
+        
+        if (citas.length === 0) {
+          contenedor.innerHTML = `
+            <div style="text-align: center; padding: 30px; color: var(--gray);">
+              <i class="fas fa-calendar-times" style="font-size: 24px;"></i>
+              <p style="margin-top: 10px;">No hay citas programadas</p>
+            </div>
+          `;
+          return;
+        }
+        
+        contenedor.innerHTML = '';
+        citas.forEach((cita, index) => {
+          setTimeout(() => {
+            renderizarCita(cita);
+          }, index * 100);
+        });
+        
+        citasCargadas = true;
+      } catch (error) {
+        console.error("Error cargando citas:", error);
+        contenedor.innerHTML = `
+          <div style="text-align: center; padding: 30px; color: var(--danger);">
+            <i class="fas fa-exclamation-triangle" style="font-size: 24px;"></i>
+            <p style="margin-top: 10px;">Error al cargar las citas</p>
+          </div>
+        `;
+      }
+    }
+
+    function renderizarCliente(datos) {
+      const contenedor = document.getElementById("contenedorListaEspera");
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'cliente-card';
+      
+      const fecha = new Date().toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      tarjeta.innerHTML = `
+        <div class="cliente-header">
+          <div class="cliente-nombre">
+            <i class="fas fa-user" style="color: var(--primary);"></i>
+            ${datos.nombre || '(Sin nombre)'}
+          </div>
+          <div class="cliente-hora">${fecha}</div>
+        </div>
+        <div class="cliente-proceso">
+          <i class="fas fa-tag" style="color: var(--gray); margin-right: 5px;"></i>
+          ${datos.proceso || '—'}
+        </div>
+      `;
+      
+      const btnDetalles = document.createElement('button');
+      btnDetalles.className = 'btn btn-sm btn-outline';
+      btnDetalles.innerHTML = '<i class="fas fa-eye"></i> Ver detalles';
+      btnDetalles.onclick = () => verDetalles(datos);
+      
+      tarjeta.appendChild(btnDetalles);
+      contenedor.appendChild(tarjeta);
+      
+      // Animación de entrada
+      anime({
+        targets: tarjeta,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    function renderizarCita(cita) {
+      const contenedor = document.getElementById("contenedorCitas");
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'card';
+      
+      const fecha = new Date(cita.fecha);
+      const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      
+      tarjeta.innerHTML = `
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-calendar-check" style="color: var(--primary);"></i>
+            ${cita.nombre}
+          </div>
+        </div>
+        <p style="margin: 8px 0; color: var(--dark);">
+          <i class="fas fa-clock" style="color: var(--gray); margin-right: 5px;"></i>
+          ${fechaFormateada}
+        </p>
+        <p style="margin: 8px 0; color: var(--dark);">
+          <i class="fas fa-clock" style="color: var(--gray); margin-right: 5px;"></i>
+          ${horaFormateada}
+        </p>
+      `;
+      
+      const btnContainer = document.createElement('div');
+      btnContainer.className = 'button-group';
+      btnContainer.style.marginTop = '15px';
+      
+      const btnDetalles = document.createElement('button');
+      btnDetalles.className = 'btn btn-sm btn-outline';
+      btnDetalles.innerHTML = '<i class="fas fa-info-circle"></i> Detalles';
+      btnDetalles.onclick = () => verDetallesCita(cita);
+      
+      const btnCancelar = document.createElement('button');
+      btnCancelar.className = 'btn btn-sm';
+      btnCancelar.style.background = 'var(--danger)';
+      btnCancelar.style.color = 'white';
+      btnCancelar.innerHTML = '<i class="fas fa-times"></i> Cancelar';
+      btnCancelar.onclick = () => cancelarCita(cita);
+      
+      btnContainer.appendChild(btnDetalles);
+      btnContainer.appendChild(btnCancelar);
+      tarjeta.appendChild(btnContainer);
+      contenedor.appendChild(tarjeta);
+      
+      // Animación de entrada
+      anime({
+        targets: tarjeta,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    async function cancelarCita(cita) {
+      const confirmacion = await Swal.fire({
+        title: '¿Cancelar cita?',
+        text: `¿Estás seguro de cancelar la cita "${cita.nombre}"?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, cancelar',
+        cancelButtonText: 'No, mantener'
+      });
+      
+      if (!confirmacion.isConfirmed) return;
+      
+      showLoader();
+      
+      try {
+        const res = await fetch("https://jawfish-saving-grossly.ngrok-free.app/cancelar-cita", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ eventId: cita.id })
+        });
+
+        const resultado = await res.json();
+        
+        if (resultado.ok) {
+          showNotification('success', 'Éxito', 'Cita cancelada correctamente');
+          cargarCitas();
+        } else {
+          showNotification('error', 'Error', 'No se pudo cancelar la cita');
+        }
+      } catch (err) {
+        console.error("Error cancelando cita:", err);
+        showNotification('error', 'Error', 'Error al cancelar la cita');
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function verDetalles(datos) {
+      const contenido = document.getElementById('contenidoDetalle');
+      contenido.innerHTML = '';
+
+      // Guardar ID del cliente activo para futuras operaciones
+      clienteActivoId = datos.id;
+
+      // Mostrar ID si existe
+      if (datos.id) {
+        contenido.innerHTML += `
+          <div style="background: #f8f9fa; padding: 10px; border-radius: 8px; margin-bottom: 15px;">
+            <p style="margin: 0; font-size: 13px; color: var(--gray);">ID DEL CLIENTE</p>
+            <p style="margin: 5px 0 0; font-weight: 600; font-family: monospace;">${datos.id}</p>
+          </div>
+        `;
+      }
+
+      // Crear tabla de detalles (excluyendo id y hitos)
+      const table = document.createElement('table');
+      table.style.width = '100%';
+      table.style.borderCollapse = 'collapse';
+
+      for (let key in datos) {
+        if (key === 'id' || key === 'hitos') continue;
+
+        const row = table.insertRow();
+
+        const cellLabel = row.insertCell();
+        cellLabel.style.padding = '8px 0';
+        cellLabel.style.borderBottom = '1px solid #f0f0f0';
+        cellLabel.style.fontWeight = '500';
+        cellLabel.style.color = 'var(--dark)';
+        cellLabel.textContent = key.toUpperCase();
+
+        const cellValue = row.insertCell();
+        cellValue.style.padding = '8px 0 8px 15px';
+        cellValue.style.borderBottom = '1px solid #f0f0f0';
+        cellValue.style.textAlign = 'right';
+        cellValue.style.color = 'var(--gray)';
+        cellValue.textContent = datos[key] || '—';
+      }
+
+      contenido.appendChild(table);
+
+      // Cargar hitos del cliente
+      cargarHitosCliente(datos.id);
+
+      // Botones Eliminar y Finalizar
+      const btnContainer = document.createElement('div');
+      btnContainer.style.display = 'flex';
+      btnContainer.style.gap = '10px';
+      btnContainer.style.marginTop = '20px';
+
+      const btnEliminar = document.createElement('button');
+      btnEliminar.className = 'btn';
+      btnEliminar.style.background = 'var(--danger)';
+      btnEliminar.style.color = 'white';
+      btnEliminar.innerHTML = '<i class="fas fa-trash"></i> Eliminar';
+      btnEliminar.onclick = async () => {
+        const confirmacion = await Swal.fire({
+          title: '¿Eliminar cliente?',
+          text: 'Esta acción no se puede deshacer',
+          icon: 'warning',
+          showCancelButton: true,
+          confirmButtonColor: '#d33',
+          cancelButtonColor: '#3085d6',
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar'
+        });
+        
+
+        if (!confirmacion.isConfirmed) return;
+
+        eliminarCliente(datos.id);
+      };
+      const btnFinalizar = document.createElement('button');
+btnFinalizar.className = 'btn btn-primary';
+btnFinalizar.innerHTML = '<i class="fas fa-check-circle"></i> Finalizar';
+btnFinalizar.onclick = async () => {
+  const confirmacion = await Swal.fire({
+    title: '¿Finalizar caso?',
+    text: 'Marcar este caso como finalizado',
+    icon: 'question',
+    showCancelButton: true,
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    confirmButtonText: 'Sí, finalizar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmacion.isConfirmed) return;
+  finalizarCliente(datos.id);
+};
+
+      function finalizarCliente(id) {
+        fetch(`https://jawfish-saving-grossly.ngrok-free.app/finalizar-caso/${id}`, {
+  method: 'PUT',
+})
+
+    .then(res => res.json())
+    .then(data => {
+      if (data.success) {
+        const tarjeta = document.querySelector(`#cliente-${id}`);
+        if (tarjeta) tarjeta.remove(); // Solo lo quita visualmente de la lista
+        Swal.fire({
+          title: 'Finalizado',
+          text: 'El caso se ha marcado como completado.',
+          icon: 'success',
+          timer: 2000,
+          showConfirmButton: false
+        });
+      }
+    })
+    .catch(err => {
+      console.error(err);
+      Swal.fire({
+        title: 'Error',
+        text: 'No se pudo finalizar el caso',
+        icon: 'error'
+      });
+    });
+}
+
+
+
+      btnContainer.appendChild(btnEliminar);
+      btnContainer.appendChild(btnFinalizar);
+      contenido.appendChild(btnContainer);
+
+      // Iniciar cuenta regresiva si hay fecha de fin
+      if (datos.fin) {
+        iniciarCuentaRegresiva(datos.fin);
+      }
+
+      // Mostrar modal
+      document.getElementById('overlayDetalle').classList.add('active');
+
+      // Animación
+      anime({
+        targets: '#detalleCliente',
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    async function cargarHitosCliente(clienteId) {
+      const listaHitos = document.getElementById('listaHitos');
+      const emptyHitos = document.getElementById('emptyHitos');
+      
+      // Resetear estados
+      listaHitos.innerHTML = '';
+      emptyHitos.style.display = 'none';
+      showLoader();
+      
+      try {
+        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`);
+
+        if (!res.ok) throw new Error('Error en la respuesta');
+        
+        const cliente = await res.json();
+const hitos = cliente.hitos || [];
+
+        
+        // Almacenar hitos en el objeto global
+        hitosPorCliente[clienteId] = hitos;
+        
+        if (hitos.length === 0) {
+          emptyHitos.style.display = 'block';
+        } else {
+          renderizarHitos(clienteId, hitos);
+        }
+        
+      } catch (error) {
+        console.error("Error cargando hitos:", error);
+        showNotification('error', 'Error', 'No se pudieron cargar los hitos');
+        emptyHitos.style.display = 'block';
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function renderizarHitos(clienteId, hitos = []) {
+      const listaHitos = document.getElementById('listaHitos');
+      const contadorHitos = document.getElementById('contadorHitos');
+      const emptyHitos = document.getElementById('emptyHitos');
+
+      if (!listaHitos || !contadorHitos || !emptyHitos) {
+        console.error('Elementos del DOM no encontrados');
+        return;
+      }
+
+      listaHitos.innerHTML = '';
+      contadorHitos.textContent = hitos.length;
+
+      if (!Array.isArray(hitos) || hitos.length === 0) {
+        emptyHitos.style.display = 'block';
+        return;
+      }
+
+      emptyHitos.style.display = 'none';
+
+      // Calcular progreso
+      const completados = hitos.filter(h => h.estado === 'Completado').length;
+      const porcentaje = Math.round((completados / hitos.length) * 100);
+
+      // Crear resumen de progreso
+      const resumen = document.createElement('div');
+      resumen.className = 'hitos-progreso';
+      resumen.innerHTML = `
+        <div class="progress-container">
+          <div class="progress-bar" style="width: ${porcentaje}%"></div>
+          <span class="progress-text">${porcentaje}%</span>
+        </div>
+        <div class="hitos-stats">
+          <span class="badge completados">${completados} completados</span>
+          <span class="badge total">${hitos.length} total</span>
+        </div>
+      `;
+      listaHitos.appendChild(resumen);
+
+      // Renderizar cada hito con animación escalonada
+      hitos.forEach((hito, index) => {
+        const estadoClass = `estado-${hito.estado.toLowerCase().replace(' ', '-')}`;
+        const card = document.createElement('div');
+        card.className = `hito-item animate__animated animate__fadeInUp`;
+        card.style.animationDelay = `${index * 50}ms`;
+        card.dataset.hitoId = hito.id || index;
+
+        card.innerHTML = `
+          <div class="hito-header">
+            <h5 class="hito-titulo">${hito.nombre || 'Hito sin nombre'}</h5>
+            <span class="badge ${estadoClass}">${hito.estado || 'Pendiente'}</span>
+          </div>
+          <div class="hito-body">
+            <p class="hito-fecha"><i class="fas fa-calendar-day"></i> ${hito.fecha || 'Sin fecha'}</p>
+            <p class="hito-descripcion">${hito.descripcion || 'Sin descripción'}</p>
+          </div>
+          <div class="hito-actions">
+            <button class="btn btn-sm btn-outline btn-editar" data-hito-id="${hito.id || index}">
+              <i class="fas fa-edit"></i> Editar
+            </button>
+            <button class="btn btn-sm btn-danger btn-eliminar" data-hito-id="${hito.id || index}">
+              <i class="fas fa-trash"></i> Eliminar
+            </button>
+          </div>
+        `;
+
+        // Eventos para editar y eliminar
+        card.querySelector('.btn-editar').addEventListener('click', () => {
+          editarHitoModal(clienteId, hito.id || index);
+        });
+
+        card.querySelector('.btn-eliminar').addEventListener('click', () => {
+          confirmarEliminarHito(clienteId, hito.id || index);
+        });
+
+        // Hover con anime.js
+        card.addEventListener('mouseenter', () => {
+          anime({
+            targets: card,
+            scale: 1.02,
+            duration: 200,
+            easing: 'easeOutQuad'
+          });
+        });
+
+        card.addEventListener('mouseleave', () => {
+          anime({
+            targets: card,
+            scale: 1,
+            duration: 200,
+            easing: 'easeOutQuad'
+          });
+        });
+
+        listaHitos.appendChild(card);
+      });
+
+      // Botón para añadir nuevo hito
+      const btnAdd = document.createElement('button');
+      btnAdd.className = 'btn btn-primary btn-add-hito animate__animated animate__fadeIn';
+      btnAdd.innerHTML = '<i class="fas fa-plus"></i> Añadir Hito';
+      btnAdd.style.animationDelay = `${hitos.length * 50 + 100}ms`;
+
+      btnAdd.addEventListener('click', () => {
+        mostrarFormularioHito(clienteId);
+      });
+
+      listaHitos.appendChild(btnAdd);
+
+      // Animación para los elementos renderizados
+      anime({
+        targets: listaHitos.children,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        delay: anime.stagger(50),
+        duration: 400,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    function generarIdUnicoHito() {
+  return 'hito-' + Math.random().toString(36).substring(2, 11);
+}
+
+async function mostrarFormularioHito(clienteId) {
+  const { value: formValues } = await Swal.fire({
+    title: '<span style="font-size: 1.5rem; color: #2c3e50;">➕ Nuevo Hito</span>',
+    html: `
+      <div class="swal2-form-container animate__animated animate__fadeIn">
+        <div class="form-group">
+          <label for="swal-nombre" class="form-label">Nombre del Hito</label>
+          <input id="swal-nombre" class="swal2-input custom-input" placeholder="Ej: Implementación inicial">
+          <div class="input-feedback"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="swal-fecha" class="form-label">Fecha Límite</label>
+          <input id="swal-fecha" type="date" class="swal2-input custom-input">
+          <div class="input-feedback"></div>
+        </div>
+        
+        <div class="form-group">
+          <label for="swal-estado" class="form-label">Estado</label>
+          <select id="swal-estado" class="swal2-input custom-select">
+            <option value="Pendiente">⏳ Pendiente</option>
+            <option value="En Proceso">🚧 En Proceso</option>
+            <option value="Completado">✅ Completado</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="swal-descripcion" class="form-label">Descripción</label>
+          <textarea id="swal-descripcion" class="swal2-textarea custom-textarea" 
+                    placeholder="Detalles del hito..."></textarea>
+        </div>
+      </div>
+    `,
+    width: '600px',
+    background: '#f8f9fa',
+    showClass: {
+      popup: 'animate__animated animate__zoomIn animate__faster'
+    },
+    hideClass: {
+      popup: 'animate__animated animate__zoomOut animate__faster'
+    },
+    focusConfirm: false,
+    showCancelButton: true,
+    confirmButtonText: '<i class="fas fa-save"></i> Guardar',
+    cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+    confirmButtonColor: '#3085d6',
+    cancelButtonColor: '#d33',
+    buttonsStyling: true,
+    customClass: {
+      confirmButton: 'btn-confirm',
+      cancelButton: 'btn-cancel'
+    },
+    preConfirm: () => {
+      const nombre = document.getElementById('swal-nombre').value.trim();
+      const fecha = document.getElementById('swal-fecha').value;
+      const estado = document.getElementById('swal-estado').value;
+      const descripcion = document.getElementById('swal-descripcion').value.trim();
+      
+      let isValid = true;
+      
+      if (!nombre) {
+        showInputError('swal-nombre', 'El nombre es obligatorio');
+        isValid = false;
+      } else {
+        hideInputError('swal-nombre');
+      }
+      
+      if (!fecha) {
+        showInputError('swal-fecha', 'La fecha es obligatoria');
+        isValid = false;
+      } else {
+        hideInputError('swal-fecha');
+      }
+      
+      if (!isValid) {
+        Swal.showValidationMessage('Por favor completa los campos requeridos');
+        return false;
+      }
+      
+      return { id: generarIdUnicoHito(), nombre, fecha, estado, descripcion };
+    },
+    willOpen: () => {
+      document.getElementById('swal-fecha').min = new Date().toISOString().split('T')[0];
+      setTimeout(() => document.getElementById('swal-nombre').focus(), 300);
+    }
+  });
+
+  if (!formValues) return;
+
+  Swal.fire({
+    title: 'Guardando hito...',
+    allowOutsideClick: false,
+    didOpen: () => Swal.showLoading()
+  });
+
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/agregar-hito/${clienteId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(formValues)
+    });
+
+    const resultado = await res.json();
+    
+    if (resultado.ok) {
+      await Swal.fire({
+        title: '<span style="color: #2ecc71">✓ Hito creado</span>',
+        html: `
+          <div class="success-checkmark animate__animated animate__bounceIn">
+            <div class="check-icon">
+              <span class="icon-line line-tip"></span>
+              <span class="icon-line line-long"></span>
+              <div class="icon-circle"></div>
+              <div class="icon-fix"></div>
+            </div>
+          </div>
+          <p>El hito <strong>${formValues.nombre}</strong> se ha registrado correctamente.</p>
+        `,
+        timer: 2000,
+        timerProgressBar: true,
+        showConfirmButton: false
+      });
+      
+      cargarHitosCliente(clienteId);
+    } else {
+      throw new Error(resultado.error || 'Error al guardar');
+    }
+  } catch (error) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Ocurrió un problema al guardar el hito',
+      footer: '<a href="#">¿Necesitas ayuda?</a>',
+      showClass: { popup: 'animate__animated animate__shakeX' }
+    });
+    console.error('Error:', error);
+  }
+}
+
+
+    function showInputError(inputId, message) {
+      const input = document.getElementById(inputId);
+      const feedback = input.nextElementSibling;
+      
+      input.style.borderColor = '#e74c3c';
+      feedback.textContent = message;
+      feedback.style.color = '#e74c3c';
+      feedback.style.display = 'block';
+    }
+
+    function hideInputError(inputId) {
+      const input = document.getElementById(inputId);
+      const feedback = input.nextElementSibling;
+      
+      input.style.borderColor = '#ddd';
+      feedback.textContent = '';
+      feedback.style.display = 'none';
+    }
+
+    async function editarHitoModal(clienteId, hitoId) {
+      // Obtener el hito específico
+      const hito = hitosPorCliente[clienteId].find(h => h.id === hitoId || hitoId === hitosPorCliente[clienteId].indexOf(h));
+      
+      if (!hito) {
+        showNotification('error', 'Error', 'No se encontró el hito');
+        return;
+      }
+
+      const { value: formValues } = await Swal.fire({
+        title: '<span style="font-size: 1.5rem; color: #2c3e50;">✏️ Editar Hito</span>',
+        html: `
+          <div class="swal2-form-container animate__animated animate__fadeIn">
+            <div class="form-group">
+              <label for="edit-nombre" class="form-label">Nombre del Hito</label>
+              <input id="edit-nombre" class="swal2-input custom-input" value="${hito.nombre || ''}">
+              <div class="input-feedback"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-fecha" class="form-label">Fecha Límite</label>
+              <input id="edit-fecha" type="date" class="swal2-input custom-input" value="${hito.fecha || ''}">
+              <div class="input-feedback"></div>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-estado" class="form-label">Estado</label>
+              <select id="edit-estado" class="swal2-input custom-select">
+                <option value="Pendiente" ${hito.estado === 'Pendiente' ? 'selected' : ''}>⏳ Pendiente</option>
+                <option value="En Proceso" ${hito.estado === 'En Proceso' ? 'selected' : ''}>🚧 En Proceso</option>
+                <option value="Completado" ${hito.estado === 'Completado' ? 'selected' : ''}>✅ Completado</option>
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label for="edit-descripcion" class="form-label">Descripción</label>
+              <textarea id="edit-descripcion" class="swal2-textarea custom-textarea"
+                        placeholder="Detalles del hito...">${hito.descripcion || ''}</textarea>
+            </div>
+          </div>
+        `,
+        width: '600px',
+        background: '#f8f9fa',
+        showClass: {
+          popup: 'animate__animated animate__zoomIn animate__faster'
+        },
+        hideClass: {
+          popup: 'animate__animated animate__zoomOut animate__faster'
+        },
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: '<i class="fas fa-save"></i> Guardar',
+        cancelButtonText: '<i class="fas fa-times"></i> Cancelar',
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        buttonsStyling: true,
+        customClass: {
+          confirmButton: 'btn-confirm',
+          cancelButton: 'btn-cancel'
+        },
+        preConfirm: () => {
+          const nombre = document.getElementById('edit-nombre').value.trim();
+          const fecha = document.getElementById('edit-fecha').value;
+          const estado = document.getElementById('edit-estado').value;
+          const descripcion = document.getElementById('edit-descripcion').value.trim();
+          
+          let isValid = true;
+          
+          if (!nombre) {
+            showInputError('edit-nombre', 'El nombre es obligatorio');
+            isValid = false;
+          } else {
+            hideInputError('edit-nombre');
+          }
+          
+          if (!fecha) {
+            showInputError('edit-fecha', 'La fecha es obligatoria');
+            isValid = false;
+          } else {
+            hideInputError('edit-fecha');
+          }
+          
+          if (!isValid) {
+            Swal.showValidationMessage('Por favor completa los campos requeridos');
+            return false;
+          }
+          
+          return { nombre, fecha, estado, descripcion };
+        },
+        willOpen: () => {
+          document.getElementById('edit-fecha').min = new Date().toISOString().split('T')[0];
+          setTimeout(() => document.getElementById('edit-nombre').focus(), 300);
+        }
+      });
+
+      if (!formValues) return;
+
+      Swal.fire({
+        title: 'Actualizando hito...',
+        allowOutsideClick: false,
+        didOpen: () => Swal.showLoading()
+      });
+
+      try {
+        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/editar-hito/${clienteId}/${hitoId}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(formValues)
+        });
+
+        const resultado = await res.json();
+        
+        if (resultado.ok) {
+          await Swal.fire({
+            title: '<span style="color: #2ecc71">✓ Hito actualizado</span>',
+            html: `
+              <div class="success-checkmark animate__animated animate__bounceIn">
+                <div class="check-icon">
+                  <span class="icon-line line-tip"></span>
+                  <span class="icon-line line-long"></span>
+                  <div class="icon-circle"></div>
+                  <div class="icon-fix"></div>
+                </div>
+              </div>
+              <p>El hito <strong>${formValues.nombre}</strong> se ha actualizado correctamente.</p>
+            `,
+            timer: 2000,
+            timerProgressBar: true,
+            showConfirmButton: false
+          });
+          
+          cargarHitosCliente(clienteId);
+        } else {
+          throw new Error(resultado.error || 'Error al actualizar');
+        }
+      } catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error',
+          text: 'Ocurrió un problema al actualizar el hito',
+          footer: '<a href="#">¿Necesitas ayuda?</a>',
+          showClass: { popup: 'animate__animated animate__shakeX' }
+        });
+        console.error('Error:', error);
+      }
+    }
+
+    async function confirmarEliminarHito(clienteId, hitoId) {
+      const confirmacion = await Swal.fire({
+        title: '¿Eliminar hito?',
+        text: 'Esta acción no se puede deshacer',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      });
+
+      if (!confirmacion.isConfirmed) return;
+
+      showLoader();
+
+      try {
+        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/eliminar-hito/${clienteId}/${hitoId}`, {
+          method: 'DELETE'
+        });
+
+        const resultado = await res.json();
+
+        if (resultado.ok) {
+          showNotification('success', 'Éxito', 'Hito eliminado correctamente');
+          cargarHitosCliente(clienteId);
+        } else {
+          showNotification('error', 'Error', 'No se pudo eliminar el hito');
+        }
+      } catch (err) {
+        showNotification('error', 'Error', 'Error al eliminar el hito');
+        console.error(err);
+      } finally {
+        hideLoader();
+      }
+    }
+
+    async function guardarTodosLosHitos(clienteId) {
+      showLoader();
+      
+      try {
+        // En una implementación real, aquí enviarías todos los cambios al servidor
+        // Esto es solo un ejemplo
+        showNotification('success', 'Éxito', 'Todos los hitos guardados correctamente');
+        cargarHitosCliente(clienteId);
+      } catch (err) {
+        showNotification('error', 'Error', 'Error al guardar los hitos');
+        console.error(err);
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function verDetallesCita(cita) {
+      const contenido = document.getElementById('contenidoDetalle');
+      
+      const fecha = new Date(cita.fecha);
+      const fechaFormateada = fecha.toLocaleDateString('es-ES', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+      
+      const horaFormateada = fecha.toLocaleTimeString('es-ES', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: true
+      });
+      
+      contenido.innerHTML = `
+        <div style="margin-bottom: 20px;">
+          <h3 style="color: var(--primary); margin-bottom: 10px;">${cita.nombre}</h3>
+          <p style="display: flex; align-items: center; margin-bottom: 8px;">
+            <i class="fas fa-calendar-day" style="color: var(--primary); margin-right: 10px; width: 20px;"></i>
+            ${fechaFormateada}
+          </p>
+          <p style="display: flex; align-items: center; margin-bottom: 8px;">
+            <i class="fas fa-clock" style="color: var(--primary); margin-right: 10px; width: 20px;"></i>
+            ${horaFormateada}
+          </p>
+          ${cita.descripcion ? `
+            <p style="display: flex; align-items: flex-start; margin-bottom: 8px;">
+              <i class="fas fa-align-left" style="color: var(--primary); margin-right: 10px; width: 20px;"></i>
+              ${cita.descripcion}
+            </p>
+          ` : ''}
+        </div>
+      `;
+      
+      // Mostrar modal
+      document.getElementById('overlayDetalle').classList.add('active');
+      
+      // Animación de entrada
+      anime({
+        targets: '#detalleCliente',
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        easing: 'easeOutExpo'
+      });
+    }
+
+    function cerrarDetalles() {
+      // Detener cuenta regresiva si está activa
+      if (intervaloReloj) {
+        clearInterval(intervaloReloj);
+        intervaloReloj = null;
+      }
+      
+      // Ocultar contador
+      document.getElementById('contenedorCuentaRegresiva').style.display = 'none';
+      
+      // Animación de salida
+      anime({
+        targets: '#detalleCliente',
+        opacity: 0,
+        translateY: 20,
+        duration: 300,
+        easing: 'easeInOutQuad',
+        complete: () => {
+          document.getElementById('overlayDetalle').classList.remove('active');
+        }
+      });
+    }
+
+    async function eliminarCliente(id) {
+      showLoader();
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/eliminar-cliente', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+
+        const resultado = await res.json();
+
+        if (res.ok && resultado.ok) {
+          showNotification('success', 'Éxito', 'Cliente eliminado correctamente');
+          cerrarDetalles();
+          cargarListaEspera();
+        } else {
+          showNotification('error', 'Error', 'No se pudo eliminar el cliente');
+        }
+      } catch (err) {
+        showNotification('error', 'Error', 'Error al eliminar el cliente');
+        console.error(err);
+      } finally {
+        hideLoader();
+      }
+    }
+
+    async function finalizarCliente(id) {
+      showLoader();
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/finalizar-cliente', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id })
+        });
+
+        const resultado = await res.json();
+
+        if (res.ok && resultado.ok) {
+          showNotification('success', 'Éxito', 'Caso marcado como finalizado');
+          cerrarDetalles();
+          cargarListaEspera();
+        } else {
+          showNotification('error', 'Error', 'No se pudo finalizar el caso');
+        }
+      } catch (err) {
+        showNotification('error', 'Error', 'Error al finalizar el caso');
+        console.error(err);
+      } finally {
+        hideLoader();
+      }
+    }
+
+    function iniciarCuentaRegresiva(fechaFin) {
+      if (intervaloReloj) clearInterval(intervaloReloj);
+      
+      const contenedor = document.getElementById('contenedorCuentaRegresiva');
+      const contador = document.getElementById('cuentaRegresiva');
+      
+      contenedor.style.display = 'block';
+      
+      const objetivo = new Date(fechaFin + "T23:59:59").getTime();
+      
+      function actualizarReloj() {
+        const ahora = new Date().getTime();
+        const diferencia = objetivo - ahora;
+
+        if (diferencia <= 0) {
+          contador.innerHTML = '<i class="fas fa-check-circle"></i> Finalizado';
+          clearInterval(intervaloReloj);
+          intervaloReloj = null;
+          return;
+        }
+
+        const dias = Math.floor(diferencia / (1000 * 60 * 60 * 24));
+        const horas = Math.floor((diferencia % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutos = Math.floor((diferencia % (1000 * 60 * 60)) / (1000 * 60));
+        const segundos = Math.floor((diferencia % (1000 * 60)) / 1000);
+
+        contador.innerHTML = `
+          <span style="color: ${dias < 3 ? 'var(--danger)' : 'var(--warning)'}">
+            ${dias}d ${horas}h ${minutos}m ${segundos}s
+          </span>
+        `;
+      }
+
+      actualizarReloj();
+      intervaloReloj = setInterval(actualizarReloj, 1000);
+    }
+
+    function recargarCitasAnimado() {
+      const btn = document.querySelector('.sidebar-header button');
+      
+      // Animación de giro
+      anime({
+        targets: btn,
+        rotate: 360,
+        duration: 800,
+        easing: 'easeInOutQuad',
+        complete: () => {
+          btn.style.transform = 'rotate(0)';
+        }
+      });
+      
+      cargarCitas();
+    }
+
+    // Funciones para documentos
+    function abrirModalDocs() {
+      document.getElementById('modalDocsOverlay').classList.add('active');
+      renderizarArchivos();
+    }
+
+    function cerrarModalDocs() {
+      document.getElementById('modalDocsOverlay').classList.remove('active');
+      document.getElementById('barraProgreso').style.display = 'none';
+      document.getElementById('barraProgresoInterna').style.width = '0%';
+    }
+
+    function renderizarArchivos() {
+      const contenedor = document.getElementById("contenedorArchivos");
+      contenedor.innerHTML = "";
+
+      archivos.forEach((archivo, index) => {
+        const fileCard = document.createElement('div');
+        fileCard.className = 'file-card';
+        
+        fileCard.innerHTML = `
+          <div class="file-icon" style="background: ${archivo.color}20; color: ${archivo.color}">
+            <i class="fas fa-${archivo.icono}"></i>
+          </div>
+          <div class="file-name">${archivo.nombre}</div>
+          <button class="btn btn-sm" onclick="iniciarDescarga('${archivo.id}', '${archivo.nombre}')" 
+            style="background: ${archivo.color}; color: white;">
+            <i class="fas fa-download"></i> Descargar
+          </button>
+        `;
+        
+        contenedor.appendChild(fileCard);
+        
+        // Animación de entrada escalonada
+        anime({
+          targets: fileCard,
+          opacity: [0, 1],
+          translateY: [20, 0],
+          delay: index * 100,
+          duration: 400,
+          easing: 'easeOutExpo'
+        });
+      });
+    }
+
+    function iniciarDescarga(fileId, fileName) {
+      const barra = document.getElementById('barraProgreso');
+      const interna = document.getElementById('barraProgresoInterna');
+      barra.style.display = 'block';
+      
+      // Animación de progreso simulada
+      let progreso = 0;
+      interna.style.width = '0%';
+      
+      const intervalo = setInterval(() => {
+        progreso += Math.floor(Math.random() * 15) + 5;
+        interna.style.width = Math.min(progreso, 100) + '%';
+        
+        if (progreso >= 100) {
+          clearInterval(intervalo);
+          
+          // Simular descarga después de completar la barra
+          setTimeout(() => {
+            const url = `https://drive.google.com/uc?export=download&id=${fileId}`;
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            showNotification('success', 'Descarga completada', `El archivo ${fileName} se ha descargado`);
+            
+            // Resetear barra
+            setTimeout(() => {
+              anime({
+                targets: interna,
+                width: '0%',
+                duration: 500,
+                easing: 'easeOutExpo',
+                complete: () => {
+                  barra.style.display = 'none';
+                }
+              });
+            }, 1000);
+          }, 500);
+        }
+      }, 200);
+    }
+
+    // Funciones para modales iframe
+    function abrirPerfil() {
+      document.getElementById('iframePerfilOverlay').classList.add('active');
+    }
+
+    function cerrarIframePerfil() {
+      document.getElementById('iframePerfilOverlay').classList.remove('active');
+      
+      // Actualizar foto de perfil si se cambió
+      const foto = localStorage.getItem("fotoPerfil") || "https://i.imgur.com/JRBQ9Vq.png";
+      document.getElementById("fotoUsuarioBtn").src = foto;
+      document.getElementById("dropdownUserImg").src = foto;
+      document.getElementById("perfilFlotante").src = foto;
+    }
+
+    function abrirWhatsapp() {
+      const modal = document.getElementById('whatsappModal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.querySelector('div').style.transform = 'translateY(0)';
+      }, 10);
+    }
+
+    function cerrarWhatsapp() {
+      const modal = document.getElementById('whatsappModal');
+      modal.style.opacity = '0';
+      modal.querySelector('div').style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+      }, 300);
+    }
+
+    function mostrarListaClientes() {
+      const modal = document.getElementById('clientesModal');
+      modal.style.display = 'flex';
+      setTimeout(() => {
+        modal.style.opacity = '1';
+        modal.querySelector('div').style.transform = 'translateY(0)';
+      }, 10);
+    }
+
+    function cerrarClientes() {
+      const modal = document.getElementById('clientesModal');
+      modal.style.opacity = '0';
+      modal.querySelector('div').style.transform = 'translateY(20px)';
+      setTimeout(() => {
+        modal.style.display = 'none';
+        cargarListaEspera(); // Recargar lista si es necesario
+      }, 300);
+    }
+
+    function ajustarPosicionUsuario() {
+      const citasPanel = document.getElementById("citasPanel");
+      const userMenu = document.querySelector(".user-menu");
+
+      if (!citasPanel || !userMenu) return;
+
+      if (citasPanel.classList.contains("active")) {
+        userMenu.style.right = "300px"; // se aleja del borde derecho
+      } else {
+        userMenu.style.right = "20px"; // posición normal
+      }
+    }
+
+    async function cargarClientesGestion() {
+      const panel = document.getElementById('panelGestionClientes');
+      
+      // Mostrar loader mientras carga
+      panel.innerHTML = `
+        <div class="loader-container">
+          <div class="loader-spinner"></div>
+          <p>Cargando clientes...</p>
+        </div>
+      `;
+      
+      try {
+        const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/lista-espera');
+        const lista = await res.json();
+        
+        panel.innerHTML = '';
+        
+        if (lista.length === 0) {
+          panel.innerHTML = `
+            <div class="empty-state">
+              <i class="fas fa-users-slash"></i>
+              <h3>No hay clientes en gestión</h3>
+              <p>Actualmente no hay clientes asignados para seguimiento.</p>
+              <button class="btn btn-primary" onclick="mostrarListaClientes()">
+                <i class="fas fa-user-plus"></i> Asignar clientes
+              </button>
+            </div>
+          `;
+          return;
+        }
+        
+        // Ordenar por progreso descendente
+        lista.sort((a, b) => {
+          const aProg = parseInt(a.progreso || 0);
+          const bProg = parseInt(b.progreso || 0);
+          return bProg - aProg;
+        });
+        
+        // Renderizar con animación escalonada
+        lista.forEach((cliente, index) => {
+          setTimeout(() => {
+            renderizarGestionCliente(cliente);
+          }, index * 100);
+        });
+      } catch (error) {
+        console.error('Error al cargar clientes:', error);
+        panel.innerHTML = `
+          <div class="error-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Error al cargar clientes</h3>
+            <p>No se pudo obtener la lista de clientes.</p>
+            <button class="btn btn-outline" onclick="cargarClientesGestion()">
+              <i class="fas fa-sync-alt"></i> Reintentar
+            </button>
+          </div>
+        `;
+      }
+    }
+
+    function renderizarGestionCliente(cliente) {
+      const contenedor = document.getElementById('panelGestionClientes');
+      const card = document.createElement('div');
+      card.className = 'card gestion-card';
+      card.dataset.clienteId = cliente.id;
+      
+      // Añadir clase según progreso para estilos diferentes
+      const progresoNum = parseInt(cliente.progreso || 0);
+      if (progresoNum >= 80) card.classList.add('completo');
+      else if (progresoNum >= 50) card.classList.add('en-progreso');
+      else card.classList.add('pendiente');
+
+      card.innerHTML = `
+        <div class="card-header">
+          <div class="card-title">
+            <i class="fas fa-user-circle"></i> ${cliente.nombre}
+            <span class="badge-progreso">${cliente.progreso || '0%'}</span>
+          </div>
+          <div class="card-actions">
+            <button class="btn-icon" onclick="verArchivosCliente('${cliente.id}')" title="Documentos">
+              <i class="fas fa-folder-open"></i>
+            </button>
+       <button class="btn-icon" onclick='verDetallesDesdeGestion("${cliente.id}")' title="Detalles">
+  <i class="fas fa-info-circle"></i>
+</button>
+
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="cliente-info-grid">
+            <div class="cliente-foto">
+              <label>Foto de Perfil</label>
+              <div class="avatar-container">
+                <img src="${cliente.foto || 'https://i.imgur.com/JRBQ9Vq.png'}" 
+                     class="avatar" 
+                     alt="${cliente.nombre}" />
+                <div class="avatar-overlay" onclick="cambiarFotoCliente('${cliente.id}')">
+                  <i class="fas fa-camera"></i>
+                </div>
+              </div>
+            </div>
+            <div class="cliente-progreso">
+              <label>Progreso del Caso</label>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" style="width: ${cliente.progreso || '0%'}" 
+                       data-progress="${cliente.progreso || '0'}"></div>
+                  <div class="progress-text">${cliente.progreso || '0%'}</div>
+                </div>
+                <input type="range" min="0" max="100" value="${progresoNum}" 
+                       class="progress-slider"
+                       oninput="actualizarProgresoVisual(this, '${cliente.id}')"
+                       onchange="actualizarProgreso('${cliente.id}', this.value)">
+              </div>
+            </div>
+          </div>
+          <div class="cliente-meta">
+            <span class="meta-item">
+              <i class="fas fa-calendar-alt"></i> ${cliente.fechaInicio || 'Sin fecha'}
+            </span>
+            <span class="meta-item">
+              <i class="fas fa-tag"></i> ${cliente.tipoProceso || 'No especificado'}
+            </span>
+          </div>
+        </div>
+      `;
+
+      // Animación de entrada
+      anime({
+        targets: card,
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 400,
+        easing: 'easeOutExpo',
+        delay: Math.random() * 200 // Efecto escalonado aleatorio
+      });
+
+      contenedor.appendChild(card);
+    }
+
+    // Actualización visual inmediata + animación
+    function actualizarProgresoVisual(slider, clienteId) {
+      const value = slider.value;
+      const card = slider.closest('.gestion-card');
+      
+      if (card) {
+        const fill = card.querySelector('.progress-fill');
+        const text = card.querySelector('.progress-text');
+        
+        // Animación suave del progreso
+        anime({
+          targets: fill,
+          width: `${value}%`,
+          duration: 300,
+          easing: 'easeOutQuad'
+        });
+        
+        text.textContent = `${value}%`;
+        
+        // Actualizar clases según progreso
+        card.classList.remove('pendiente', 'en-progreso', 'completo');
+        if (value >= 80) card.classList.add('completo');
+        else if (value >= 50) card.classList.add('en-progreso');
+        else card.classList.add('pendiente');
+      }
+    }
+
+    // Envío al servidor con mejor manejo de errores
+    async function actualizarProgreso(id, valor) {
+      try {
+        const response = await fetch('https://jawfish-saving-grossly.ngrok-free.app/actualizar-progreso', {
+          method: 'POST',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          },
+          body: JSON.stringify({ 
+            id, 
+            progreso: `${valor}%`,
+            ultimaActualizacion: new Date().toISOString()
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error('Error en la respuesta del servidor');
+        }
+
+        const data = await response.json();
+        
+        // Notificación mejorada con animación
+        showNotification('success', 'Progreso actualizado', 
+          `El progreso se actualizó a ${valor}%`, {
+            icon: 'fas fa-check-circle',
+            animation: 'tada'
+          });
+        
+        // Actualizar badge en la tarjeta
+        const card = document.querySelector(`.gestion-card[data-cliente-id="${id}"]`);
+        if (card) {
+          const badge = card.querySelector('.badge-progreso');
+          if (badge) {
+            anime({
+              targets: badge,
+              scale: [1.5, 1],
+              color: ['#4CAF50', '#333'],
+              duration: 600,
+              easing: 'easeOutElastic'
+            });
+            badge.textContent = `${valor}%`;
+          }
+        }
+        
+      } catch (error) {
+        console.error('Error al actualizar progreso:', error);
+        showNotification('error', 'Error', 
+          'No se pudo guardar el progreso. Intente nuevamente.', {
+            icon: 'fas fa-exclamation-triangle',
+            autoClose: false
+          });
+        
+        // Revertir visualmente si hay error
+        const slider = document.querySelector(`.progress-slider[data-client-id="${id}"]`);
+        if (slider) {
+          slider.value = slider.getAttribute('data-last-value') || 0;
+          actualizarProgresoVisual(slider, id);
+        }
+      }
+    }
+
+    async function verArchivosCliente(clienteId) {
+      showLoader();
+      
+      // Simular carga de archivos
+      setTimeout(() => {
+        hideLoader();
+        
+        // Mostrar modal de documentos
+        const modal = document.getElementById('modalDocsOverlay');
+        modal.classList.add('active');
+        
+        // Configurar título específico
+        const modalTitle = modal.querySelector('.modal-title');
+        modalTitle.innerHTML = `<i class="fas fa-folder-open"></i> Documentos del Cliente`;
+        
+        // Cargar archivos específicos del cliente
+        renderizarArchivosCliente(clienteId);
+      
+        // Animación de entrada
+        anime({
+          targets: modal.querySelector('.modal'),
+          opacity: [0, 1],
+          translateY: [20, 0],
+          duration: 400,
+          easing: 'easeOutExpo'
+        });
+      }, 800);
+    }
+
+    async function renderizarArchivosCliente(clienteId) {
+      const contenedor = document.getElementById("contenedorArchivos");
+      contenedor.innerHTML = "";
+
+      // Botón para subir
+      const subir = document.createElement("div");
+      subir.className = "file-card subir-nuevo";
+      subir.innerHTML = `<div class="file-icon">+</div><div class="file-name">Subir nuevo</div>`;
+      subir.onclick = () => seleccionarArchivo(clienteId);
+      contenedor.appendChild(subir);
+
+      // Cargar archivos del servidor
+      try {
+        const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/archivos/${clienteId}`);
+        const archivos = await res.json();
+
+        archivos.forEach((archivo, index) => {
+          const card = document.createElement("div");
+          card.className = "file-card";
+
+          const nombreSeguro = archivo.nombre || `archivo-${Date.now()}.pdf`;
+          card.innerHTML = `
+            <div class="file-icon"><i class="fas fa-file-pdf"></i></div>
+            <div class="file-name">${nombreSeguro}</div>
+            <a href="${archivo.base64}" download="${nombreSeguro}" class="btn btn-sm">📥 Descargar</a>
+          `;
+
+          // Click derecho para eliminar
+          card.addEventListener("contextmenu", async (e) => {
+            e.preventDefault();
+            const confirmacion = await Swal.fire({
+              title: `¿Eliminar "${nombreSeguro}"?`,
+              text: "Esta acción no se puede deshacer.",
+              icon: "warning",
+              showCancelButton: true,
+              confirmButtonText: "Sí, eliminar",
+              cancelButtonText: "Cancelar",
+              confirmButtonColor: "#d33"
+            });
+
+            if (confirmacion.isConfirmed) {
+              try {
+                const res = await fetch("/eliminar-archivo", {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ clienteId, nombre: nombreSeguro })
+                });
+
+                const data = await res.json();
+                if (data.ok) {
+                  showNotification("success", "Eliminado", "Archivo eliminado correctamente");
+                  renderizarArchivosCliente(clienteId);
+                } else {
+                  showNotification("error", "Error", data.error || "No se pudo eliminar el archivo");
+                }
+              } catch (err) {
+                showNotification("error", "Error", "Error al eliminar archivo");
+                console.error(err);
+              }
+            }
+          });
+
+          contenedor.appendChild(card);
+        });
+
+      } catch (err) {
+        showNotification("error", "Error", "No se pudieron cargar los archivos");
+      }
+    }
+
+    function seleccionarArchivo(clienteId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+
+      input.onchange = async (e) => {
+        const archivo = e.target.files[0];
+        if (!archivo) return;
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result;
+          try {
+            const res = await fetch('/subir-archivo', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                clienteId,
+                nombre: archivo.name,
+                base64
+              })
+            });
+
+            const data = await res.json();
+            if (data.ok) {
+              showNotification("success", "Archivo subido", archivo.name);
+              renderizarArchivosCliente(clienteId);
+            } else {
+              showNotification("error", "Error", data.error || "No se pudo subir");
+            }
+          } catch (err) {
+            showNotification("error", "Error", "Error al subir archivo");
+            console.error(err);
+          }
+        };
+
+        reader.readAsDataURL(archivo); // Convierte a base64
+      };
+
+      input.click();
+    }
+
+    function mostrarDetallesCliente(clienteId) {
+      showLoader();
+      
+      fetch(`https://jawfish-saving-grossly.ngrok-free.app/cliente/${clienteId}`)
+        .then(res => res.json())
+        .then(cliente => {
+          hideLoader();
+          clienteActivoId = clienteId;
+          verDetalles(cliente);
+        })
+        .catch(error => {
+          hideLoader();
+          showNotification('error', 'Error', 'No se pudieron cargar los detalles del cliente');
+          console.error('Error al cargar detalles:', error);
+        });
+    }
+
+    function cambiarFotoCliente(clienteId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.onchange = async (e) => {
+        const archivo = e.target.files[0];
+        if (!archivo) return;
+
+        const reader = new FileReader();
+        reader.onload = async () => {
+          const base64 = reader.result;
+          try {
+            const res = await fetch('/actualizar-foto-cliente', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                clienteId,
+                foto: base64
+              })
+            });
+
+            const data = await res.json();
+            if (data.ok) {
+              showNotification("success", "Foto actualizada", "La foto del cliente se ha actualizado");
+              cargarClientesGestion();
+            } else {
+              showNotification("error", "Error", data.error || "No se pudo actualizar la foto");
+            }
+          } catch (err) {
+            showNotification("error", "Error", "Error al actualizar la foto");
+            console.error(err);
+          }
+        };
+
+        reader.readAsDataURL(archivo);
+      };
+
+      input.click();
+    }
+
+    // Cerrar sesión
+    function cerrarSesion() {
+      localStorage.removeItem("isAuthenticated");
+      localStorage.removeItem("nombreUsuario");
+      localStorage.removeItem("fotoPerfil");
+      window.location.href = "Login.html";
+    }
+
+    // Inicialización
+    document.addEventListener("DOMContentLoaded", () => {
+      // Verificar autenticación
+      if (localStorage.getItem("isAuthenticated") !== "true") {
+        window.location.href = "Login.html";
+        return;
+      }
+      
+      // Cargar datos del usuario
+      const nombreUsuario = localStorage.getItem("nombreUsuario") || "Usuario";
+      const fotoUsuario = localStorage.getItem("fotoPerfil") || "https://i.imgur.com/JRBQ9Vq.png";
+      
+      document.getElementById("dropdownUserName").textContent = nombreUsuario;
+      document.getElementById("fotoUsuarioBtn").src = fotoUsuario;
+      document.getElementById("dropdownUserImg").src = fotoUsuario;
+      document.getElementById("perfilFlotante").src = fotoUsuario;
+      
+      // Cargar datos iniciales
+      cargarListaEspera();
+      cargarCitas();
+      
+      // Actualizar citas cada minuto
+      setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          cargarCitas();
+        }
+      }, 60000);
+      
+      // Efecto de entrada inicial
+      anime({
+        targets: '.container',
+        opacity: [0, 1],
+        translateY: [20, 0],
+        duration: 600,
+        easing: 'easeOutExpo'
+      });
+      
+      // Efecto flotante para la barra de tareas
+      anime({
+        targets: '.taskbar',
+        translateY: [20, 0],
+        opacity: [0, 1],
+        duration: 800,
+        delay: 300,
+        easing: 'easeOutExpo'
+      });
+    });
+    async function verDetallesDesdeGestion(id) {
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${id}`);
+    const datos = await res.json();
+    verDetalles(datos); // reutiliza tu función existente
+  } catch (error) {
+    showNotification('error', 'Error', 'No se pudo obtener los detalles del cliente');
+    console.error(error);
+  }
+}
+
+
+async function eliminarPago(clienteId, index) {
+  const confirmacion = await Swal.fire({
+    title: '¿Eliminar este pago?',
+    text: 'Esta acción no se puede deshacer',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3085d6',
+    confirmButtonText: 'Sí, eliminar',
+    cancelButtonText: 'Cancelar'
+  });
+
+  if (!confirmacion.isConfirmed) return;
+
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}/pagos/${index}`, {
+      method: 'DELETE'
+    });
+
+    const resultado = await res.json();
+
+    if (resultado.ok) {
+      showNotification('success', 'Éxito', `Pago eliminado correctamente`);
+      cargarPanelPagos();
+    } else {
+      throw new Error('Respuesta no OK del servidor');
+    }
+
+  } catch (err) {
+    console.error('❌ Error al eliminar pago:', err);
+    showNotification('error', 'Error', 'No se pudo eliminar el pago');
+  }
+}
+
+
+async function cargarPanelPagos() {
+  const contenedor = document.getElementById('contenedor-pagos');
+  contenedor.innerHTML = '<div class="loader">Cargando pagos...</div>';
+
+  try {
+    const res = await fetch('https://jawfish-saving-grossly.ngrok-free.app/clientes');
+    if (!res.ok) throw new Error('Error al cargar clientes');
+    
+    const clientes = await res.json();
+
+    if (!clientes || clientes.length === 0) {
+      contenedor.innerHTML = '<div class="empty-state"><i class="fas fa-wallet"></i><p>No hay clientes registrados</p></div>';
+      return;
+    }
+
+    contenedor.innerHTML = '';
+    
+    clientes.forEach(cliente => {
+      const tarjeta = document.createElement('div');
+      tarjeta.className = 'tarjeta-pago';
+      
+      // Verificar si tiene pagos
+      const tienePagos = cliente.pagos && cliente.pagos.length > 0;
+      const totalPagado = tienePagos ? 
+        cliente.pagos.filter(p => p.estado === 'Pagado').reduce((sum, p) => sum + p.monto, 0) : 0;
+      
+      tarjeta.innerHTML = `
+        <div class="cliente-header">
+          <h3 style="color: var(--primary); margin-bottom: 5px;">
+            <i class="fas fa-user"></i> ${cliente.nombre || 'Cliente sin nombre'}
+          </h3>
+          <p><strong>ID:</strong> ${cliente.id}</p>
+          <p><strong>Proceso:</strong> ${cliente.proceso || 'No especificado'}</p>
+          <p><strong>Total pagado:</strong> $${totalPagado.toFixed(2)}</p>
+        </div>
+        
+        <div class="pagos-lista">
+          <div class="pagos-header">
+            <h4 style="margin: 15px 0 10px;">Historial de Pagos</h4>
+            <button class="btn btn-sm btn-primary" onclick="abrirModalPago('${cliente.id}')">
+              <i class="fas fa-plus"></i> Nuevo Pago
+            </button>
+          </div>
+          
+          ${tienePagos ? 
+            cliente.pagos.map((pago, index) => `
+              <div class="pago-item">
+                <div>
+                  <span style="font-weight: bold;">$${pago.monto.toFixed(2)}</span>
+                  <span class="pago-estado ${pago.estado === 'Pagado' ? 'pago-pagado' : 'pago-pendiente'}">
+                    ${pago.estado}
+                  </span>
+                  <span style="color: #666; font-size: 0.9em;">${pago.fecha || 'Sin fecha'}</span>
+                </div>
+                <div>
+                  <button class="btn-icon" onclick="abrirModalPago('${cliente.id}', ${index})" title="Editar">
+                    <i class="fas fa-edit"></i>
+                  </button>
+                  <button class="btn-icon" onclick="eliminarPago('${cliente.id}', ${index})" title="Eliminar">
+                    <i class="fas fa-trash" style="color: #ff4d4f;"></i>
+                  </button>
+                </div>
+              </div>
+            `).join('') 
+            : '<p style="color: #999; text-align: center;"><em>No hay pagos registrados</em></p>'
+          }
+        </div>
+      `;
+      
+      contenedor.appendChild(tarjeta);
+    });
+
+  } catch (err) {
+    console.error('Error al cargar pagos:', err);
+    contenedor.innerHTML = `
+      <div class="alert alert-danger">
+        <i class="fas fa-exclamation-triangle"></i> Error al cargar los pagos: ${err.message}
+      </div>
+    `;
+  }
+}
+
+async function agregarPago(clienteId) {
+  const monto = prompt('Monto del pago:');
+  if (!monto || isNaN(monto)) return alert('Monto inválido');
+
+  const estado = prompt('Estado (Pagado o Pendiente):');
+  if (!estado || !['Pagado', 'Pendiente'].includes(estado)) return alert('Estado inválido');
+
+  const fecha = prompt('Fecha del pago (YYYY-MM-DD):');
+  if (!fecha) return alert('Fecha inválida');
+
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`);
+    const cliente = await res.json();
+
+    if (!cliente.pagos) cliente.pagos = [];
+
+    cliente.pagos.push({
+      monto: parseFloat(monto),
+      estado,
+      fecha
+    });
+
+    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(cliente)
+    });
+
+    cargarPanelPagos();
+  } catch (err) {
+    alert('Error al añadir el pago');
+    console.error(err);
+  }
+}
+
+
+
+
+
+
+let clientePagoActual = null;
+let pagoIndexActual = null;
+
+// Función para abrir el modal de pagos
+function abrirModalPago(clienteId, index = null) {
+  clientePagoActual = clienteId;
+  pagoIndexActual = index;
+
+  const modal = document.getElementById('modalPago');
+  const titulo = document.getElementById('modalPagoTitulo');
+  const monto = document.getElementById('pagoMonto');
+  const estado = document.getElementById('pagoEstado');
+  const fecha = document.getElementById('pagoFecha');
+
+  // Mostrar el modal
+  modal.style.display = 'flex';
+
+  // Configurar el formulario según si es edición o nuevo
+  if (index !== null) {
+    titulo.textContent = 'Editar Pago';
+
+    fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`)
+      .then(res => res.json())
+      .then(cliente => {
+        const pago = cliente.pagos?.[index];
+        if (pago) {
+          monto.value = pago.monto ?? '';
+          estado.value = pago.estado ?? 'Pagado';
+          fecha.value = pago.fecha ?? new Date().toISOString().split('T')[0];
+        } else {
+          showNotification('error', 'Error', 'No se pudo cargar el pago');
+          cerrarModalPago();
+        }
+      })
+      .catch(err => {
+        console.error('Error al obtener cliente:', err);
+        showNotification('error', 'Error', 'Error al cargar datos del cliente');
+        cerrarModalPago();
+      });
+
+  } else {
+    titulo.textContent = 'Agregar Pago';
+    monto.value = '';
+    estado.value = 'Pagado';
+    fecha.value = new Date().toISOString().split('T')[0];
+  }
+}
+
+
+// Función para cerrar el modal
+function cerrarModalPago() {
+  document.getElementById('modalPago').style.display = 'none';
+}
+
+// Función para guardar el pago
+document.getElementById('btnGuardarPago').onclick = async function() {
+  const monto = parseFloat(document.getElementById('pagoMonto').value);
+  const estado = document.getElementById('pagoEstado').value;
+  const fecha = document.getElementById('pagoFecha').value;
+  
+  if (!monto || isNaN(monto)) {
+    alert('Por favor ingrese un monto válido');
+    return;
+  }
+  
+  if (!fecha) {
+    alert('Por favor seleccione una fecha');
+    return;
+  }
+  
+  try {
+    // Obtener cliente actual
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/clientes/${clientePagoActual}`);
+    const cliente = await res.json();
+    
+    if (!cliente.pagos) cliente.pagos = [];
+    
+    // Actualizar o agregar pago
+    if (pagoIndexActual !== null) {
+      // Editar pago existente
+      cliente.pagos[pagoIndexActual] = { monto, estado, fecha }; // ← así está bien
+delete cliente.pagos[pagoIndexActual].tipo; // ← elimina tipo si existía
+    } else {
+      // Agregar nuevo pago
+      cliente.pagos.push({ monto, estado, fecha });
+    }
+    
+    // Guardar cambios
+    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/editar-cliente/${clientePagoActual}`, {
+  method: 'PUT',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(cliente)
+});
+
+    
+    // Recargar panel y cerrar modal
+    cargarPanelPagos();
+    cerrarModalPago();
+    showNotification('success', 'Éxito', pagoIndexActual !== null ? 'Pago actualizado' : 'Pago agregado');
+    
+  } catch (err) {
+    console.error('Error al guardar pago:', err);
+    showNotification('error', 'Error', 'No se pudo guardar el pago');
+  }
+};
+
+  </script>
+</body>
+</html>

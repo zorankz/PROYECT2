@@ -1,0 +1,2030 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Panel de Mensajes Premium</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary-color: #5c6bc0;
+      --primary-light: #8e99f3;
+      --primary-dark: #26418f;
+      --secondary-color: #26a69a;
+      --secondary-light: #64d8cb;
+      --secondary-dark: #00766c;
+      --background: #f5f7fa;
+      --surface: #ffffff;
+      --error: #ef5350;
+      --on-primary: #ffffff;
+      --on-secondary: #ffffff;
+      --on-background: #263238;
+      --on-surface: #263238;
+      --on-error: #ffffff;
+      --border-radius: 12px;
+      --box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #f0f2f5;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+}
+
+
+/* Ajustar el layout al 100% del contenedor */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr 1.5fr;
+  width: 100%;
+  height: 100%;
+}
+    /* Barra lateral */
+    .sidebar {
+  background-color: #ebf5fa; /* Cambia este valor */
+  border-right: 1px solid rgba(0, 0, 0, 0.08);
+  padding: 24px 16px;
+  display: flex;
+  flex-direction: column;
+  z-index: 10;
+  transform: translateX(0);
+  transition: var(--transition);
+}
+
+    .profile {
+      text-align: center;
+      padding: 20px 0;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      animation: fadeIn 0.6s ease-out;
+    }
+
+    .profile img {
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-bottom: 12px;
+      border: 3px solid var(--primary-light);
+      box-shadow: 0 4px 12px rgba(92, 107, 192, 0.2);
+      transition: var(--transition);
+    }
+
+    .profile img:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 16px rgba(92, 107, 192, 0.3);
+    }
+
+    .profile h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 4px;
+      color: var(--primary-dark);
+    }
+
+    .profile p {
+      font-size: 14px;
+      color: var(--secondary-dark);
+      margin-bottom: 4px;
+    }
+
+    .profile small {
+      font-size: 12px;
+      color: var(--on-background);
+      opacity: 0.7;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .connection-status {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    #connection-dot {
+      font-size: 16px;
+      margin-right: 6px;
+    }
+
+    /* Navegación */
+    .nav-links {
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .nav-links ul {
+      list-style: none;
+    }
+
+    .nav-links li {
+      margin-bottom: 4px;
+      border-radius: var(--border-radius);
+      overflow: hidden;
+      transition: var(--transition);
+    }
+
+    .nav-links li:hover {
+      background-color: rgba(92, 107, 192, 0.08);
+    }
+
+    .nav-links li.active {
+      background-color: var(--primary-color);
+    }
+
+    .nav-links li.active span {
+      color: rgb(247, 247, 247);
+    }
+
+    .nav-links li span {
+      display: block;
+      padding: 12px 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    /* Lista de chats */
+    .inbox {
+      background-color: var(--surface);
+      border-right: 1px solid rgba(0, 0, 0, 0.08);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateX(0);
+      transition: var(--transition);
+    }
+
+    .inbox-header {
+      padding: 20px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .inbox-header h2 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-dark);
+    }
+
+    .inbox-header button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+      box-shadow: 0 2px 6px rgba(92, 107, 192, 0.3);
+    }
+
+    .inbox-header button:hover {
+      background-color: var(--primary-dark);
+      transform: scale(1.1);
+    }
+
+    .chat-list {
+      flex-grow: 1;
+      overflow-y: auto;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .chat-item {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.04);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .chat-item::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background-color: transparent;
+      transition: var(--transition);
+    }
+
+    .chat-item:hover {
+      background-color: rgba(92, 107, 192, 0.05);
+    }
+
+    .chat-item:hover::before {
+      background-color: var(--primary-light);
+    }
+
+    .chat-item.selected {
+      background-color: rgba(92, 107, 192, 0.1);
+    }
+
+    .chat-item.selected::before {
+      background-color: var(--primary-color);
+    }
+
+    .chat-item img {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 12px;
+      transition: var(--transition);
+    }
+
+    .chat-item:hover img {
+      transform: rotate(5deg);
+    }
+
+    .chat-info {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .chat-info strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-info p {
+      font-size: 13px;
+      color: var(--on-surface);
+      opacity: 0.7;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .chat-time {
+      font-size: 11px;
+      color: var(--on-surface);
+      opacity: 0.5;
+      margin-left: 8px;
+      white-space: nowrap;
+    }
+
+    /* Panel de chat */
+    .chat-panel {
+      display: flex;
+      flex-direction: column;
+      background-color: var(--surface);
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      background-color: var(--surface);
+      z-index: 2;
+    }
+
+    .chat-header div {
+      flex-grow: 1;
+    }
+
+    .chat-header h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: var(--primary-dark);
+    }
+
+    .chat-header small {
+      font-size: 12px;
+      color: var(--on-surface);
+      opacity: 0.7;
+    }
+
+    .chat-header button {
+      background-color: transparent;
+      border: none;
+      color: var(--primary-color);
+      font-size: 18px;
+      cursor: pointer;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+    }
+
+    .chat-header button:hover {
+      background-color: rgba(92, 107, 192, 0.1);
+      transform: rotate(15deg);
+    }
+
+    .chat-body {
+      flex-grow: 1;
+      padding: 20px 24px 20px 24px; /* Asegura padding a los lados */
+      overflow-y: auto;
+      background-color: #f9f9f9;
+      background-image: 
+        linear-gradient(rgba(92, 107, 192, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(92, 107, 192, 0.03) 1px, transparent 1px);
+      background-size: 20px 20px;
+      position: relative;
+    }
+
+    .fecha-etiqueta {
+      text-align: center;
+      margin: 20px 0;
+      position: relative;
+    }
+
+    .fecha-etiqueta::before,
+    .fecha-etiqueta::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      width: 30%;
+      height: 1px;
+      background-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .fecha-etiqueta::before {
+      left: 0;
+    }
+
+    .fecha-etiqueta::after {
+      right: 0;
+    }
+
+    .fecha-etiqueta span {
+      display: inline-block;
+      background-color: var(--surface);
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--on-surface);
+      opacity: 0.7;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .message {
+      max-width: 70%;
+      margin-bottom: 16px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: var(--transition);
+    }
+
+    .message.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .message.sent {
+  align-self: flex-end;
+  align-items: flex-end;
+  margin-right: 8px;
+  margin-left: auto;
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+}
+
+
+    .message.received {
+      align-self: flex-start;
+      align-items: flex-start;
+    }
+
+    .mensaje-texto {
+      padding: 12px 16px;
+      border-radius: 18px;
+      font-size: 14px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      position: relative;
+      animation: messageAppear 0.3s ease-out forwards;
+    }
+    .message.sent .mensaje-texto {
+  background-color: var(--primary-color);
+  color: var(--on-primary);
+  border-top-right-radius: 4px;
+  border-top-left-radius: 18px;
+  border-bottom-left-radius: 18px;
+  border-bottom-right-radius: 18px;
+  padding: 12px 16px;
+  box-shadow: 0 2px 8px rgba(92, 107, 192, 0.3);
+  word-break: break-word;
+  display: inline-block;
+}
+
+
+
+    .message.received .mensaje-texto {
+      background-color: var(--surface);
+      color: var(--on-surface);
+      border-top-left-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .error-message .mensaje-texto {
+      background-color: var(--error);
+      color: var(--on-error);
+    }
+
+    .mensaje-footer {
+      display: flex;
+      align-items: center;
+      margin-top: 4px;
+      font-size: 11px;
+      color: var(--on-surface);
+      opacity: 0.6;
+    }
+
+    .message.sent .mensaje-footer {
+      flex-direction: row-reverse;
+    }
+
+    .estado-mensaje {
+      margin-left: 6px;
+      font-size: 10px;
+      transition: var(--transition);
+    }
+
+    .estado-mensaje.visto {
+      color: var(--secondary-color);
+    }
+
+    /* Archivos */
+    .mensaje-archivo {
+      padding: 12px 16px;
+      border-radius: 18px;
+      background-color: var(--surface);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      max-width: 100%;
+    }
+
+    .mensaje-archivo a {
+      display: flex;
+      align-items: center;
+      text-decoration: none;
+      color: var(--on-surface);
+      transition: var(--transition);
+    }
+
+    .mensaje-archivo a:hover {
+      color: var(--primary-color);
+    }
+
+    .mensaje-archivo i {
+      margin-right: 8px;
+      font-size: 18px;
+      color: var(--primary-color);
+    }
+
+    .preview-image {
+      max-width: 100%;
+      max-height: 300px;
+      border-radius: 8px;
+      transition: var(--transition);
+    }
+
+    .preview-image:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .preview-file {
+      display: flex;
+      align-items: center;
+      padding: 8px 12px;
+      background-color: rgba(92, 107, 192, 0.1);
+      border-radius: 8px;
+    }
+
+    .file-info {
+      display: flex;
+      align-items: center;
+      flex-grow: 1;
+    }
+
+    .file-info i {
+      margin-right: 8px;
+      color: var(--primary-color);
+    }
+
+    .file-info span {
+      flex-grow: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      margin-right: 8px;
+    }
+
+    .download-button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .download-button:hover {
+      background-color: var(--primary-dark);
+    }
+
+    /* Input de chat */
+    .chat-input {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      background-color: var(--surface);
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+      z-index: 2;
+    }
+
+    .chat-input input[type="text"] {
+      flex-grow: 1;
+      padding: 12px 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 24px;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+      margin: 0 8px;
+    }
+
+    .chat-input input[type="text"]:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.2);
+    }
+
+    .chat-input button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .chat-input button[data-action="upload"] {
+      background-color: transparent;
+      color: var(--primary-color);
+    }
+
+    .chat-input button[data-action="upload"]:hover {
+      background-color: rgba(92, 107, 192, 0.1);
+    }
+
+    .chat-input button[data-action="send"] {
+      box-shadow: 0 2px 6px rgba(92, 107, 192, 0.3);
+    }
+
+    .chat-input button[data-action="send"]:hover {
+      background-color: var(--primary-dark);
+      transform: scale(1.05);
+    }
+
+    /* Paneles flotantes */
+    .floating-panel {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.9);
+      background-color: var(--surface);
+      border-radius: var(--border-radius);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2);
+      width: 400px;
+      max-width: 90%;
+      z-index: 100;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .floating-panel.active {
+      opacity: 1;
+      visibility: visible;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .floating-panel h3 {
+      padding: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .panel-body {
+      padding: 20px;
+    }
+
+    .panel-body input {
+      width: 100%;
+      padding: 12px 16px;
+      margin-bottom: 16px;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
+      font-size: 14px;
+      outline: none;
+      transition: var(--transition);
+    }
+
+    .panel-body input:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(92, 107, 192, 0.2);
+    }
+
+    .panel-footer {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .panel-footer button {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .panel-footer button:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(92, 107, 192, 0.3);
+    }
+
+    /* Modales */
+    .modal-archivo {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: var(--transition);
+    }
+
+    .modal-archivo.visible {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .modal-contenido {
+      background-color: var(--surface);
+      border-radius: var(--border-radius);
+      width: 400px;
+      max-width: 90%;
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.3);
+      overflow: hidden;
+      transform: translateY(20px);
+      transition: var(--transition);
+    }
+
+    .modal-archivo.visible .modal-contenido {
+      transform: translateY(0);
+    }
+
+    .modal-contenido h3 {
+      padding: 20px;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary-dark);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    #preview-archivo-modal {
+      padding: 20px;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      padding: 16px 20px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .modal-footer button {
+      padding: 8px 16px;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-left: 8px;
+    }
+
+    .modal-footer button:first-child {
+      background-color: var(--primary-color);
+      color: white;
+      border: none;
+    }
+
+    .modal-footer button:first-child:hover {
+      background-color: var(--primary-dark);
+    }
+
+    .modal-footer button:last-child {
+      background-color: transparent;
+      color: var(--on-surface);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+    }
+
+    .modal-footer button:last-child:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    /* Menús contextuales */
+    .menu-opciones {
+      position: fixed;
+      background-color: var(--surface);
+      border-radius: 8px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transform: scale(0.95);
+      transition: var(--transition);
+    }
+
+    .menu-opciones.active {
+      opacity: 1;
+      visibility: visible;
+      transform: scale(1);
+    }
+
+    .menu-opciones button {
+      display: block;
+      width: 100%;
+      padding: 10px 16px;
+      text-align: left;
+      background: none;
+      border: none;
+      font-size: 14px;
+      color: var(--on-surface);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .menu-opciones button:hover {
+      background-color: rgba(92, 107, 192, 0.1);
+      color: var(--primary-color);
+    }
+
+    .menu-opciones button i {
+      margin-right: 8px;
+      width: 18px;
+      text-align: center;
+    }
+
+    /* Efecto ripple */
+    .ripple {
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ripple:after {
+      content: "";
+      display: block;
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+      background-image: radial-gradient(circle, #fff 10%, transparent 10.01%);
+      background-repeat: no-repeat;
+      background-position: 50%;
+      transform: scale(10, 10);
+      opacity: 0;
+      transition: transform .5s, opacity 1s;
+    }
+
+    .ripple:active:after {
+      transform: scale(0, 0);
+      opacity: 0.3;
+      transition: 0s;
+    }
+
+    /* Animaciones */
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes messageAppear {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1); }
+    }
+
+    @keyframes float {
+      0% { transform: translateY(0px); }
+      50% { transform: translateY(-5px); }
+      100% { transform: translateY(0px); }
+    }
+
+    /* Responsive */
+    @media (max-width: 1200px) {
+      .layout {
+        grid-template-columns: 240px 1fr;
+      }
+      
+      .chat-panel {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 100%;
+        height: 100%;
+        transform: translateX(100%);
+      }
+      
+      .chat-panel.active {
+        transform: translateX(0);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+      
+      .sidebar {
+        
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 280px;
+        height: 100%;
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .inbox {
+        margin-left: 0;
+      }
+    }
+
+    /* Clases utilitarias */
+    .hidden {
+      display: none !important;
+    }
+
+    .visible {
+      display: block !important;
+    }
+    .app-wrapper {
+  width: 1920px;           /* más ancho */
+  height: 1400px;           /* menos alto */
+  background-color: white;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.12);
+  overflow: hidden;
+  display: flex;
+}
+.chat-header-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.chat-foto {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--primary-light);
+}
+
+  </style>
+</head>
+<body>
+  <div class="app-wrapper">
+
+  <div class="layout">
+    <!-- Barra lateral -->
+    <aside class="sidebar">
+      <div class="profile" data-panel="perfil">
+        <img id="usuarioFoto" src="https://i.pravatar.cc/100" alt="Foto de perfil">
+        <h3 id="nombreUsuario">Zoran Kadrovic</h3>
+        <p id="estadoUsuario">Disponible</p>
+        
+        <small>9:00 - 18:00</small>
+        <div class="connection-status">
+          <span id="connection-dot">•</span>
+          <span id="connection-text">Conectando...</span>
+        </div>
+      </div>
+      
+      <nav class="nav-links">
+        <ul>
+          <li class="active" data-filter="pendientes">
+            <span><i class="fas fa-inbox"></i> Pendientes</span>
+          </li>
+          <li data-filter="abiertos">
+            <span><i class="fas fa-check-circle"></i> Abiertos</span>
+          </li>
+          <li data-filter="archivados">
+            <span><i class="fas fa-archive"></i> Archivados</span>
+          </li>
+          <li data-filter="clientes">
+            <span><i class="fas fa-users"></i> Clientes</span>
+          </li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- Lista de chats -->
+    <section class="inbox">
+      <header class="inbox-header">
+        <h2 id="inbox-title">Mensajes Recientes</h2>
+        <button data-panel="contacto" class="ripple"><i class="fas fa-plus"></i></button>
+      </header>
+      <ul class="chat-list" id="chat-list"></ul>
+    </section>
+
+    <!-- Panel de chat -->
+    <section class="chat-panel">
+      <header class="chat-header">
+        <div class="chat-header-info">
+          <img id="chat-foto" src="https://i.pravatar.cc/80" alt="Foto del cliente" class="chat-foto">
+          <div>
+            <h3 id="chat-name">Nombre del Cliente</h3>
+            <small id="chat-estado">Disponible</small>
+          </div>
+        </div>
+        <button data-panel="contacto" data-edit="true" class="ripple"><i class="fas fa-pencil-alt"></i></button>
+      </header>
+      
+
+      <div class="chat-body" id="chat-body"></div>
+
+      <div class="chat-input">
+        <input type="file" id="file-upload" hidden>
+        <button data-action="upload" class="ripple"><i class="fas fa-paperclip"></i></button>
+        <input type="text" id="chat-message" placeholder="Escribe un mensaje...">
+        <button id="send-message" data-action="send" class="ripple"><i class="fas fa-paper-plane"></i></button>
+      </div>
+    </section>
+  </div>
+
+  <!-- Paneles flotantes -->
+  <div id="panel-contacto" class="floating-panel">
+    <h3 id="contact-panel-title">Añadir Contacto</h3>
+    <div class="panel-body">
+      <input type="text" placeholder="Nombre completo" id="contact-nombre">
+      <input type="tel" placeholder="Número de teléfono" id="contact-numero">
+      <input type="url" placeholder="Foto de perfil (URL)" id="contact-foto">
+    </div>
+    <div class="panel-footer">
+      <button data-action="save-contact" class="ripple">Guardar</button>
+    </div>
+  </div>
+
+  <div id="panel-perfil" class="floating-panel">
+    <h3>Editar Perfil</h3>
+    <div class="panel-body">
+      <input type="text" placeholder="Tu nombre" id="perfil-nombre">
+      <input type="text" placeholder="Estado" id="perfil-estado">
+      <input type="url" placeholder="Foto de perfil (URL)" id="perfil-foto">
+    </div>
+    <div class="panel-footer">
+      <button data-action="save-profile" class="ripple">Actualizar</button>
+    </div>
+  </div>
+
+  <!-- Modales -->
+  <div id="modal-confirmacion" class="modal-archivo">
+    <div class="modal-contenido">
+      <h3>¿Deseas enviar este archivo?</h3>
+      <div id="preview-archivo-modal"></div>
+      <div class="modal-footer">
+        <button data-action="confirm-file">Enviar</button>
+        <button data-action="cancel-file">Cancelar</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Menús contextuales -->
+  <div id="menu-opciones" class="menu-opciones">
+    <div class="opciones-chat" style="display: none;">
+      <button data-action="move-chat" data-target="pendientes"><i class="fas fa-inbox"></i> Mover a Pendientes</button>
+      <button data-action="move-chat" data-target="abiertos"><i class="fas fa-check-circle"></i> Mover a Abiertos</button>
+      <button data-action="move-chat" data-target="archivados"><i class="fas fa-archive"></i> Mover a Archivados</button>
+    </div>
+    <div class="opciones-mensaje" style="display: none;">
+      <button data-action="edit-message"><i class="fas fa-edit"></i> Editar</button>
+      <button data-action="delete-message"><i class="fas fa-trash"></i> Borrar</button>
+    </div>
+  </div>
+
+  <div id="menu-archivo" class="menu-opciones">
+    <div>
+      <button data-action="download-file"><i class="fas fa-download"></i> Descargar</button>
+    </div>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    // Módulo principal de la aplicación
+    const App = (() => {
+      // Constantes
+      const ASESOR_ID = 'asesor-zoran-001';
+      
+      // Estado de la aplicación
+      const state = {
+        clientes: [],
+        estadoActual: 'pendientes',
+        chatSeleccionado: null,
+        chatActivoIndex: null,
+        mensajeId: 0,
+        mensajeActivoId: null,
+        archivoPendiente: null,
+        archivoHTMLPendiente: '',
+        archivoURLActivo: '',
+        escribiendoTimeout: null,
+        socket: null,
+        mensajesCargados: new Set() // Para evitar duplicados
+      };
+
+      // Elementos del DOM
+      const DOM = {
+        chatList: document.getElementById('chat-list'),
+        chatBody: document.getElementById('chat-body'),
+        chatMessage: document.getElementById('chat-message'),
+        sendButton: document.getElementById('send-message'),
+        chatName: document.getElementById('chat-name'),
+        chatStatus: document.querySelector('.chat-header small'),
+        inboxTitle: document.getElementById('inbox-title'),
+        panels: {
+          contacto: document.getElementById('panel-contacto'),
+          perfil: document.getElementById('panel-perfil')
+        },
+        modalArchivo: document.getElementById('modal-confirmacion'),
+        menuOpciones: document.getElementById('menu-opciones'),
+        menuArchivo: document.getElementById('menu-archivo'),
+        fileUpload: document.getElementById('file-upload'),
+        sidebar: document.querySelector('.sidebar'),
+        chatPanel: document.querySelector('.chat-panel')
+      };
+
+      // Inicialización
+      const init = () => {
+        setupSocket();
+        setupEventListeners();
+        cargarClientesDesdeServidor();
+        actualizarMenuLateral();
+        
+        // Mostrar animación de carga inicial
+        setTimeout(() => {
+          document.body.style.opacity = '1';
+        }, 100);
+      };
+
+      // Configurar Socket.IO
+      const setupSocket = () => {
+        if (state.socket) {
+          state.socket.off('mensaje-cliente');
+          state.socket.off('archivo-cliente');
+          state.socket.off('connect');
+          state.socket.off('disconnect');
+          state.socket.off('connect_error');
+        }
+
+        state.socket = io();
+
+        state.socket.on('connect', () => {
+          document.getElementById('connection-dot').style.color = 'green';
+          document.getElementById('connection-text').textContent = 'Conectado';
+          if (state.chatSeleccionado) {
+            state.socket.emit('unirse', state.chatSeleccionado.id);
+          }
+          
+          // Animación de conexión
+          const dot = document.getElementById('connection-dot');
+          dot.style.animation = 'pulse 1.5s infinite';
+          setTimeout(() => {
+            dot.style.animation = '';
+          }, 2000);
+        });
+
+        state.socket.on('disconnect', () => {
+          document.getElementById('connection-dot').style.color = 'red';
+          document.getElementById('connection-text').textContent = 'Desconectado';
+        });
+
+        state.socket.on('connect_error', (err) => {
+          console.error('Error de conexión:', err);
+        });
+
+        state.socket.on('mensaje-cliente', (mensaje) => {
+          if (state.chatSeleccionado && state.chatSeleccionado.id === mensaje.clienteId) {
+            const msgId = mensaje._id || mensaje.fecha;
+            if (!state.mensajesCargados.has(msgId)) {
+              addMessage(mensaje.texto, 'received', false, new Date(mensaje.fecha));
+              state.mensajesCargados.add(msgId);
+              
+              // Animación de notificación
+              animateNotification();
+            }
+          }
+        });
+
+        state.socket.on('archivo-cliente', (data) => {
+          if (state.chatSeleccionado && state.chatSeleccionado.id === data.clienteId) {
+            const fileId = data._id || data.fecha;
+            if (!state.mensajesCargados.has(fileId)) {
+              const fileHTML = `
+                <div class="mensaje-archivo">
+                  <a href="data:${data.archivo.tipo};base64,${data.archivo.datos}" 
+                     download="${data.archivo.nombre}">
+                    <i class="fas fa-file"></i> ${data.archivo.nombre}
+                  </a>
+                </div>
+              `;
+              addMessage(fileHTML, 'received', false, new Date(data.fecha));
+              state.mensajesCargados.add(fileId);
+              
+              // Animación de notificación
+              animateNotification();
+            }
+          }
+        });
+      };
+      
+      // Animación de notificación
+      const animateNotification = () => {
+        const title = document.title;
+        document.title = '✉️ ' + title;
+        
+        setTimeout(() => {
+          document.title = title;
+        }, 2000);
+        
+        if (!document.hasFocus()) {
+          // Solo vibrar si la ventana no está enfocada
+          if (navigator.vibrate) {
+            navigator.vibrate([200, 100, 200]);
+          }
+        }
+      };
+
+      // Configurar event listeners
+      const setupEventListeners = () => {
+        document.body.addEventListener('click', (e) => {
+          const target = e.target;
+          
+          if (target.hasAttribute('data-panel')) {
+            mostrarPanel(target.getAttribute('data-panel'), target.hasAttribute('data-edit'));
+            return;
+          }
+          
+          if (target.hasAttribute('data-action')) {
+            handleAction(target.getAttribute('data-action'), target);
+            return;
+          }
+          
+          DOM.menuOpciones.classList.remove('active');
+          DOM.menuArchivo.classList.remove('active');
+        });
+
+        document.querySelector('.nav-links').addEventListener('click', (e) => {
+          const filter = e.target.closest('[data-filter]');
+          if (filter) {
+            filtrarMensajes(filter.getAttribute('data-filter'));
+          }
+        });
+
+        DOM.sendButton.addEventListener('click', enviarMensaje);
+        DOM.chatMessage.addEventListener('keypress', (e) => {
+          if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            enviarMensaje();
+          }
+        });
+
+        DOM.chatMessage.addEventListener('input', () => {
+          if (!state.chatSeleccionado) return;
+          DOM.chatStatus.textContent = 'Escribiendo...';
+          clearTimeout(state.escribiendoTimeout);
+          state.escribiendoTimeout = setTimeout(() => {
+            DOM.chatStatus.textContent = 'Última conexión: hace 2 minutos';
+          }, 2000);
+          
+          // Notificar al servidor que se está escribiendo
+          if (state.socket && state.chatSeleccionado) {
+            state.socket.emit('escribiendo', {
+              clienteId: state.chatSeleccionado.id,
+              asesorId: ASESOR_ID
+            });
+          }
+        });
+
+        DOM.fileUpload.addEventListener('change', manejarArchivoSeleccionado);
+
+        document.addEventListener('contextmenu', (e) => {
+          const message = e.target.closest('.message');
+          const chatItem = e.target.closest('.chat-item');
+          const fileLink = e.target.closest('.message a[href]');
+
+          if (message) {
+            e.preventDefault();
+            const id = message.getAttribute('data-id');
+            state.mensajeActivoId = id;
+            mostrarMenuOpciones(e, 'mensaje');
+          } else if (chatItem) {
+            e.preventDefault();
+            const index = Array.from(DOM.chatList.children).indexOf(chatItem);
+            state.chatActivoIndex = index;
+            mostrarMenuOpciones(e, 'chat');
+          } else if (fileLink) {
+            e.preventDefault();
+            state.archivoURLActivo = fileLink.href;
+            mostrarMenuArchivo(e);
+          }
+        });
+        
+        // Eventos para responsive
+        window.addEventListener('resize', handleResize);
+        handleResize();
+      };
+      
+      // Manejar cambios de tamaño
+      const handleResize = () => {
+        if (window.innerWidth <= 768) {
+          document.querySelector('.layout').style.gridTemplateColumns = '1fr';
+          DOM.sidebar.style.transform = 'translateX(-100%)';
+          DOM.chatPanel.style.transform = 'translateX(100%)';
+        } else if (window.innerWidth <= 1200) {
+          document.querySelector('.layout').style.gridTemplateColumns = '280px 1fr';
+          DOM.sidebar.style.transform = 'translateX(0)';
+          DOM.chatPanel.style.transform = 'translateX(100%)';
+        } else {
+          document.querySelector('.layout').style.gridTemplateColumns = '280px 1fr 1.5fr';
+          DOM.sidebar.style.transform = 'translateX(0)';
+          DOM.chatPanel.style.transform = 'translateX(0)';
+        }
+      };
+
+      // Manejar acciones
+      const handleAction = (action, target) => {
+        switch(action) {
+          case 'send':
+            enviarMensaje();
+            break;
+          case 'upload':
+            DOM.fileUpload.click();
+            break;
+          case 'save-contact':
+            guardarContacto();
+            break;
+          case 'save-profile':
+            guardarPerfil();
+            break;
+          case 'confirm-file':
+            confirmarEnvioArchivo();
+            break;
+          case 'cancel-file':
+            cerrarModalArchivo();
+            break;
+          case 'move-chat':
+            moverChat(target.getAttribute('data-target'));
+            break;
+          case 'edit-message':
+            editarMensaje(state.mensajeActivoId);
+            break;
+          case 'delete-message':
+            borrarMensaje(state.mensajeActivoId);
+            break;
+          case 'download-file':
+            descargarArchivoContextual();
+            break;
+        }
+      };
+
+      // Cargar clientes desde el servidor
+      const cargarClientesDesdeServidor = async () => {
+        try {
+          // Mostrar skeleton loading
+          DOM.chatList.innerHTML = Array(5).fill(`
+            <li class="chat-item skeleton">
+              <div class="skeleton-avatar"></div>
+              <div class="chat-info">
+                <div class="skeleton-line" style="width: 70%"></div>
+                <div class="skeleton-line" style="width: 90%"></div>
+              </div>
+            </li>
+          `).join('');
+          
+          const res = await fetch('/clientes');
+          const data = await res.json();
+          state.clientes = Object.values(data);
+          renderInbox();
+          actualizarMenuLateral();
+        } catch (err) {
+          console.error('Error cargando clientes:', err);
+          // Mostrar mensaje de error
+          DOM.chatList.innerHTML = `
+            <li class="error-message">
+              <i class="fas fa-exclamation-triangle"></i> Error al cargar los contactos
+            </li>
+          `;
+        }
+      };
+
+      // Renderizar la bandeja de entrada
+      const renderInbox = () => {
+        DOM.chatList.innerHTML = '';
+        
+        const clientesFiltrados = state.clientes.filter(c => {
+  return !c.estado || c.estado === state.estadoActual;
+});
+
+
+        if (clientesFiltrados.length === 0) {
+          DOM.chatList.innerHTML = `
+            <li class="empty-state">
+              <i class="fas fa-comment-slash"></i>
+              <p>No hay mensajes ${state.estadoActual}</p>
+            </li>
+          `;
+          return;
+        }
+
+        clientesFiltrados.forEach((cliente, index) => {
+  const realIndex = state.clientes.findIndex(c => c.id === cliente.id);
+  const item = document.createElement('li');
+  item.classList.add('chat-item');
+  item.innerHTML = `
+    <img src="${cliente.foto || 'https://i.pravatar.cc/150'}" alt="${cliente.nombre}" />
+    <div class="chat-info">
+      <strong>${cliente.nombre}</strong>
+      <p>${cliente.mensaje || ''}</p>
+    </div>
+    <span class="chat-time">${cliente.hora || ''}</span>
+  `;
+  item.addEventListener('click', () => seleccionarChat(realIndex));
+  DOM.chatList.appendChild(item);
+
+  setTimeout(() => {
+    item.style.opacity = '1';
+    item.style.transform = 'translateY(0)';
+  }, index * 50);
+});
+
+
+        actualizarMenuLateral();
+      };
+
+      // Filtrar mensajes por estado
+      const filtrarMensajes = (estado) => {
+        state.estadoActual = estado;
+        const titulos = {
+          pendientes: 'Mensajes Pendientes',
+          abiertos: 'Mensajes Abiertos',
+          archivados: 'Mensajes Archivados',
+          clientes: 'Lista de Clientes'
+        };
+        DOM.inboxTitle.textContent = titulos[estado] || estado;
+        document.querySelectorAll('.nav-links li').forEach(el => el.classList.remove('active'));
+        const opciones = ['pendientes', 'abiertos', 'archivados', 'clientes'];
+        document.querySelectorAll('.nav-links li')[opciones.indexOf(estado)].classList.add('active');
+        renderInbox();
+      };
+
+      // Seleccionar un chat
+      const seleccionarChat = async (index) => {
+        const clientesFiltrados = state.clientes.filter(c => c.estado === state.estadoActual);
+        const cliente = clientesFiltrados[index];
+        if (!cliente) return;
+
+        // Salir de la sala anterior si existe
+        if (state.chatSeleccionado && state.socket) {
+          state.socket.emit('salir', state.chatSeleccionado.id);
+        }
+
+        state.chatSeleccionado = cliente;
+        state.mensajesCargados.clear();
+        DOM.chatName.textContent = cliente.nombre;
+        document.getElementById("chat-foto").src = cliente.foto || "https://i.pravatar.cc/80";
+document.getElementById("chat-estado").textContent = cliente.estado || "Disponible";
+
+        DOM.chatBody.innerHTML = '<div class="loading-messages"><i class="fas fa-spinner fa-spin"></i> Cargando mensajes...</div>';
+
+        // Unirse a la nueva sala
+        if (state.socket) {
+          state.socket.emit('unirse', cliente.id);
+        }
+
+        // Cargar historial de mensajes
+        try {
+          const res = await fetch(`/mensajes/${cliente.id}`);
+          const mensajes = await res.json();
+
+          DOM.chatBody.innerHTML = '';
+          
+          if (mensajes.length === 0) {
+            DOM.chatBody.innerHTML = `
+              <div class="empty-chat">
+                <i class="fas fa-comments"></i>
+                <p>No hay mensajes en este chat</p>
+                <small>Envía un mensaje para iniciar la conversación</small>
+              </div>
+            `;
+            return;
+          }
+
+          mensajes.forEach(msg => {
+            const esDelAsesor = msg.autor === ASESOR_ID;
+            const msgId = msg._id || msg.fecha;
+            if (!state.mensajesCargados.has(msgId)) {
+              if (msg.tipo === 'archivo') {
+                const fileHTML = `
+                  <div class="mensaje-archivo">
+                    <a href="data:${msg.archivo.tipo};base64,${msg.archivo.datos}" 
+                       download="${msg.archivo.nombre}">
+                      <i class="fas fa-file"></i> ${msg.archivo.nombre}
+                    </a>
+                  </div>
+                `;
+                addMessage(fileHTML, esDelAsesor ? 'sent' : 'received', false, new Date(msg.fecha));
+              } else {
+                addMessage(msg.texto, esDelAsesor ? 'sent' : 'received', false, new Date(msg.fecha));
+              }
+              state.mensajesCargados.add(msgId);
+            }
+          });
+
+        } catch (err) {
+          console.error('Error cargando mensajes:', err);
+          addMessage('Error al cargar el historial', 'received', true);
+        }
+
+        document.querySelectorAll('.chat-item').forEach((el, i) => {
+          el.classList.toggle('selected', i === index);
+        });
+
+        if (window.innerWidth <= 1200) {
+          DOM.chatPanel.classList.add('active');
+        }
+      };
+
+      // Enviar mensaje
+      const enviarMensaje = async () => {
+        const text = DOM.chatMessage.value.trim();
+        if (!text || !state.chatSeleccionado) return;
+
+        // Mostrar mensaje localmente como enviado
+        addMessage(text, 'sent');
+        
+        try {
+          const mensaje = {
+            clienteId: state.chatSeleccionado.id,
+            autor: ASESOR_ID,
+            texto: text,
+            fecha: new Date().toISOString(),
+            tipo: 'texto'
+          };
+
+          // Enviar mensaje al servidor
+          state.socket.emit('mensaje-asesor', mensaje);
+          
+          DOM.chatMessage.value = '';
+          
+          await fetch('/mensajes/' + state.chatSeleccionado.id, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(mensaje)
+          });
+          
+          // Animación de éxito
+          DOM.sendButton.innerHTML = '<i class="fas fa-check"></i>';
+          setTimeout(() => {
+            DOM.sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+          }, 1000);
+          
+        } catch (err) {
+          console.error('Error al enviar mensaje:', err);
+          addMessage('Error al enviar el mensaje', 'received', true);
+          
+          // Animación de error
+          DOM.sendButton.innerHTML = '<i class="fas fa-exclamation"></i>';
+          setTimeout(() => {
+            DOM.sendButton.innerHTML = '<i class="fas fa-paper-plane"></i>';
+          }, 1000);
+        }
+      };
+
+      // Añadir mensaje al chat
+      const addMessage = (text, type = 'sent', error = false, timestamp = new Date(), id = null) => {
+        const fecha = new Date(timestamp);
+        const fechaClave = fecha.toDateString();
+
+        let seccion = DOM.chatBody.querySelector(`[data-fecha='${fechaClave}']`);
+
+        if (!seccion) {
+          seccion = document.createElement('div');
+          seccion.className = 'fecha-etiqueta';
+          seccion.dataset.fecha = fechaClave;
+          seccion.innerHTML = `<span>${obtenerEtiquetaFecha(fecha)}</span>`;
+          DOM.chatBody.appendChild(seccion);
+        }
+
+        const msgId = id || `msg-${state.mensajeId++}`;
+        if (state.mensajesCargados.has(msgId)) {
+          console.warn('Intentando añadir mensaje duplicado:', msgId);
+          return;
+        }
+
+        const msg = document.createElement('div');
+        msg.className = `message ${type}${error ? ' error-message' : ''}`;
+        msg.setAttribute('data-id', msgId);
+
+        const mensajeTexto = error 
+          ? `<i class="fas fa-exclamation-circle"></i> ${text}`
+          : text;
+
+        msg.innerHTML = `
+          <div class="mensaje-texto">${mensajeTexto}</div>
+          <div class="mensaje-footer">
+            <small>${fecha.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+            ${type === 'sent' ? `<span class="estado-mensaje" data-id="${msgId}">✅</span>` : ''}
+          </div>
+        `;
+
+        // Animación
+        msg.style.opacity = '0';
+        msg.style.transform = 'translateY(10px)';
+        DOM.chatBody.appendChild(msg);
+
+        void msg.offsetWidth;
+
+        msg.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        msg.style.opacity = '1';
+        msg.style.transform = 'translateY(0)';
+
+        DOM.chatBody.scrollTop = DOM.chatBody.scrollHeight;
+
+        if (type === 'sent') {
+          setTimeout(() => {
+            const estado = msg.querySelector('.estado-mensaje');
+            if (estado) estado.textContent = '✅✅';
+          }, 2000);
+
+          setTimeout(() => {
+            const estado = msg.querySelector('.estado-mensaje');
+            if (estado) estado.classList.add('visto');
+          }, 4000);
+        }
+
+        state.mensajesCargados.add(msgId);
+      };
+
+      // Obtener etiqueta de fecha legible
+      const obtenerEtiquetaFecha = (fecha) => {
+        const hoy = new Date();
+        const ayer = new Date();
+        ayer.setDate(hoy.getDate() - 1);
+
+        if (fecha.toDateString() === hoy.toDateString()) return 'Hoy';
+        if (fecha.toDateString() === ayer.toDateString()) return 'Ayer';
+
+        return fecha.toLocaleDateString('es-ES', {
+          weekday: 'long',
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric'
+        });
+      };
+
+      // Actualizar menú lateral
+      const actualizarMenuLateral = () => {
+        const categorias = {
+          abiertos: state.clientes.some(c => c.estado === 'abiertos'),
+          archivados: state.clientes.some(c => c.estado === 'archivados')
+        };
+
+        const items = document.querySelectorAll('.nav-links li');
+        items[1].style.display = categorias.abiertos ? '' : 'none';
+        items[2].style.display = categorias.archivados ? '' : 'none';
+      };
+
+      // Mostrar panel flotante
+      const mostrarPanel = (tipo, editar = false) => {
+        Object.values(DOM.panels).forEach(p => p.classList.remove('active'));
+        const panel = DOM.panels[tipo];
+        if (tipo === 'contacto') {
+          document.getElementById('contact-panel-title').textContent = editar ? 'Editar Contacto' : 'Añadir Contacto';
+          if (editar && state.chatSeleccionado) {
+            document.getElementById('contact-nombre').value = state.chatSeleccionado.nombre;
+            document.getElementById('contact-numero').value = state.chatSeleccionado.numero || '';
+            document.getElementById('contact-foto').value = state.chatSeleccionado.foto || '';
+          } else {
+            document.getElementById('contact-nombre').value = '';
+            document.getElementById('contact-numero').value = '';
+            document.getElementById('contact-foto').value = '';
+          }
+        } else if (tipo === 'perfil') {
+          const profile = document.querySelector('.profile');
+          document.getElementById('perfil-nombre').value = profile.querySelector('h3').textContent;
+          document.getElementById('perfil-estado').value = profile.querySelector('p').textContent;
+          document.getElementById('perfil-foto').value = profile.querySelector('img').src;
+        }
+        panel.classList.add('active');
+      };
+
+      // Guardar contacto
+      const guardarContacto = async () => {
+        const nombre = document.getElementById('contact-nombre').value;
+        const numero = document.getElementById('contact-numero').value;
+        const foto = document.getElementById('contact-foto').value || 'https://i.pravatar.cc/150';
+
+        if (!nombre) {
+          alert('El nombre es obligatorio');
+          return;
+        }
+
+        try {
+          const res = await fetch('/guardar-cliente', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              nombre,
+              telefono: numero,
+              foto
+            })
+          });
+
+          const result = await res.json();
+          if (result.ok) {
+            // Animación de éxito
+            const btn = document.querySelector('#panel-contacto [data-action="save-contact"]');
+            btn.innerHTML = '<i class="fas fa-check"></i> Guardado';
+            btn.style.backgroundColor = 'var(--secondary-color)';
+            
+            setTimeout(() => {
+              btn.innerHTML = 'Guardar';
+              btn.style.backgroundColor = 'var(--primary-color)';
+              DOM.panels.contacto.classList.remove('active');
+              cargarClientesDesdeServidor();
+            }, 1000);
+          }
+        } catch (err) {
+          console.error('Error al guardar contacto:', err);
+          // Animación de error
+          const btn = document.querySelector('#panel-contacto [data-action="save-contact"]');
+          btn.innerHTML = '<i class="fas fa-times"></i> Error';
+          btn.style.backgroundColor = 'var(--error)';
+          
+          setTimeout(() => {
+            btn.innerHTML = 'Guardar';
+            btn.style.backgroundColor = 'var(--primary-color)';
+          }, 1000);
+        }
+      };
+
+      // Guardar perfil
+      const guardarPerfil = () => {
+        const nombre = document.getElementById('perfil-nombre').value;
+        const estado = document.getElementById('perfil-estado').value;
+        const foto = document.getElementById('perfil-foto').value;
+        
+        const profile = document.querySelector('.profile');
+        if (nombre) profile.querySelector('h3').textContent = nombre;
+        if (estado) profile.querySelector('p').textContent = estado;
+        if (foto) {
+          const img = profile.querySelector('img');
+          img.style.opacity = '0';
+          img.src = foto;
+          setTimeout(() => {
+            img.style.opacity = '1';
+          }, 300);
+        }
+        
+        // Animación de éxito
+        const btn = document.querySelector('#panel-perfil [data-action="save-profile"]');
+        btn.innerHTML = '<i class="fas fa-check"></i> Actualizado';
+        btn.style.backgroundColor = 'var(--secondary-color)';
+        
+        setTimeout(() => {
+          btn.innerHTML = 'Actualizar';
+          btn.style.backgroundColor = 'var(--primary-color)';
+          DOM.panels.perfil.classList.remove('active');
+        }, 1000);
+      };
+
+      // Mostrar menú de opciones
+      const mostrarMenuOpciones = (e, tipo) => {
+        e.preventDefault();
+        e.stopPropagation();
+
+        const msgBox = DOM.menuOpciones.querySelector('.opciones-mensaje');
+        const chatBox = DOM.menuOpciones.querySelector('.opciones-chat');
+
+        msgBox.style.display = tipo === 'mensaje' ? 'block' : 'none';
+        chatBox.style.display = tipo === 'chat' ? 'block' : 'none';
+
+        DOM.menuOpciones.style.top = `${e.clientY}px`;
+        DOM.menuOpciones.style.left = `${e.clientX}px`;
+        DOM.menuOpciones.classList.add('active');
+      };
+
+      // Mostrar menú de archivo
+      const mostrarMenuArchivo = (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        DOM.menuArchivo.style.top = `${e.clientY}px`;
+        DOM.menuArchivo.style.left = `${e.clientX}px`;
+        DOM.menuArchivo.classList.add('active');
+      };
+
+      // Mover chat a otra categoría
+      const moverChat = (nuevaCategoria) => {
+        if (state.chatActivoIndex !== null) {
+          const clientesFiltrados = state.clientes.filter(c => c.estado === state.estadoActual);
+          const cliente = clientesFiltrados[state.chatActivoIndex];
+          
+          if (cliente) {
+            cliente.estado = nuevaCategoria;
+            
+            // Animación de movimiento
+            const chatItem = DOM.chatList.children[state.chatActivoIndex];
+            chatItem.style.transform = 'translateX(-100%)';
+            chatItem.style.opacity = '0';
+            
+            setTimeout(() => {
+              renderInbox();
+              actualizarMenuLateral();
+              state.chatActivoIndex = null;
+              DOM.menuOpciones.classList.remove('active');
+            }, 300);
+          }
+        }
+      };
+
+      // Editar mensaje
+      const editarMensaje = (id) => {
+        const mensaje = DOM.chatBody.querySelector(`[data-id='${id}']`);
+        const textoOriginal = mensaje.querySelector('.mensaje-texto').textContent;
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = textoOriginal;
+        input.className = 'editar-input';
+        mensaje.querySelector('.mensaje-texto').replaceWith(input);
+        input.focus();
+
+        input.addEventListener('keydown', e => {
+          if (e.key === 'Enter') {
+            const nuevoTexto = input.value;
+
+            // Animación de actualización
+            input.style.transform = 'scale(0.9)';
+            input.style.opacity = '0.8';
+            
+            setTimeout(() => {
+              const nuevoDiv = document.createElement('div');
+              nuevoDiv.className = 'mensaje-texto';
+              nuevoDiv.textContent = nuevoTexto;
+              input.replaceWith(nuevoDiv);
+            }, 300);
+          }
+        });
+      };
+
+      // Borrar mensaje
+      const borrarMensaje = (id) => {
+        const mensaje = DOM.chatBody.querySelector(`[data-id='${id}']`);
+        if (!mensaje) return;
+
+        const confirmar = confirm('¿Estás seguro que deseas borrar este mensaje?');
+        if (!confirmar) return;
+
+        mensaje.style.transform = 'scale(0.9)';
+        mensaje.style.opacity = '0';
+        
+        setTimeout(() => {
+          mensaje.remove();
+        }, 300);
+      };
+
+      // Manejar archivo seleccionado
+      const manejarArchivoSeleccionado = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = () => {
+          const url = reader.result;
+          state.archivoPendiente = file;
+
+          if (file.type.startsWith('image/')) {
+            state.archivoHTMLPendiente = `
+              <a href="${url}" target="_blank">
+                <img src="${url}" alt="Imagen" class="preview-image">
+              </a>`;
+          } else if (file.type === 'application/pdf') {
+            state.archivoHTMLPendiente = `
+              <div class="preview-file">
+                <i class="fas fa-file-pdf"></i> <a href="${url}" target="_blank">${file.name}</a>
+              </div>`;
+          } else {
+            state.archivoHTMLPendiente = `
+              <div class="preview-file">
+                <div class="file-info">
+                  <i class="fas fa-file"></i> <span>${file.name}</span>
+                  <a href="${url}" download="${file.name}" class="download-button">Descargar</a>
+                </div>
+              </div>`;
+          }
+
+          document.getElementById('preview-archivo-modal').innerHTML = state.archivoHTMLPendiente;
+          DOM.modalArchivo.classList.add('visible');
+        };
+
+        reader.readAsDataURL(file);
+      };
+
+      // Confirmar envío de archivo
+      const confirmarEnvioArchivo = async () => {
+        if (!state.archivoPendiente || !state.chatSeleccionado) return;
+
+        const file = state.archivoPendiente;
+        const reader = new FileReader();
+        
+        reader.onload = async () => {
+          const fileData = {
+            nombre: file.name,
+            tipo: file.type,
+            datos: reader.result.split(',')[1]
+          };
+
+          try {
+            // Mostrar archivo localmente como enviado
+            addMessage(state.archivoHTMLPendiente, 'sent');
+            
+            const mensajeArchivo = {
+              clienteId: state.chatSeleccionado.id,
+              autor: ASESOR_ID,
+              archivo: fileData,
+              fecha: new Date().toISOString(),
+              tipo: 'archivo'
+            };
+
+            // Enviar archivo al servidor
+            state.socket.emit('archivo-asesor', mensajeArchivo);
+            
+            await fetch(`/archivos/${state.chatSeleccionado.id}`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(mensajeArchivo)
+            });
+            
+            // Animación de éxito
+            const btn = document.querySelector('#modal-confirmacion [data-action="confirm-file"]');
+            btn.innerHTML = '<i class="fas fa-check"></i> Enviado';
+            btn.style.backgroundColor = 'var(--secondary-color)';
+            
+            setTimeout(() => {
+              cerrarModalArchivo();
+            }, 800);
+          } catch (err) {
+            console.error('Error al enviar archivo:', err);
+            addMessage('Error al enviar el archivo', 'received', true);
+            
+            // Animación de error
+            const btn = document.querySelector('#modal-confirmacion [data-action="confirm-file"]');
+            btn.innerHTML = '<i class="fas fa-times"></i> Error';
+            btn.style.backgroundColor = 'var(--error)';
+            
+            setTimeout(() => {
+              btn.innerHTML = 'Enviar';
+              btn.style.backgroundColor = 'var(--primary-color)';
+            }, 1000);
+          }
+        };
+        
+        reader.readAsDataURL(file);
+      };
+
+      // Cerrar modal de archivo
+      const cerrarModalArchivo = () => {
+        state.archivoPendiente = null;
+        state.archivoHTMLPendiente = '';
+        DOM.fileUpload.value = '';
+        DOM.modalArchivo.classList.remove('visible');
+      };
+
+      // Descargar archivo contextual
+      const descargarArchivoContextual = () => {
+        if (!state.archivoURLActivo) return;
+
+        const link = document.createElement('a');
+        link.href = state.archivoURLActivo;
+        link.download = '';
+        link.click();
+
+        state.archivoURLActivo = '';
+        DOM.menuArchivo.classList.remove('active');
+      };
+
+      return {
+        init
+      };
+    })();
+
+    // Inicializar la aplicación cuando el DOM esté listo
+    document.addEventListener('DOMContentLoaded', () => {
+      // Establecer opacidad inicial para la transición
+      document.body.style.opacity = '0';
+      document.body.style.transition = 'opacity 0.3s ease';
+      
+      App.init();
+    });
+    
+  document.addEventListener("DOMContentLoaded", () => {
+    const nombre = localStorage.getItem("nombreUsuario");
+    const foto = localStorage.getItem("fotoPerfil");
+    const estado = localStorage.getItem("estadoPerfil") || "Disponible";
+
+    if (nombre && document.getElementById("nombreUsuario"))
+      document.getElementById("nombreUsuario").textContent = nombre;
+
+    if (foto && document.getElementById("usuarioFoto"))
+      document.getElementById("usuarioFoto").src = foto;
+
+    if (estado && document.getElementById("estadoUsuario"))
+      document.getElementById("estadoUsuario").textContent = estado;
+  });
+
+
+  </script>
+    </div>
+
+</body>
+</html>

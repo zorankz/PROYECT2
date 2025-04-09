@@ -1,0 +1,557 @@
+{
+  "1234567890@c.us": [
+    {
+      "from": "me",
+      "text": "Hola, ¿cómo estás?",
+      "timestamp": "2024-12-01T10:00:00.000Z"
+    },
+    {
+      "from": "them",
+      "text": "¡Bien! ¿Y tú?",
+      "timestamp": "2024-12-01T10:01:00.000Z"
+    }
+  ],
+  "0987654321@c.us": [
+    {
+      "from": "them",
+      "text": "¿Está listo el documento?",
+      "timestamp": "2024-12-03T15:22:00.000Z"
+    },
+    {
+      "from": "me",
+      "text": "Sí, ya te lo envié",
+      "timestamp": "2024-12-03T15:25:00.000Z"
+    }
+  ],
+  "status@broadcast": [
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.885Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.887Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.887Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.887Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.887Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.888Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.888Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.888Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.889Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.889Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.889Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.890Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.890Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.890Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:25.891Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.249Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.249Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.250Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.250Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.250Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.251Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.251Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.251Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.251Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.252Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.252Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.252Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.253Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.253Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.253Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.253Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.254Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.254Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.255Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.255Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.255Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.256Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.256Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.256Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.256Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.256Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.257Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.257Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.257Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.258Z"
+    },
+    {
+      "from": "them",
+      "text": "Comunícate con\n0424-4140768\nCamaleón tour \nPuedes pagar por parte",
+      "timestamp": "2025-04-06T10:17:36.258Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.258Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.258Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.259Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.259Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.259Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.260Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.260Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.260Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.260Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.261Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.261Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.261Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.262Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.262Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.262Z"
+    },
+    {
+      "from": "them",
+      "text": "COMPRO CARRO CON LAS 3 B (Venezuela)",
+      "timestamp": "2025-04-06T10:17:36.262Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.263Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.263Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.263Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.263Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.264Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.264Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.265Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.265Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.265Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.265Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.265Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.266Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.266Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.266Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.266Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.267Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.267Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.267Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.268Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.268Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.268Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.269Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.269Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.269Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.269Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.270Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.270Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.270Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.270Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.271Z"
+    },
+    {
+      "from": "them",
+      "text": "",
+      "timestamp": "2025-04-06T10:17:36.271Z"
+    },
+    {
+      "from": "them",
+      "text": "Comunícate con\n0424-4140768\nCamaleón tour \nPuedes pagar por parte",
+      "timestamp": "2025-04-06T10:49:40.172Z"
+    },
+    {
+      "from": "them",
+      "text": "COMPRO CARRO CON LAS 3 B (Venezuela)",
+      "timestamp": "2025-04-06T10:49:42.517Z"
+    },
+    {
+      "from": "them",
+      "text": "Comunícate con\n0424-4140768\nCamaleón tour \nPuedes pagar por parte",
+      "timestamp": "2025-04-06T11:11:02.595Z"
+    },
+    {
+      "from": "them",
+      "text": "COMPRO CARRO CON LAS 3 B (Venezuela)",
+      "timestamp": "2025-04-06T11:11:03.686Z"
+    },
+    {
+      "from": "them",
+      "text": "Comunícate con\n0424-4140768\nCamaleón tour \nPuedes pagar por parte",
+      "timestamp": "2025-04-06T11:59:18.938Z"
+    },
+    {
+      "from": "them",
+      "text": "COMPRO CARRO CON LAS 3 B (Venezuela)",
+      "timestamp": "2025-04-06T11:59:21.359Z"
+    },
+    {
+      "from": "them",
+      "text": "Comunícate con\n0424-4140768\nCamaleón tour \nPuedes pagar por parte",
+      "timestamp": "2025-04-06T12:03:53.359Z"
+    },
+    {
+      "from": "them",
+      "text": "COMPRO CARRO CON LAS 3 B (Venezuela)",
+      "timestamp": "2025-04-06T12:03:53.365Z"
+    }
+  ],
+  "13527099499@c.us": [
+    {
+      "from": "them",
+      "text": "Hi",
+      "timestamp": "2025-04-06T10:36:04.221Z"
+    },
+    {
+      "from": "them",
+      "text": "Grupo",
+      "timestamp": "2025-04-06T10:36:31.346Z"
+    },
+    {
+      "from": "them",
+      "text": "Hi",
+      "timestamp": "2025-04-06T10:50:14.450Z"
+    }
+  ],
+  "16504950255@c.us": [
+    {
+      "from": "them",
+      "text": "Hi",
+      "timestamp": "2025-04-06T11:05:48.342Z"
+    }
+  ]
+}

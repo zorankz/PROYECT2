@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Área del Cliente Premium</title>
+  <!-- External Resources -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cliente.css">
+  <style>
+
+.message {
+  max-width: 75%;
+  padding: 12px 16px;
+  border-radius: 18px;
+  position: relative;
+  animation: messageIn 0.3s ease-out forwards;
+  opacity: 0;
+  transform: translateY(10px);
+}
+
+
+    /* Asegurar que el contenedor de input quede abajo */
+    .chat-input-container {
+      margin-top: auto;
+    }
+    
+    /* Estilos adicionales para el panel de progreso */
+    .progress-actions {
+      margin-top: 30px;
+      text-align: center;
+    }
+    
+    .btn-add-milestone {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+    
+    .btn-add-milestone:hover {
+      background-color: #3e8e41;
+    }
+    
+    .milestone-form {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+    
+    .milestone-form.active {
+      display: block;
+    }
+    
+    .form-group {
+      margin-bottom: 15px;
+    }
+    
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+    
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 8px 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+    
+    .form-actions button {
+      padding: 8px 15px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    
+    .btn-cancel-form {
+      background-color: #f1f1f1;
+      border: 1px solid #ddd;
+    }
+    
+    .btn-submit-form {
+      background-color: #2196F3;
+      color: white;
+      border: none;
+    }
+    .modal-foto {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-foto.activo {
+  display: flex;
+}
+
+.contenido-modal {
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255,255,255,0.2);
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 32px;
+  color: white;
+  cursor: pointer;
+}
+#welcome-box {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  opacity: 1;
+  transition: opacity 1s ease;
+}
+
+#welcome-box.fade-out {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.welcome-content {
+  background: white;
+  padding: 2rem;
+  border-radius: 16px;
+  text-align: center;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilos generales */
+#vista-dependientes {
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.dependientes-header {
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.section-title {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #2c3e50;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  color: #7f8c8d;
+  font-size: 1rem;
+}
+
+/* Tarjeta del formulario */
+.milestone-card {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.form-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1.5rem;
+  color: #3498db;
+}
+
+/* Grid del formulario */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* Estilos para los campos del formulario */
+.form-group {
+  margin-bottom: 0;
+}
+
+.input-label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+  color: #34495e;
+  font-size: 0.9rem;
+}
+
+.input-field {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+  outline: none;
+}
+
+.input-hint {
+  display: block;
+  font-size: 0.75rem;
+  color: #95a5a6;
+  margin-top: 0.25rem;
+}
+
+/* Botón principal */
+.btn-primary {
+  background-color: #3498db;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btn-primary:hover {
+  background-color: #2980b9;
+  transform: translateY(-1px);
+}
+
+/* Lista de dependientes */
+.dependientes-list-container {
+  background: #ffffff;
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08);
+  border: 1px solid #e0e0e0;
+}
+
+.list-title {
+  font-size: 1.2rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #2c3e50;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 2rem;
+  color: #95a5a6;
+}
+
+.empty-state i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #bdc3c7;
+}
+
+/* Items de dependientes (ejemplo) */
+.dependiente-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+.dependiente-item:last-child {
+  border-bottom: none;
+}
+
+.dependiente-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.dependiente-nombre {
+  font-weight: 500;
+  margin-bottom: 0.25rem;
+}
+
+.dependiente-details {
+  font-size: 0.85rem;
+  color: #7f8c8d;
+}
+
+.btn-icon {
+  background: none;
+  border: none;
+  color: #e74c3c;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: #f5f5f5;
+}
+.progress-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 20px;
+}
+
+.pago-step {
+  background-color: #f5faff;
+  border-left: 5px solid #007bff;
+  padding: 15px 20px;
+  border-radius: 8px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.pago-step h3 {
+  margin: 0 0 8px 0;
+  color: #007bff;
+}
+
+.pago-step p {
+  margin: 4px 0;
+}
+
+.estado-pago span {
+  font-weight: bold;
+}
+
+.btn-comprobante {
+  margin-top: 10px;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-comprobante:hover {
+  background-color: #1976d2;
+}
+.modal-foto {
+  display: none;
+  justify-content: center;
+  align-items: center;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.8);
+}
+
+.modal-foto.activo {
+  display: flex;
+}
+
+.contenido-modal {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}
+
+.cerrar-modal {
+  position: absolute;
+  top: 20px;
+  right: 30px;
+  font-size: 32px;
+  color: white;
+  cursor: pointer;
+}
+
+.btn-submit-form {
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.btn-submit-form:hover {
+  background-color: #1976d2;
+}
+
+  </style>
+
+</head>
+<body>
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar">
+      <div class="profile">
+        <img id="client-photo" src="https://i.pravatar.cc/150?img=32" alt="Foto de perfil" class="profile-pic floating">
+        <h3 id="client-name">Alex Johnson</h3>
+        <p id="client-status">Cliente Premium</p>
+        <small class="status">En línea</small>
+      </div>
+
+      <nav class="nav-menu">
+        <button class="nav-item active" data-view="chat">
+          <i class="fas fa-comment-dots"></i>
+          <span>Chat</span>
+        </button>
+        <button class="nav-item" data-view="info">
+          <i class="fas fa-user"></i>
+          <span>Mi Información</span>
+        </button>
+        <button class="nav-item" data-view="documentos">
+          <i class="fas fa-folder"></i>
+          <span>Documentos</span>
+        </button>
+        <button class="nav-item" data-view="progreso">
+          <i class="fas fa-chart-line"></i>
+          <span>Mi Progreso</span>
+        </button>
+        <button class="nav-item" data-view="dependientes">
+          <i class="fas fa-users"></i>
+          <span>Dependientes</span>
+        </button>
+        <button class="nav-item" data-view="pagos">
+          <i class="fas fa-credit-card"></i>
+          <span>Pagos</span>
+        </button>
+        
+      </nav>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+      <header class="content-header">
+        <h1 class="content-title" id="vista-titulo">Chat con Asesor</h1>
+
+      </header>
+
+      <!-- Welcome Message -->
+      <div class="welcome-message" id="welcome-box">
+        <div class="welcome-content">
+          <i class="fas fa-user-circle welcome-icon"></i>
+          <h2>Bienvenido a tu Área Privada</h2>
+          <p>Selecciona una opción del menú para comenzar</p>
+        </div>
+      </div>
+
+      <!-- Chat Panel -->
+      <section id="vista-chat" class="content-panel oculto">
+        <div class="chat-container">
+          <div class="chat-header">
+            <h2>Conversación con tu Asesor</h2>
+          </div>
+          
+          <div class="chat-body" id="chat-body">
+            <div id="messages-container">
+              <div class="welcome-chat-message">
+                <div class="message received">
+                  ¡Hola <span id="client-name-chat">Alex</span>! ¿En qué puedo ayudarte hoy?
+                  <span class="message-time">10:30 AM</span>
+                </div>
+                <p class="chat-instructions">Escribe tu mensaje en el cuadro de abajo para comenzar la conversación</p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="chat-input-container">
+            <div class="chat-input">
+              <input type="text" id="chat-message" placeholder="Escribe tu mensaje...">
+              <button class="file-btn ripple" id="file-btn" title="Adjuntar archivo">
+                <i class="fas fa-paperclip"></i>
+              </button>
+              <button class="send-btn ripple" id="send-btn" title="Enviar mensaje">
+                <i class="fas fa-paper-plane"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section id="vista-pagos" class="content-panel oculto">
+        <div class="info-container">
+          <h2>Plan de Pagos</h2>
+          <p class="progress-description">Aquí verás los pagos asignados por tu asesor. Sube un comprobante por cada pago realizado.</p>
+      
+          <!-- Nueva barra de progreso -->
+          <div class="progress-wrapper" style="margin-bottom: 2rem;">
+            <div class="progress-title">
+              <span>Pagos Realizados</span>
+              <span id="pago-progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="pago-progress-fill" style="width: 0%; background-color: #28a745;"></div>
+            </div>
+          </div>
+      
+          <!-- Lista de pagos -->
+          <div class="progress-container" id="lista-pagos">
+            <!-- JS insertará los pagos aquí -->
+          </div>
+        </div>
+      </section>
+      
+      
+      <!-- Information Panel -->
+      <section id="vista-info" class="content-panel oculto">
+        <div class="info-container">
+          <div class="info-grid">
+            <div class="info-card">
+              <h3>Nombre Completo</h3>
+              <p id="info-nombre"></p>
+            </div>
+            <div class="info-card">
+              <h3>Correo Electrónico</h3>
+              <p id="info-email"></p>
+            </div>
+            <div class="info-card">
+              <h3>Teléfono</h3>
+              <p id="info-phone"></p>
+            </div>
+            <div class="info-card">
+              <h3>ID de Cliente</h3>
+              <p id="info-id"></p>
+            </div>
+            <div class="info-card">
+              <h3>Dirección</h3>
+              <p id="info-direccion"></p>
+            </div>
+            <div class="info-card">
+              <h3>Número A</h3>
+              <p id="info-numeroA"></p>
+            </div>
+            <div class="info-card">
+              <h3>Fecha de Registro</h3>
+              <p id="info-registro"></p>
+            </div>
+            <div class="info-card">
+              <h3>Cuenta USCIS</h3>
+              <p id="info-uscis"></p>
+            </div>
+            <div class="info-card">
+              <h3>Contraseña</h3>
+              <p id="info-password"></p>
+            </div>
+            <div class="info-card">
+              <h3>Código de Respaldo</h3>
+              <p id="info-codigo"></p>
+            </div>
+            <div class="info-card">
+              <h3>Tipo de Proceso</h3>
+              <p id="info-proceso"></p>
+            </div>
+          </div>
+          
+        </div>
+      </section>
+
+      <!-- Documents Panel -->
+      <section id="vista-documentos" class="content-panel oculto">
+        <div class="documents-container">
+          <h2>Mis Documentos</h2>
+          <div class="documents-list" id="documents-list">
+            <div class="empty-state">
+              <i class="fas fa-folder-open"></i>
+              <p>No hay documentos disponibles</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Progress Panel -->
+      <section id="vista-progreso" class="content-panel oculto">
+        <div class="progress-container">
+          <h2>Progreso de mi Caso</h2>
+          <p class="progress-description">Aquí puedes ver el avance de tu proceso</p>
+          
+          <div class="progress-wrapper">
+            <div class="progress-title">
+              <span>Completado</span>
+              <span id="progress-percent">0%</span>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+            </div>
+            <p class="progress-text" id="progress-text">El proceso comenzará una vez completado el registro y pago.</p>
+          </div>
+          
+          <div class="progress-steps" id="progress-steps">
+            <!-- Los hitos se agregarán dinámicamente aquí -->
+          </div>
+          
+  
+   
+        </div>
+      </section>
+
+      <!-- Dependientes Panel -->
+<!-- Dependientes Panel -->
+<section id="vista-dependientes" class="content-panel oculto">
+  <div class="info-container">
+    <div class="dependientes-header">
+      <h2 class="section-title">Mis Dependientes</h2>
+      <p class="section-subtitle">Administra los familiares incluidos en tu caso</p>
+    </div>
+
+    <div class="dependientes-content">
+      <!-- Formulario para agregar -->
+      <div class="milestone-card active" id="form-dependiente">
+        <h3 class="form-title">Añadir nuevo dependiente</h3>
+        
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="dep-nombre" class="input-label">Nombre completo</label>
+            <input type="text" id="dep-nombre" class="input-field" placeholder="Ej: María González Pérez" required>
+            <span class="input-hint">Nombre legal como aparece en documentos</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="dep-fecha" class="input-label">Fecha de Nacimiento</label>
+            <input type="date" id="dep-fecha" class="input-field" required>
+            <span class="input-hint">Formato: DD/MM/AAAA</span>
+          </div>
+          
+          <div class="form-group">
+            <label for="dep-alien" class="input-label">Número de Alien</label>
+            <input type="text" id="dep-alien" class="input-field" placeholder="Ej: A123456789" pattern="[A-Za-z]\d{9}" required>
+            <span class="input-hint">Letra seguida de 9 dígitos</span>
+          </div>
+        </div>
+        
+        <div class="form-actions">
+          <button type="button" class="btn-primary" onclick="agregarDependiente()">
+            <i class="fas fa-user-plus"></i> Añadir Dependiente
+          </button>
+        </div>
+      </div>
+
+      <!-- Lista de dependientes -->
+      <div class="dependientes-list-container">
+        <h3 class="list-title">Tus dependientes registrados</h3>
+        
+        <div class="dependientes-list" id="dependientes-lista">
+          <!-- Estado vacío -->
+          <div class="empty-state">
+            <i class="fas fa-users-slash"></i>
+            <p>No has agregado dependientes aún</p>
+          </div>
+          
+          <!-- Ejemplo de item (se generará dinámicamente) -->
+          <!--
+          <div class="dependiente-item">
+            <div class="dependiente-info">
+              <span class="dependiente-nombre">María González Pérez</span>
+              <span class="dependiente-details">Nacimiento: 15/03/1990 • Alien: A123456789</span>
+            </div>
+            <button class="btn-icon" title="Eliminar dependiente">
+              <i class="fas fa-trash-alt"></i>
+            </button>
+          </div>
+          -->
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+  <!-- MODAL PARA AMPLIAR FOTO -->
+  <div id="modal-foto" class="modal-foto">
+    <span class="cerrar-modal">&times;</span>
+    <img id="foto-ampliada" class="contenido-modal" src="" alt="Foto ampliada">
+  </div>
+
+  <!-- File Upload Modal -->
+  <div id="file-modal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h3>Seleccionar Archivo</h3>
+      <div class="file-uploader">
+        <input type="file" id="file-input" hidden>
+        <div class="drop-area" id="drop-area">
+          <i class="fas fa-cloud-upload-alt"></i>
+          <p>Arrastra tu archivo aquí o haz clic para seleccionar</p>
+          <button class="btn-select-file ripple">Seleccionar Archivo</button>
+        </div>
+        <div class="file-preview" id="file-preview"></div>
+      </div>
+      <div class="modal-actions">
+        <button class="btn-cancel ripple">Cancelar</button>
+        <button class="btn-send ripple" disabled>Enviar Archivo</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JavaScript Resources -->
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <script>
+    // Al inicio de tu script
+
+    const urlParams = new URLSearchParams(window.location.search);
+const clienteId = urlParams.get('id');
+
+// Validación temprana
+if (!clienteId) {
+  console.error('No se proporcionó ID de cliente');
+  window.location.href = 'login-cliente.html';
+  throw new Error('Ejecución detenida: sin ID de cliente'); // ✅ Válido
+}
+
+
+console.log('Cliente ID:', clienteId);
+
+// Ahora puedes usar clienteId con seguridad
+const socket = io('https://jawfish-saving-grossly.ngrok-free.app');
+
+socket.on('connect', () => {
+  console.log('🟢 Conectado al servidor:', socket.id);
+  socket.emit('unirse', clienteId);
+  cargarDatosDelCliente();
+  cargarMensajesDelCliente(clienteId);
+  cargarProgresoDelCliente(clienteId);
+});
+socket.on('disconnect', () => {
+  console.log('🔴 Desconectado del servidor');
+});
+socket.on('progreso-actualizado', () => {
+  console.log('📈 Progreso actualizado recibido del servidor');
+
+  // Recargar progreso
+  cargarProgresoDelCliente(clienteId);
+
+  // Aplicar animación a la barra de progreso
+  const barra = document.getElementById('progress-fill');
+  if (barra) {
+    barra.classList.add('resaltado');
+    setTimeout(() => barra.classList.remove('resaltado'), 1000);
+  }
+});
+
+let mensajesCargados = new Set();
+
+function scrollToBottom() {
+  const container = document.getElementById('chat-body');
+  if (container) {
+    setTimeout(() => {
+      container.scrollTop = container.scrollHeight;
+    }, 50);
+  }
+}
+
+
+// Escuchar mensajes del ASESOR
+socket.on('mensaje-asesor', (mensaje) => {
+  const container = document.getElementById('messages-container');
+  const msgId = mensaje._id || mensaje.fecha; // Usa _id si el servidor lo proporciona, de lo contrario usa fecha
+
+  if (!mensajesCargados.has(msgId)) {
+    const msgEl = document.createElement('div');
+    msgEl.className = 'message received';
+    msgEl.innerHTML = `
+      ${mensaje.texto}
+      <span class="message-time">
+        ${new Date(mensaje.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </span>
+    `;
+    container.appendChild(msgEl);
+    mensajesCargados.add(msgId); // Marcar como cargado
+    scrollToBottom();
+  } else {
+    console.warn('Mensaje duplicado detectado:', msgId);
+  }
+});
+
+// Client Data Functions
+async function cargarPagosCliente(cliente) {
+  const pagos = cliente.pagos || [];
+
+  const lista = document.getElementById('lista-pagos');
+  if (!lista) {
+    console.error('⚠️ No se encontró el contenedor #lista-pagos');
+    return;
+  }
+
+  lista.innerHTML = '';
+
+  if (pagos.length === 0) {
+    lista.innerHTML = `
+      <div class="empty-state">
+        <i class="fas fa-money-check-alt"></i>
+        <p>No hay pagos programados aún</p>
+      </div>`;
+    return;
+  }
+
+  let pagados = 0;
+
+  pagos.forEach((pago, index) => {
+    if (pago.estado === 'Pagado') pagados++;
+
+    const card = document.createElement('div');
+    card.className = 'pago-step';
+    card.innerHTML = `
+      <h3>Pago ${index + 1}</h3>
+      <p><strong>Monto:</strong> $${pago.monto}</p>
+      <p><strong>Fecha:</strong> ${pago.fecha || 'No especificada'}</p>
+      <p class="estado-pago"><strong>Estado:</strong> <span>${pago.estado}</span></p>
+      ${
+        pago.estado === 'Pendiente'
+          ? `<input type="file" id="comprobante-${index}" class="input-comprobante">
+             <button class="btn-comprobante" onclick="subirComprobante('${cliente.id}', ${index})">Subir Comprobante</button>`
+          : `<span style="color: green;">✔️ Pago confirmado</span>`
+      }
+    `;
+    lista.appendChild(card);
+  });
+
+  // Barra de progreso de pagos
+  const porcentaje = Math.round((pagados / pagos.length) * 100);
+  document.getElementById('pago-progress-percent').textContent = `${porcentaje}%`;
+  document.getElementById('pago-progress-fill').style.width = `${porcentaje}%`;
+}
+async function cargarDatosDelCliente() {
+  try {
+    const url = `https://jawfish-saving-grossly.ngrok-free.app/clientes/${clienteId}`;
+    console.log('Intentando cargar datos desde:', url);
+    
+    const res = await fetch(url, {
+      headers: {
+        'ngrok-skip-browser-warning': 'true' // Necesario para ngrok
+      }
+    });
+    
+    if (!res.ok) {
+      if (res.status === 404) {
+        throw new Error('Cliente no encontrado en el sistema');
+      } else {
+        throw new Error(`Error del servidor: ${res.status}`);
+      }
+    }
+    
+    const cliente = await res.json();
+    console.log('Datos del cliente recibidos:', cliente); // Verifica si los datos están llegando correctamente
+    
+    if (!cliente || Object.keys(cliente).length === 0) {
+      throw new Error('Datos del cliente vacíos');
+    }
+    
+    actualizarInterfazCliente(cliente); // Aquí actualizas la interfaz con los datos del cliente
+    cargarArchivosDelCliente(clienteId); // Si tienes archivos, los cargas aquí también
+    cargarPagosCliente(cliente); // Si tienes pagos, los cargas aquí
+    
+    return cliente;
+  } catch (err) {
+    console.error('❌ Error al cargar datos del cliente:', err);
+    
+    // Mostrar mensaje de error al usuario
+    const errorBox = document.createElement('div');
+    errorBox.style.position = 'fixed';
+    errorBox.style.top = '20px';
+    errorBox.style.left = '50%';
+    errorBox.style.transform = 'translateX(-50%)';
+    errorBox.style.backgroundColor = '#ffebee';
+    errorBox.style.color = '#c62828';
+    errorBox.style.padding = '15px';
+    errorBox.style.borderRadius = '4px';
+    errorBox.style.zIndex = '1000';
+    errorBox.style.boxShadow = '0 2px 10px rgba(0,0,0,0.2)';
+    errorBox.innerHTML = `
+      <i class="fas fa-exclamation-circle"></i>
+      <span>${err.message}</span>
+    `;
+    
+    document.body.appendChild(errorBox);
+    
+    // Eliminar el mensaje después de 5 segundos
+    setTimeout(() => {
+      errorBox.remove();
+    }, 5000);
+    
+    return null;
+  }
+}
+
+
+function actualizarInterfazCliente(cliente) {
+  const setText = (id, texto) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = texto;
+  };
+  setText('client-name', cliente.nombre || 'No disponible');
+
+  setText('info-nombre', cliente.nombre || 'No disponible');
+  setText('info-email', cliente.correo || 'No disponible');
+  setText('info-phone', cliente.telefono || 'No disponible');
+  setText('info-id', cliente.id || 'No disponible');
+  setText('info-direccion', cliente.direccion || 'No disponible');
+  setText('info-numeroA', cliente.numeroA || 'No disponible');
+  setText('info-registro', new Date(cliente.fechaCreacion).toLocaleDateString());
+  setText('info-uscis', cliente.uscis || 'No registrado');
+  setText('info-password', cliente.contrasena || 'No proporcionada');
+  setText('info-codigo', cliente.codigoRespaldo || 'Sin código');
+  setText('info-proceso', cliente.proceso || 'No especificado');
+
+  // Foto
+  if (cliente.foto) {
+    const img = document.getElementById('client-photo');
+    if (img) img.src = cliente.foto;
+  }
+}
+
+
+// Message Functions
+// Ampliar foto de perfil
+const imgPerfil = document.querySelector('#client-photo');
+const modalFoto = document.querySelector('#modal-foto');
+const fotoAmpliada = document.querySelector('#foto-ampliada');
+const cerrarModal = document.querySelector('.cerrar-modal');
+
+imgPerfil.addEventListener('click', () => {
+  fotoAmpliada.src = imgPerfil.src;
+  modalFoto.classList.add('activo');
+});
+
+cerrarModal.addEventListener('click', () => {
+  modalFoto.classList.remove('activo');
+});
+
+modalFoto.addEventListener('click', (e) => {
+  if (e.target === modalFoto) {
+    modalFoto.classList.remove('activo');
+  }
+});
+
+async function cargarMensajesDelCliente(id) {
+  if (!id) {
+    console.error("ID de cliente no proporcionado en cargarMensajesDelCliente.");
+    return;
+  }
+
+  try {
+    console.log('Intentando cargar mensajes para el cliente:', id);
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/mensajes/${id}`);
+    
+    if (!res.ok) {
+      throw new Error(`Error HTTP: ${res.status} - ${res.statusText}`);
+    }
+
+    const mensajes = await res.json();
+    console.log('Mensajes recibidos del servidor:', mensajes);
+
+    const messagesContainer = document.getElementById('messages-container');
+    if (!messagesContainer) {
+      console.error('Contenedor de mensajes (#messages-container) no encontrado.');
+      return;
+    }
+
+    // Limpiar el contenedor y resetear el historial
+// Limpiar el contenedor y resetear el historial
+messagesContainer.innerHTML = '';
+mensajesCargados.clear();
+document.getElementById('welcome-box').classList.add('oculto'); // Oculta el mensaje de bienvenida si hay mensajes
+
+
+    // Mostrar mensaje de bienvenida solo si NO hay mensajes en la base de datos
+    if (!Array.isArray(mensajes) || mensajes.length === 0) {
+      console.log('No hay mensajes previos. Mostrando mensaje de bienvenida.');
+      const welcomeMsg = document.createElement('div');
+      welcomeMsg.className = 'welcome-chat-message';
+      welcomeMsg.innerHTML = `
+        <div class="message received">
+          ¡Hola <span id="client-name-chat">Cliente</span>! ¿En qué puedo ayudarte hoy?
+          <span class="message-time">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+        </div>
+        <p class="chat-instructions">Escribe tu mensaje en el cuadro de abajo para comenzar la conversación</p>
+      `;
+      messagesContainer.appendChild(welcomeMsg);
+      return;
+    }
+
+    // Renderizar mensajes del historial
+    mensajes.forEach(msg => {
+      const msgId = msg._id ? `msg-${msg._id}` : `temp-${Date.parse(msg.fecha)}`;
+
+      if (!mensajesCargados.has(msgId)) {
+        const msgEl = document.createElement('div');
+        msgEl.className = 'message ' + (msg.autor === 'cliente' ? 'sent' : 'received');
+        msgEl.innerHTML = `
+          ${msg.texto || 'Mensaje sin texto'}
+          <span class="message-time">
+            ${new Date(msg.fecha).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+          </span>
+        `;
+        messagesContainer.appendChild(msgEl);
+        mensajesCargados.add(msgId);
+      } else {
+        console.warn('Mensaje duplicado detectado (historial):', msgId);
+      }
+    });
+
+    scrollToBottom();
+  } catch (err) {
+    console.error("Error cargando mensajes:", err);
+    const messagesContainer = document.getElementById('messages-container');
+    if (messagesContainer) {
+      const errorMsg = document.createElement('div');
+      errorMsg.className = 'message error';
+      errorMsg.textContent = 'No se pudieron cargar los mensajes. Inténtalo de nuevo.';
+      messagesContainer.appendChild(errorMsg);
+      scrollToBottom();
+    }
+  }
+  if (Array.isArray(cliente.dependientes)) {
+  const contenedor = document.getElementById('dependientes-lista');
+  contenedor.innerHTML = ''; // limpiar antes
+
+  if (cliente.dependientes.length === 0) {
+    contenedor.innerHTML = `
+      <div class="info-card">
+        <h3>Sin dependientes</h3>
+        <p>No hay dependientes registrados.</p>
+      </div>
+    `;
+  } else {
+    cliente.dependientes.forEach(dep => {
+      const div = document.createElement('div');
+      div.className = 'info-card';
+      div.innerHTML = `
+        <h3>${dep.nombre}</h3>
+        <p>Parentesco: ${dep.parentesco}</p>
+        <p>Edad: ${dep.edad} años</p>
+      `;
+      contenedor.appendChild(div);
+    });
+  }
+}
+
+}
+
+async function cargarArchivosDelCliente(id) {
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/archivos/${id}`);
+    const archivos = await res.json();
+
+    const lista = document.getElementById('documents-list');
+    lista.innerHTML = '';
+
+    if (archivos.length === 0) {
+      lista.innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-folder-open"></i>
+          <p>No hay documentos disponibles</p>
+        </div>`;
+      return;
+    }
+
+    archivos.forEach(file => {
+      const card = document.createElement('div');
+      card.className = 'document-card';
+
+      const isPDF = file.nombre.toLowerCase().endsWith('.pdf');
+      const icon = isPDF
+        ? `<i class="fas fa-file-pdf fa-3x"></i>`
+        : `<img src="${file.url}" alt="${file.nombre}" class="thumbnail">`;
+
+      card.innerHTML = `
+        <div class="document-preview">${icon}</div>
+        <div class="document-info">
+          <p class="file-name">${file.nombre}</p>
+           <a href="${file.base64}" download="${file.nombre}" class="btn-download"><i class="fas fa-download"></i> Descargar</a>
+        </div>
+      `;
+
+      lista.appendChild(card);
+    });
+  } catch (err) {
+    console.error("❌ Error cargando archivos:", err);
+  }
+}
+
+// Funciones para manejar el progreso del cliente
+async function cargarProgresoDelCliente(id) {
+  try {
+    const res = await fetch(`https://jawfish-saving-grossly.ngrok-free.app/progreso/${id}`);
+    const progreso = await res.json();
+    
+    if (progreso && progreso.hitos) {
+      renderizarHitos(progreso.hitos);
+      actualizarBarraProgreso(progreso.hitos);
+    } else {
+      renderizarHitos([]);
+      actualizarBarraProgreso([]);
+    }
+  } catch (err) {
+    console.error("Error cargando progreso:", err);
+    renderizarHitos([]);
+    actualizarBarraProgreso([]);
+  }
+}
+
+function renderizarHitos(hitos) {
+  const container = document.getElementById('progress-steps');
+  container.innerHTML = '';
+
+  // Añade estilos dinámicos al contenedor si no existen
+  if (!document.getElementById('progress-steps-styles')) {
+    const style = document.createElement('style');
+    style.id = 'progress-steps-styles';
+    style.textContent = `
+      #progress-steps {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+        padding: 1rem;
+        position: relative;
+      }
+      
+      #progress-steps::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: 40px;
+        width: 4px;
+        background: linear-gradient(to bottom, #e0e0e0, #e0e0e0);
+        z-index: 1;
+        border-radius: 4px;
+      }
+      
+      .step {
+        display: flex;
+        gap: 1.5rem;
+        position: relative;
+        z-index: 2;
+        opacity: 0;
+        transform: translateY(20px);
+        transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      }
+      
+      .step.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      
+      .step-icon {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 2rem;
+        flex-shrink: 0;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+        transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        cursor: pointer;
+        position: relative;
+      }
+      
+      .step-icon::after {
+        content: '';
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        border: 2px solid transparent;
+        top: 0;
+        left: 0;
+        transition: all 0.3s ease;
+      }
+      
+      .step-info {
+        flex-grow: 1;
+        padding-bottom: 2rem;
+      }
+      
+      .step-info h3 {
+        margin: 0 0 0.5rem 0;
+        font-size: 1.2rem;
+        color: #333;
+        font-weight: 600;
+      }
+      
+      .step-info p {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #666;
+      }
+      
+      .step-notes-container {
+        position: relative;
+        display: inline-block;
+      }
+      
+      .step-notes-trigger {
+        background: #f0f0f0;
+        border: none;
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-left: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 12px;
+      }
+      
+      .step-notes-trigger:hover {
+        background: #e0e0e0;
+      }
+      
+      .step-notes-bubble {
+        position: absolute;
+        bottom: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        background: white;
+        padding: 12px;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+        width: 250px;
+        max-width: 80vw;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.3s ease;
+        z-index: 10;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 10px;
+      }
+      
+      .step-notes-bubble::after {
+        content: '';
+        position: absolute;
+        top: 100%;
+        left: 50%;
+        transform: translateX(-50%);
+        border-width: 8px;
+        border-style: solid;
+        border-color: white transparent transparent transparent;
+      }
+      
+      .step-notes-container:hover .step-notes-bubble {
+        opacity: 1;
+        visibility: visible;
+      }
+      
+      /* Estados */
+      .step.pending .step-icon {
+        background: linear-gradient(135deg, #fff3cd, #ffecb3);
+        color: #ffb300;
+        border: 3px solid #ffc107;
+      }
+      
+      .step.current .step-icon {
+        background: linear-gradient(135deg, #cce5ff, #a3d0ff);
+        color: #0062cc;
+        border: 3px solid #007bff;
+        animation: pulseSpin 2s infinite ease-in-out;
+      }
+      
+      .step.completed .step-icon {
+        background: linear-gradient(135deg, #d4edda, #b8e0c1);
+        color: #218838;
+        border: 3px solid #28a745;
+      }
+      
+      @keyframes pulseSpin {
+        0% { transform: scale(1) rotate(0deg); }
+        50% { transform: scale(1.1) rotate(10deg); }
+        100% { transform: scale(1) rotate(0deg); }
+      }
+      
+      /* Efectos hover */
+      .step:hover .step-icon {
+        transform: scale(1.1);
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      }
+      
+      .step.pending:hover .step-icon {
+        animation: shake 0.5s ease infinite;
+      }
+      
+      .step.completed:hover .step-icon {
+        animation: bounce 0.5s ease;
+      }
+      
+      @keyframes shake {
+        0%, 100% { transform: rotate(-5deg); }
+        50% { transform: rotate(5deg); }
+      }
+      
+      @keyframes bounce {
+        0%, 100% { transform: translateY(0); }
+        50% { transform: translateY(-10px); }
+      }
+      
+      /* Responsivo */
+      @media (max-width: 600px) {
+        .step-icon {
+          width: 60px;
+          height: 60px;
+          font-size: 1.5rem;
+        }
+        
+        #progress-steps::before {
+          left: 30px;
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+  hitos.forEach((hito, index) => {
+    const estadoOriginal = hito.estado?.toLowerCase() || 'pendiente';
+
+    // Normaliza el estado a clases válidas
+    let estadoClase = 'pending';
+    let icon = '<i class="fas fa-clock"></i>'; // por defecto
+    
+    if (estadoOriginal.includes('completado') || estadoOriginal.includes('completed')) {
+      estadoClase = 'completed';
+      icon = '<i class="fas fa-check-circle"></i>';
+    } else if (estadoOriginal.includes('proceso') || estadoOriginal.includes('current')) {
+      estadoClase = 'current';
+      icon = '<i class="fas fa-spinner fa-spin"></i>';
+    }
+
+    const step = document.createElement('div');
+    step.className = `step ${estadoClase}`;
+
+    // Construir el elemento de notas si existe
+    const nota = hito.descripcion || hito.notas;
+const notasElement = nota ? `
+  <div class="step-notes-container">
+    <button class="step-notes-trigger">i</button>
+    <div class="step-notes-bubble">${nota}</div>
+  </div>
+` : '';
+
+
+    step.innerHTML = `
+      <div class="step-icon">${icon}</div>
+      <div class="step-info">
+  <h3>${hito.nombre}</h3>
+<p>${hito.fecha || 'Sin fecha'}</p>
+${nota ? `<small class="step-notes">${nota}</small>` : ''}
+
+      </div>
+    `;
+
+    container.appendChild(step);
+    
+    // Animación de aparición escalonada
+    setTimeout(() => {
+      step.classList.add('visible');
+    }, 150 * index);
+    
+    // Efecto click en iconos
+    const iconElement = step.querySelector('.step-icon');
+    iconElement.addEventListener('click', () => {
+      iconElement.style.transform = 'scale(0.9)';
+      setTimeout(() => {
+        iconElement.style.transform = 'scale(1.1)';
+      }, 100);
+    });
+  });
+}
+function actualizarBarraProgreso(hitos) {
+  const totalHitos = hitos.length;
+  
+  // Normaliza el estado y filtra los completados
+  const completados = hitos.filter(h => 
+    h.estado?.toLowerCase() === 'completado' || 
+    h.estado?.toLowerCase() === 'completed'
+  ).length;
+
+  const porcentaje = Math.round((completados / totalHitos) * 100) || 0;
+
+  // Actualiza la UI
+  document.getElementById('progress-percent').textContent = `${porcentaje}%`;
+  document.getElementById('progress-fill').style.width = `${porcentaje}%`;
+
+  const progressText = document.getElementById('progress-text');
+  if (porcentaje === 0) {
+    progressText.textContent = 'El proceso comenzará una vez completado el registro y pago.';
+  } else if (porcentaje < 50) {
+    progressText.textContent = '¡Vamos bien! Estamos en las primeras etapas del proceso.';
+  } else if (porcentaje < 100) {
+    progressText.textContent = '¡Vas muy bien! Estamos avanzando según lo planeado.';
+  } else {
+    progressText.textContent = '¡Felicidades! Has completado todo el proceso.';
+  }
+}
+
+
+
+
+async function sendMessage() {
+  const chatInput = document.getElementById('chat-message');
+  const message = chatInput.value.trim();
+
+  if (!message || !clienteId) return;
+
+  try {
+    const msgId = 'msg-' + Date.now(); // ID temporal hasta que el servidor responda
+
+    // Mostrar mensaje localmente como enviado
+    const msgEl = document.createElement('div');
+    msgEl.className = 'message sent';
+    msgEl.setAttribute('data-id', msgId); // Añadir ID al elemento
+    msgEl.innerHTML = `
+      ${message}
+      <span class="message-time">
+        ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+      </span>
+    `;
+    document.getElementById('messages-container').appendChild(msgEl);
+    mensajesCargados.add(msgId); // Marcar como cargado inmediatamente
+    scrollToBottom();
+
+    // Enviar al servidor
+    socket.emit('mensaje-cliente', {
+      clienteId: clienteId,
+      texto: message,
+      fecha: new Date().toISOString()
+    }, (response) => {
+      if (response.status === 'error') {
+        console.error('Error del servidor:', response.error);
+      } else if (response._id) {
+        // Actualizar el ID del mensaje con el del servidor
+        const localMsg = document.querySelector(`[data-id="${msgId}"]`);
+        if (localMsg) {
+          localMsg.setAttribute('data-id', response._id);
+          mensajesCargados.delete(msgId); // Eliminar el ID temporal
+          mensajesCargados.add(response._id); // Añadir el ID del servidor
+        }
+      }
+    });
+
+    await fetch(`https://jawfish-saving-grossly.ngrok-free.app/mensajes/${clienteId}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        autor: 'cliente',
+        texto: message,
+        fecha: new Date().toISOString()
+      })
+    });
+
+    chatInput.value = '';
+    scrollToBottom();
+  } catch (err) {
+    console.error('Error al enviar mensaje:', err);
+  }
+}
+
+// UI Initialization
+document.addEventListener('DOMContentLoaded', () => {
+  setupNavigation();
+  setupChat();
+  setupFileModal();
+  setupDependientesPanel();
+
+  // Forzar carga del chat al inicio
+  const btnChat = document.querySelector('.nav-item[data-view="chat"]');
+  if (btnChat) {
+    btnChat.classList.add('active');
+    document.getElementById('vista-chat').classList.remove('oculto');
+    document.getElementById('vista-titulo').textContent = 'Chat con Asesor';
+    scrollToBottom();
+  }
+
+  // Ocultar mensaje de bienvenida automáticamente
+  setTimeout(() => {
+    const welcomeBox = document.getElementById('welcome-box');
+    if (welcomeBox && !welcomeBox.classList.contains('fade-out')) {
+      welcomeBox.classList.add('fade-out');
+    }
+  }, 3000);
+
+  // Cargar datos reales
+  if (clienteId) {
+    cargarDatosDelCliente().then(cliente => {
+      if (cliente) {
+        cargarMensajesDelCliente(cliente.id);
+        cargarProgresoDelCliente(cliente.id);
+        cargarPagosCliente(cliente);
+      }
+    });
+  }
+});
+
+
+function setupNavigation() {
+  const navItems = document.querySelectorAll('.nav-item');
+  
+  navItems.forEach(item => {
+    item.addEventListener('click', function() {
+      navItems.forEach(navItem => navItem.classList.remove('active'));
+      this.classList.add('active');
+      
+      const view = this.getAttribute('data-view');
+      document.querySelectorAll('.content-panel').forEach(panel => {
+        panel.classList.add('oculto');
+      });
+      const welcomeBox = document.getElementById('welcome-box');
+if (welcomeBox && !welcomeBox.classList.contains('fade-out')) {
+  welcomeBox.classList.add('fade-out');
+}
+
+      
+      if (view) {
+        document.getElementById(`vista-${view}`).classList.remove('oculto');
+        
+        const titles = {
+  chat: 'Chat con Asesor',
+  info: 'Mi Información',
+  documentos: 'Mis Documentos',
+  progreso: 'Progreso del Caso',
+  pagos: 'Plan de Pagos' // ✅ ← Esto faltaba
+};
+
+        document.getElementById('vista-titulo').textContent = titles[view];
+      }
+      if (view === 'chat') {
+        scrollToBottom();
+      }
+      if (view === 'documentos') {
+        cargarArchivosDelCliente(clienteId);
+      }
+      if (view === 'progreso') {
+        cargarProgresoDelCliente(clienteId);
+      }
+      if (view === 'pagos') {
+  cargarDatosDelCliente(); // vuelve a cargar cliente y pagos
+}
+
+    });
+  });
+}
+function setupDependientesPanel() {
+  const lista = document.getElementById('dependientes-lista');
+
+  // Ejemplo de datos estáticos. Puedes hacer fetch aquí si los quieres traer del servidor
+  const dependientes = [
+    { nombre: 'María López', parentesco: 'Hija', edad: 12 },
+    { nombre: 'Carlos López', parentesco: 'Hijo', edad: 10 }
+  ];
+
+  lista.innerHTML = ''; // Limpia antes de insertar
+
+  dependientes.forEach(dep => {
+    const card = document.createElement('div');
+    card.className = 'info-card';
+    card.innerHTML = `
+      <h3>${dep.nombre}</h3>
+      <p>Parentesco: ${dep.parentesco}</p>
+      <p>Edad: ${dep.edad} años</p>
+    `;
+    lista.appendChild(card);
+  });
+}
+
+function setupProgressPanel() {
+  const addBtn = document.getElementById('add-milestone-btn');
+  const cancelBtn = document.getElementById('cancel-milestone-btn');
+  const submitBtn = document.getElementById('submit-milestone-btn');
+  const form = document.getElementById('milestone-form');
+  
+  addBtn.addEventListener('click', () => {
+    form.classList.toggle('active');
+  });
+  
+  cancelBtn.addEventListener('click', () => {
+    form.classList.remove('active');
+    // Limpiar el formulario
+    document.getElementById('milestone-name').value = '';
+    document.getElementById('milestone-status').value = 'pending';
+    document.getElementById('milestone-date').value = '';
+    document.getElementById('milestone-notes').value = '';
+  });
+  
+  submitBtn.addEventListener('click', () => {
+    const nombre = document.getElementById('milestone-name').value.trim();
+    const estado = document.getElementById('milestone-status').value;
+    const fecha = document.getElementById('milestone-date').value;
+    const notas = document.getElementById('milestone-notes').value.trim();
+    
+    if (!nombre) {
+      alert('Por favor ingresa un nombre para el hito');
+      return;
+    }
+    
+    const nuevoHito = {
+      nombre,
+      estado,
+      fecha: fecha || new Date().toISOString().split('T')[0],
+      notas: notas || ''
+    };
+    
+    form.classList.remove('active');
+    
+    // Limpiar el formulario
+    document.getElementById('milestone-name').value = '';
+    document.getElementById('milestone-status').value = 'pending';
+    document.getElementById('milestone-date').value = '';
+    document.getElementById('milestone-notes').value = '';
+  });
+}
+
+function setupChat() {
+  const sendBtn = document.getElementById('send-btn');
+  const chatInput = document.getElementById('chat-message');
+  
+  sendBtn.addEventListener('click', sendMessage);
+  chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+  });
+}
+
+function setupFileModal() {
+  const fileBtn = document.getElementById('file-btn');
+  const fileInput = document.getElementById('file-input');
+  const dropArea = document.getElementById('drop-area');
+  const btnSelectFile = document.querySelector('.btn-select-file');
+  const btnCancel = document.querySelector('.btn-cancel');
+  const btnSend = document.querySelector('.btn-send');
+  const modal = document.getElementById('file-modal');
+  const closeModal = document.querySelector('.close-modal');
+  
+  fileBtn.addEventListener('click', () => modal.style.display = 'block');
+  closeModal.addEventListener('click', () => modal.style.display = 'none');
+  btnCancel.addEventListener('click', () => modal.style.display = 'none');
+  btnSelectFile.addEventListener('click', () => fileInput.click());
+  
+  fileInput.addEventListener('change', handleFileSelect);
+  
+  // Drag and Drop Handlers
+  ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, preventDefaults, false);
+  });
+  
+  ['dragenter', 'dragover'].forEach(eventName => {
+    dropArea.addEventListener(eventName, highlight, false);
+  });
+  
+  ['dragleave', 'drop'].forEach(eventName => {
+    dropArea.addEventListener(eventName, unhighlight, false);
+  });
+  
+  dropArea.addEventListener('drop', handleDrop, false);
+  
+  function preventDefaults(e) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+  
+  function highlight() {
+    dropArea.classList.add('highlight');
+  }
+  
+  function unhighlight() {
+    dropArea.classList.remove('highlight');
+  }
+  
+  function handleDrop(e) {
+    const files = e.dataTransfer.files;
+    handleFiles(files);
+  }
+  
+  function handleFileSelect(e) {
+    handleFiles(e.target.files);
+  }
+  
+  function handleFiles(files) {
+    if (!files.length) return;
+    const file = files[0];
+    const filePreview = document.getElementById('file-preview');
+
+    if (file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        filePreview.innerHTML = `
+          <div class="preview-image">
+            <img src="${e.target.result}" alt="Preview">
+            <p>${file.name}</p>
+          </div>
+        `;
+        btnSend.disabled = false;
+      };
+      reader.readAsDataURL(file);
+    } else {
+      filePreview.innerHTML = `
+        <div class="preview-file">
+          <i class="fas fa-file"></i>
+          <p>${file.name}</p>
+          <small>${(file.size / 1024).toFixed(2)} KB</small>
+        </div>
+      `;
+      btnSend.disabled = false;
+    }
+  }
+  
+  btnSend.addEventListener('click', () => {
+    alert('Archivo enviado con éxito');
+    modal.style.display = 'none';
+    document.getElementById('file-preview').innerHTML = '';
+    btnSend.disabled = true;
+  });
+}
+function agregarDependiente() {
+  const nombre = document.getElementById('dep-nombre').value.trim();
+  const fecha = document.getElementById('dep-fecha').value;
+  const alien = document.getElementById('dep-alien').value.trim();
+
+  if (!nombre || !fecha || !alien) {
+    alert('Por favor completa todos los campos');
+    return;
+  }
+
+  const nuevoDep = { nombre, fechaNacimiento: fecha, alien };
+
+  // Aquí puedes hacer fetch POST a tu servidor si es necesario
+  dependientes.push(nuevoDep); // o guarda en tu backend
+  localStorage.setItem('dependientes_' + clienteId, JSON.stringify(dependientes));
+  renderizarDependientes();
+
+  // Limpiar el formulario
+  document.getElementById('dep-nombre').value = '';
+  document.getElementById('dep-fecha').value = '';
+  document.getElementById('dep-alien').value = '';
+}
+
+let dependientes = [];
+
+function renderizarDependientes() {
+  const lista = document.getElementById('dependientes-lista');
+  lista.innerHTML = '';
+
+  dependientes.forEach((dep, index) => {
+    const card = document.createElement('div');
+    card.className = 'info-card';
+    card.innerHTML = `
+      <h3>${dep.nombre}</h3>
+      <p>Fecha de Nacimiento: ${new Date(dep.fechaNacimiento).toLocaleDateString()}</p>
+      <p>Número Alien: ${dep.alien}</p>
+      <button onclick="eliminarDependiente(${index})" style="margin-top: 10px; background:#f44336; color:white; border:none; padding:6px 12px; border-radius:4px;">Eliminar</button>
+    `;
+    lista.appendChild(card);
+  });
+}
+
+function eliminarDependiente(index) {
+  if (confirm('¿Eliminar este dependiente?')) {
+    dependientes.splice(index, 1);
+    localStorage.setItem('dependientes_' + clienteId, JSON.stringify(dependientes));
+    renderizarDependientes();
+  }
+}
+
+
+function cargarDependientesGuardados() {
+  const guardados = localStorage.getItem('dependientes_' + clienteId);
+  if (guardados) {
+    dependientes = JSON.parse(guardados);
+    renderizarDependientes();
+  }
+}
+function eliminarTodosDependientes() {
+  if (confirm("¿Estás seguro que deseas eliminar todos los dependientes?")) {
+    dependientes = [];
+    localStorage.removeItem('dependientes_' + clienteId);
+    renderizarDependientes();
+  }
+}
+async function cargarPagosCliente(cliente) {
+  const pagos = cliente.pagos || [];
+  const lista = document.getElementById('lista-pagos');
+  lista.innerHTML = '';
+
+  let pagados = 0;
+
+  pagos.forEach((pago, index) => {
+    const esPagado = pago.estado?.toLowerCase() === 'pagado';
+
+    if (esPagado) pagados++;
+
+    const tarjeta = document.createElement('div');
+    tarjeta.className = 'pago-step';
+    tarjeta.innerHTML = `
+      <h3>Pago ${index + 1}</h3>
+      <p><strong>Monto:</strong> $${pago.monto}</p>
+      <p><strong>Fecha:</strong> ${pago.fecha || 'No especificada'}</p>
+      <p class="estado-pago"><strong>Estado:</strong> <span style="color: ${esPagado ? 'green' : 'orange'}">${pago.estado}</span></p>
+      ${
+        !esPagado
+          ? `<input type="file" id="comprobante-${index}" class="input-comprobante">
+             <button class="btn-comprobante" onclick="subirComprobante('${cliente.id}', ${index})">Subir Comprobante</button>`
+          : `<span style="color: green;">✔️ Comprobante confirmado</span>`
+      }
+    `;
+    lista.appendChild(tarjeta);
+  });
+
+  const porcentaje = pagos.length ? Math.round((pagados / pagos.length) * 100) : 0;
+  document.getElementById('pago-progress-percent').textContent = `${porcentaje}%`;
+  document.getElementById('pago-progress-fill').style.width = `${porcentaje}%`;
+}
+
+
+
+
+function subirComprobante(idPago) {
+  pagoSeleccionadoId = idPago;
+  document.getElementById('input-comprobante').value = '';
+  document.getElementById('modal-comprobante').classList.add('activo');
+}
+
+function cerrarModalComprobante() {
+  document.getElementById('modal-comprobante').classList.remove('activo');
+}
+
+function enviarComprobante() {
+  const archivo = document.getElementById('input-comprobante').files[0];
+
+  if (!archivo || !pagoSeleccionadoId) {
+    alert("Selecciona un archivo válido");
+    return;
+  }
+
+  const formData = new FormData();
+  formData.append("archivo", archivo);
+  formData.append("pagoId", pagoSeleccionadoId);
+  formData.append("clienteId", clienteId); // usa tu clienteId
+
+  fetch('https://jawfish-saving-grossly.ngrok-free.app/pagos/comprobante', {
+    method: 'POST',
+    body: formData
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Comprobante enviado con éxito");
+    cerrarModalComprobante();
+    // Opcional: recargar pagos
+  })
+  .catch(err => {
+    console.error("Error al subir comprobante:", err);
+    alert("Hubo un problema al enviar el comprobante.");
+  });
+}
+function mostrarModalPago(datosCliente) {
+  const total = prompt("Monto total del proceso:");
+  const inicial = prompt("Pago inicial:");
+  const semanas = prompt("¿En cuántas semanas quiere pagar el resto?");
+
+  if (!total || !inicial || !semanas) {
+    alert("Debes llenar todos los campos.");
+    return;
+  }
+
+  const restante = total - inicial;
+  const montoSemanal = Math.ceil(restante / (semanas - 1));
+  const pagos = [];
+
+  // Primer pago ya pagado
+  pagos.push({
+    descripcion: 'Pago Inicial',
+    monto: Number(inicial),
+    comprobante: '✔️ Pagado (por asesor)'
+  });
+
+  // Pagos restantes
+  for (let i = 1; i < semanas; i++) {
+    pagos.push({
+      descripcion: `Semana ${i + 1}`,
+      monto: montoSemanal,
+      comprobante: null
+    });
+  }
+
+  datosCliente.pagos = pagos;
+
+  // Aquí guardas el cliente como ya lo haces
+  guardarClienteEnServidor(datosCliente);
+}
+function mostrarLoading(mostrar) {
+  const loading = document.getElementById('loading-indicator') || 
+    document.createElement('div');
+  
+  if (!document.getElementById('loading-indicator')) {
+    loading.id = 'loading-indicator';
+    loading.style.position = 'fixed';
+    loading.style.top = '0';
+    loading.style.left = '0';
+    loading.style.width = '100%';
+    loading.style.height = '100%';
+    loading.style.backgroundColor = 'rgba(255,255,255,0.8)';
+    loading.style.display = 'flex';
+    loading.style.justifyContent = 'center';
+    loading.style.alignItems = 'center';
+    loading.style.zIndex = '9999';
+    loading.innerHTML = `
+      <div style="text-align: center;">
+        <i class="fas fa-spinner fa-spin fa-3x"></i>
+        <p>Cargando datos...</p>
+      </div>
+    `;
+    document.body.appendChild(loading);
+  }
+  
+  loading.style.display = mostrar ? 'flex' : 'none';
+}
+
+// Luego en tu función cargarDatosDelCliente:
+
+  </script>
+</body>
+</html>
