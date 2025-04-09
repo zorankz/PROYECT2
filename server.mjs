@@ -633,18 +633,20 @@ io.on('connection', (socket) => {
         texto: data.texto,
         fecha: new Date().toISOString()
       });
-
-      socket.to(data.clienteId).emit('mensaje-asesor', {
+  
+      // Emitir al cliente correctamente
+      socket.to(data.clienteId).emit('mensaje-cliente', {
         ...mensajeGuardado,
         clienteId: data.clienteId
       });
-
+  
       if (callback) callback({ status: 'ok', mensaje: mensajeGuardado });
     } catch (err) {
       console.error('❌ Error en mensaje-asesor:', err);
       if (callback) callback({ status: 'error', error: err.message });
     }
   });
+  
 
   socket.on('mensaje-cliente', async (data, callback) => {
     try {
