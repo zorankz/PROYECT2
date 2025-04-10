@@ -1,7 +1,7 @@
 import { readFile, writeFile, access } from 'fs/promises';
 
-import pkg from 'uuid';
-const { v4: uuidv4 } = pkg;
+import { v4 as uuidv4 } from 'uuid';
+const id = uuidv4();
 
 const RUTA_MENSAJES = './db/mensajes.json';
 const RUTA_CLIENTES = './db/contactos.json';
