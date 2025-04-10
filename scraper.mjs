@@ -1,5 +1,6 @@
 import puppeteer from 'puppeteer-extra';
 import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import chromium from 'chrome-aws-lambda';
 import anticaptcha from '@antiadmin/anticaptchaofficial';
 
 puppeteer.use(StealthPlugin());
@@ -8,10 +9,19 @@ anticaptcha.setAPIKey('a8a0f3e560b3d9e2ffcae00e8f976d55');
 const siteURL = 'https://acis.eoir.justice.gov/en/';
 
 export default async function consultarEOIR(alienNumber) {
-  const browser = await puppeteer.launch({ headless: false, args: ['--no-sandbox'] });
-  const page = await browser.newPage();
+  let browser = null;
+  let page = null;
 
   try {
+    browser = await puppeteer.launch({
+      args: chromium.args,
+      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser',
+      headless: chromium.headless,
+      defaultViewport: chromium.defaultViewport,
+    });
+
+    page = await browser.newPage();
+
     console.log('🌐 Accediendo al sitio EOIR...');
     await page.goto(siteURL, { waitUntil: 'networkidle2' });
 
@@ -96,7 +106,7 @@ export default async function consultarEOIR(alienNumber) {
         parteServida: 'IMMIGRATION COURT',
         direccionParteServida,
         metodoServicio: 'FIRST MAIL CLASS DELIVERY',
-        fecha: new Date().toLocaleDateString('en-GB') // dd/mm/yyyy
+        fecha: new Date().toLocaleDateString('en-GB')
       };
     });
 
@@ -105,8 +115,8 @@ export default async function consultarEOIR(alienNumber) {
 
   } catch (err) {
     console.error('❌ Error durante scraping:', err.message);
-    await page.screenshot({ path: 'error_screenshot.png', fullPage: true });
-    await browser.close();
+    if (page) await page.screenshot({ path: 'error_screenshot.png', fullPage: true });
+    if (browser) await browser.close();
     return { error: 'Fallo consultando EOIR', detalle: err.message };
   }
 }
