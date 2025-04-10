@@ -8,17 +8,27 @@ anticaptcha.setAPIKey('a8a0f3e560b3d9e2ffcae00e8f976d55');
 
 const siteURL = 'https://acis.eoir.justice.gov/en/';
 
+// Detecta si estás en Render u otro entorno de producción
+const esProduccion = !!(process.env.AWS_REGION || process.env.IS_RENDER);
+
 export default async function consultarEOIR(alienNumber) {
   let browser = null;
   let page = null;
 
   try {
-    browser = await puppeteer.launch({
-      args: chromium.args,
-      executablePath: await chromium.executablePath || '/usr/bin/chromium-browser',
-      headless: chromium.headless,
-      defaultViewport: chromium.defaultViewport,
-    });
+    browser = await puppeteer.launch(
+      esProduccion
+        ? {
+            args: chromium.args,
+            executablePath: await chromium.executablePath,
+            headless: chromium.headless,
+            defaultViewport: chromium.defaultViewport,
+          }
+        : {
+            headless: false,
+            args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          }
+    );
 
     page = await browser.newPage();
 
